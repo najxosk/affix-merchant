@@ -80,19 +80,30 @@ h2{font-size:18px;margin:6px 0 8px;color:#e8c77a;border-bottom:1px solid #4a3b28
 .reveal{animation:rev .7s}
 @keyframes rev{0%{transform:rotateY(90deg) scale(.8);filter:brightness(3)}100%{transform:none}}
 .big{font-size:22px;text-align:center;color:#ff8c1a;text-shadow:0 0 10px #ff6a00}
+.stab,.fstab{position:relative}
+.sbar i{transition:width .9s ease-out}
+.float{position:absolute;right:6px;top:-6px;color:#ff6a4a;font-weight:bold;font-size:18px;text-shadow:0 0 6px #000,0 0 10px #ff3b2a;animation:flt 1.6s forwards;pointer-events:none;z-index:3}
+@keyframes flt{0%{opacity:0;transform:translateY(8px) scale(.8)}15%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:translateY(-40px)}}
+#shop{position:fixed;inset:0;z-index:19;background:#000c;display:flex;align-items:flex-end;justify-content:center}
+#shop .box{max-width:560px;width:100%;max-height:92vh;overflow:auto;background:linear-gradient(#2a2219,#17130f);border:2px solid #8a6d3e;border-radius:14px 14px 0 0;padding:12px}
+.shopi{border:1px solid #4a3b28;border-radius:10px;padding:8px;margin-bottom:8px;background:#0005}
+.shopi button{min-height:50px;font-size:15px}
+#curs{cursor:pointer}
+.info{font-size:12px;background:#3a1510;border:1px solid #d0584a;border-radius:6px;padding:6px;margin-top:6px;color:#ffc9c0}
+.pos{color:#6be36b}.neg{color:#ff6a5a}
 </style></head>
 <body>
 <div id="app">
 <header>
- <div class="row"><div id="gold"></div><div id="rep"></div><button class="sm" id="langBtn" data-act="lang"></button><button class="sm" data-act="help">?</button></div>
- <div id="curs"></div>
+ <div class="row"><div id="gold"></div><div id="rep"></div><button class="sm" id="langBtn" data-act="lang"></button><button class="sm" data-act="shop" id="shopBtn">🛒</button><button class="sm" data-act="help">?</button></div>
+ <div id="curs" data-act="shop"></div>
  <div id="ticker"></div>
 </header>
 <main id="view"></main>
 </div>
 <nav><div id="tabs"></div></nav>
 <div id="modal" class="hidden"><div class="box" id="modalBox"></div></div>
-<div id="toast"></div>
+<div id="shop" class="hidden"><div class="box" id="shopBox"></div></div><div id="toast"></div>
 <canvas id="fx"></canvas>
 <div id="flash"></div>
 <script>
@@ -102,7 +113,8 @@ const CONFIG={
  startGold:100, startCur:{reroll:3,augment:5,annul:2,lock:0},
  curCost:{reroll:5,augment:7,annul:6,lock:40}, forgeGold:3,
  marketSize:5, marketRefreshSec:60, marketRefreshCost:5, trendSec:180, bountyRefreshSec:150,
- crateCost:35, baseStab:[35,55], startStall:4,
+ crateCost:35, baseStab:[35,55], startStall:6, lockLvl:3,
+ essenceCost:24, shardCost:{reroll:5,augment:7,annul:6,lock:30}, charityCooldown:120, bountySkipCost:5,
  tierW:{5:10,4:22,3:45,2:95,1:220},        // value weight of an affix by tier
  rollW:{5:50,4:30,3:14,2:5,1:1.5},          // chance weights for rolling tiers
  tierIlvl:{5:1,4:12,3:28,2:48,1:68},        // min item level for tier
@@ -126,7 +138,17 @@ const CURS=['reroll','augment','annul','lock'],CICO={reroll:'🎲',augment:'💠
 const UPS=[{k:'stall',max:4,cost:l=>60*2**l,req:l=>l+1},{k:'stab',max:5,cost:l=>50*2**l,req:l=>l+1},{k:'haggle',max:5,cost:l=>40*2**l,req:l=>l+2},{k:'tongue',max:5,cost:l=>70*2**l,req:l=>l+2}];
 // ================= I18N =================
 const I18N={
-sk:{market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Rozvoj',
+sk:{shop:'Obchod',shopT:'Obchod s menami',owned:'máš',needGold:'Chýba ti',unlockAt:'Odomkne sa na úrovni reputácie',close:'Zavrieť',shards:'Úlomky',
+ src_reroll:'Zdroj: obchod, denný bonus, výmena úlomkov',src_augment:'Zdroj: obchod, denný bonus (+2), výmena úlomkov',src_annul:'Zdroj: obchod, výmena úlomkov',src_lock:'Zdroj: obchod od úrovne 3, výmena úlomkov',
+ essInfo:'🧪 Esencie (cielené pridanie konkrétneho afixu) nájdeš v Dielni pri vybranom predmete. 🧩 Úlomky získaš rozobratím predmetov.',
+ essence:'Esencia – pridaj konkrétny afix',essenceD:'Pridá presne zvolený afix (tier je náhodný podľa ilvl). Drahšie, ale ideálne pre zákazky.',
+ salvage:'Rozobrať',salvaged:'Rozobraté: +{n} 🧩 úlomkov',missing:'Chýba',skip:'Iný zákazník',
+ charityT:'Si bez peňazí?',charityD:'Starý kováč ti daruje obyčajnú zbraň, aby si mohol začať znova.',charityBtn:'Vziať darček',charityWait:'Ďalší dar o',
+ fracInfo:'💔 Prasknutý predmet sa už nedá upravovať (meny ani Vyhňa). Môžeš ho stále predať (−15 % hodnoty), odovzdať zákazníkovi alebo rozobrať na úlomky.',
+ compare:'oproti vybranému',maxTierIl:'max. tier',ilvlExpl:'Tento predmet má ilvl {i}, preto môže mať najviac tier T{m}. Na T{n} treba ilvl {r}+. Kúp predmet s vyšším ilvl.',
+ addFirst:'Predmet nemá afixy – najprv pridaj afix 💠 alebo esenciou.',confirmT:'Riskantné kovanie!',confirmYes:'Kovať aj tak',cancel:'Zrušiť',
+ afterForge:'po kovaní',loss:'strata',noRoom:'Na tejto strane nie je miesto.',buyHint:'Nemáš žiadny – otváram obchod.',
+market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Rozvoj',
  normal:'Bežný',magic:'Magický',rare:'Vzácny',exalted:'Vznešený',
  sword:'Meč',axe:'Sekera',dagger:'Dýka',bow:'Luk',staff:'Palica',wand:'Prútik',
  reroll:'Kameň prehodenia',augment:'Kameň rozšírenia',annul:'Kameň zrušenia',lock:'Runa zámku',
@@ -154,8 +176,18 @@ sk:{market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:
 <p><b>Tiery:</b> každý afix má tier <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1 (najlepší)</span>. <b>ilvl</b> (úroveň predmetu) určuje, aký vysoký tier môže padnúť.</p>
 <p><b>Meny:</b> 🎲 prehodí hodnoty, 💠 pridá afix, 🌀 odstráni afix, 🔒 ochráni jeden afix pri ďalšej úprave.</p>
 <p><b>Vyhňa:</b> vyber afix a zvýš jeho tier. Každé kovanie míňa <b>Stabilitu</b> (náhodne). Ak stabilita nestačí, predmet <span class="bad">praskne</span> (už sa nedá upravovať) alebo sa zriedka <span class="bad">roztrieska</span>. Šance vidíš vždy pred kovaním.</p>
-<p><b>Tip:</b> 🔥 horúci afix má dvojnásobnú cenu. Zákazníci platia za presnú zhodu až 2,6×!</p>`},
-en:{market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'Upgrades',
+<p><b>Odkiaľ meny:</b> 🛒 Obchod (ťukni na meny hore), denný bonus, 🧩 úlomky z rozobratých predmetov. 🧪 Esencia pridá konkrétny afix – ideálne na zákazky.</p><p><b>Prasknutý</b> predmet sa už nedá upravovať, ale dá sa predať alebo rozobrať.</p><p><b>Tip:</b> 🔥 horúci afix má dvojnásobnú cenu. Zákazníci platia za presnú zhodu až 2,6×!</p>`},
+en:{shop:'Shop',shopT:'Currency shop',owned:'owned',needGold:'You need',unlockAt:'Unlocks at reputation level',close:'Close',shards:'Shards',
+ src_reroll:'Source: shop, daily bonus, shard exchange',src_augment:'Source: shop, daily bonus (+2), shard exchange',src_annul:'Source: shop, shard exchange',src_lock:'Source: shop from level 3, shard exchange',
+ essInfo:'🧪 Essences (targeted add of a specific affix) are in the Workshop for the selected item. 🧩 Shards come from salvaging items.',
+ essence:'Essence – add a specific affix',essenceD:'Adds exactly the chosen affix (tier is random by ilvl). Pricier, but perfect for bounties.',
+ salvage:'Salvage',salvaged:'Salvaged: +{n} 🧩 shards',missing:'Missing',skip:'Other customer',
+ charityT:'Broke?',charityD:'The old smith gives you a plain weapon so you can start again.',charityBtn:'Take the gift',charityWait:'Next gift in',
+ fracInfo:'💔 A fractured item can no longer be crafted (no currencies, no Forge). You can still sell it (−15% value), deliver it to a customer or salvage it into shards.',
+ compare:'vs selected',maxTierIl:'max tier',ilvlExpl:'This item is ilvl {i}, so it can have at most tier T{m}. T{n} needs ilvl {r}+. Buy an item with higher ilvl.',
+ addFirst:'Item has no affixes – add one first with 💠 or an Essence.',confirmT:'Risky forge!',confirmYes:'Forge anyway',cancel:'Cancel',
+ afterForge:'after forge',loss:'loss',noRoom:'No free slot on that side.',buyHint:'You have none – opening the shop.',
+market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'Upgrades',
  normal:'Normal',magic:'Magic',rare:'Rare',exalted:'Exalted',
  sword:'Sword',axe:'Axe',dagger:'Dagger',bow:'Bow',staff:'Staff',wand:'Wand',
  reroll:'Reroll Stone',augment:'Augment Stone',annul:'Annul Stone',lock:'Lock Rune',
@@ -183,7 +215,7 @@ en:{market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrad
 <p><b>Tiers:</b> each affix has a tier <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1 (best)</span>. <b>ilvl</b> (item level) limits which tiers can roll.</p>
 <p><b>Currencies:</b> 🎲 rerolls values, 💠 adds an affix, 🌀 removes an affix, 🔒 protects one affix for the next craft.</p>
 <p><b>Forge:</b> pick an affix and raise its tier. Each forge costs random <b>Stability</b>. If stability runs out the item <span class="bad">fractures</span> (no more crafting) or rarely <span class="bad">shatters</span>. Odds are always shown before you forge.</p>
-<p><b>Tip:</b> the 🔥 hot affix is worth double. Customers pay up to 2.6× for an exact match!</p>`}};
+<p><b>Where currencies come from:</b> 🛒 Shop (tap the currencies at the top), daily bonus, 🧩 shards from salvaged items. 🧪 Essences add a specific affix – great for bounties.</p><p><b>Fractured</b> items can't be crafted any more but can be sold or salvaged.</p><p><b>Tip:</b> the 🔥 hot affix is worth double. Customers pay up to 2.6× for an exact match!</p>`}};
 const AT={sk:{pphys:['+{v}% fyzického poškodenia','Fyz. %'],fphys:['+{v} fyzického poškodenia','Fyz. plošné'],ffire:['+{v} ohnivého poškodenia','Oheň'],fcold:['+{v} mrazivého poškodenia','Mráz'],flight:['+{v} bleskového poškodenia','Blesk'],pele:['+{v}% elementálneho poškodenia','Element %'],aspd:['+{v}% rýchlosti útoku','Rýchl. útoku'],crit:['+{v}% šance na kritický zásah','Krit. šanca'],cmult:['+{v}% kritického násobiča','Krit. násobič'],rfire:['+{v}% odolnosti voči ohňu','Odol. oheň'],rcold:['+{v}% odolnosti voči mrazu','Odol. mráz'],rlight:['+{v}% odolnosti voči blesku','Odol. blesk'],cspd:['+{v}% rýchlosti kúzlenia','Rýchl. kúzlenia']},
 en:{pphys:['+{v}% Physical Damage','Phys %'],fphys:['+{v} Physical Damage','Flat Phys'],ffire:['+{v} Fire Damage','Fire'],fcold:['+{v} Cold Damage','Cold'],flight:['+{v} Lightning Damage','Lightning'],pele:['+{v}% Elemental Damage','Elemental %'],aspd:['+{v}% Attack Speed','Attack Speed'],crit:['+{v}% Critical Chance','Crit Chance'],cmult:['+{v}% Critical Multiplier','Crit Multi'],rfire:['+{v}% Fire Resistance','Fire Res'],rcold:['+{v}% Cold Resistance','Cold Res'],rlight:['+{v}% Lightning Resistance','Lightning Res'],cspd:['+{v}% Cast Speed','Cast Speed']}};
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.en[k]||k;
@@ -220,7 +252,7 @@ function icon(b){const P={
  return `<svg viewBox="0 0 64 64">${P[b]}</svg>`}
 // ================= STATE =================
 let S;
-function fresh(){return{v:1,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0},login:{last:'',streak:0},tut:false,nid:1}}
+function fresh(){return{v:1,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0},login:{last:'',streak:0},tut:false,nid:1,shards:0,helpAt:0}}
 function save(){try{localStorage.setItem(CONFIG.saveKey,JSON.stringify(S))}catch(e){}}
 function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&d.v===1){S=Object.assign(fresh(),d);return true}}catch(e){}S=fresh();return false}
 // ================= RULES =================
@@ -243,12 +275,12 @@ const needXp=l=>Math.round(CONFIG.repBase*Math.pow(l,1.6));
 function rollTier(il,boost){const m=maxTier(il),w={};for(let x=5;x>=m;x--)w[x]=CONFIG.rollW[x]*(boost&&x<=3?3:1);return+wpick(w)}
 function addAffix(it,boost){const sides=[];if(it.p.length<3)sides.push('p');if(it.s.length<3)sides.push('s');if(!sides.length)return null;const side=pick(sides);
  const used=new Set(all(it).map(a=>a.k));const a=pick(AFF.filter(x=>x.s===side&&!used.has(x.k)));const tr=rollTier(it.ilvl,boost),q=R();const af={k:a.k,t:tr,q,v:rollVal(a,tr,q),lock:false};it[side].push(af);return af}
-function makeItem(il,n,boost){const it={id:S.nid++,base:pick(unlockedBases()),ilvl:il,p:[],s:[],stab:ri(...CONFIG.baseStab)+stabBonus(),frac:false,cost:0,name:pick(NA)+' '+pick(NB)};for(let i=0;i<n;i++)addAffix(it,boost);return it}
+function makeItem(il,n,boost){const it={id:S.nid++,base:pick(unlockedBases()),ilvl:il,p:[],s:[],stab:0,frac:false,cost:0,name:pick(NA)+' '+pick(NB)};it.stab=it.stab0=ri(...CONFIG.baseStab)+stabBonus();for(let i=0;i<n;i++)addAffix(it,boost);return it}
 const affVal=a=>CONFIG.tierW[a.t]*(S.demand[a.k]||1)*(.7+.6*a.q)*(S.hot===a.k?CONFIG.hotMul:1);
 function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=affVal(a);if(A.length>=6)v*=1.3;else if(A.length>=4)v*=1.1;if(it.frac)v*=.85;return Math.max(1,Math.round(v))}
 const sellPrice=it=>Math.round(itemValue(it)*CONFIG.sellMul*sellBonus());
 const buyPrice=it=>it.fixed||Math.max(1,Math.round(itemValue(it)*it.pf*buyMul()));
-function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(1,mx-30),mx);const it=makeItem(il,+wpick({0:40,1:25,2:18,3:10,4:5,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
+function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(5,mx-30),mx);const it=makeItem(il,+wpick({0:40,1:25,2:18,3:10,4:5,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
 function rotateTrend(){const prev=S.hot;let k;do k=pick(AFF).k;while(k===prev);S.hot=k;for(const a of AFF)S.demand[a.k]=Math.min(1.5,Math.max(.6,(S.demand[a.k]||1)*(.85+R()*.3)));S.trendAt=S.play+CONFIG.trendSec}
 function genBounty(){const keys=[pick(AFF.filter(a=>a.s==='p')).k,pick(AFF.filter(a=>a.s==='s')).k];if(S.lvl>=4&&R()<.4){let k;do k=pick(AFF).k;while(keys.includes(k));keys.push(k)}
  return{id:S.nid++,face:pick(FACES),name:pick(CUSTN),keys,minIlvl:Math.max(1,Math.round(ri(1,marketMax()*.6)/5)*5),until:S.play+CONFIG.bountyRefreshSec+ri(0,60),bonus:ri(5,30)}}
@@ -270,12 +302,22 @@ const ACT={
   S.gold-=p;it.cost=p;delete it.pf;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.market.splice(+i,1);all(it).forEach(discover);SND.coin();toast('🪙 −'+p)},
  crate:()=>{if(S.lvl<2)return;if(S.gold<CONFIG.crateCost)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));const mx=marketMax();
   S.gold-=CONFIG.crateCost;const it=makeItem(ri(Math.round(mx*.6),mx),ri(2,6),true);it.unid=true;it.cost=CONFIG.crateCost;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.tab='workshop';SND.coin()},
- refresh:()=>{if(S.gold<CONFIG.marketRefreshCost)return toast(t('noGold'));S.gold-=CONFIG.marketRefreshCost;genMarket();SND.click()},
+ refresh:()=>{const rc=S.market.length?CONFIG.marketRefreshCost:0;if(S.gold<rc)return toast(t('noGold'));S.gold-=rc;genMarket();SND.click()},
  selItem:i=>{S.sel=+i;S.selAff=null;SND.click()},
  selAff:a=>{S.selAff=S.selAff===a?null:a;SND.click()},
  identify:()=>{const it=cur();if(!it||!it.unid)return;it.unid=false;render();anim('#wcard','reveal');all(it).forEach(discover);SND.craft();sparks($('#wcard'),'#ffff77',40);if(all(it).some(a=>a.t===1))setTimeout(jackpot,400);checkPerfect(it);save();return 'noR'},
- buyCur:c=>{if(c==='lock'&&S.lvl<3)return;const p=curCost(c);if(S.gold<p)return toast(t('noGold'));S.gold-=p;S.cur[c]++;SND.coin()},
- use:c=>{const it=cur();if(!it||it.unid)return;if(it.frac)return toast(t('fragile'));if(S.cur[c]<=0)return toast(t('noCur'));const A=all(it);let jack=false;
+ shop:()=>{shopOpen=true;SND.click()},closeShop:()=>{shopOpen=false},
+ buyCur:a=>{const[c,nn]=a.split(':'),n=+(nn||1);if(c==='lock'&&S.lvl<CONFIG.lockLvl)return toast(t('unlockAt')+' '+CONFIG.lockLvl);const p=curCost(c)*n;if(S.gold<p)return toast(t('needGold')+' '+(p-S.gold)+'🪙');S.gold-=p;S.cur[c]+=n;SND.coin();toast(CICO[c]+' +'+n+' · 🪙 −'+p)},
+ buyShard:c=>{if(c==='lock'&&S.lvl<CONFIG.lockLvl)return;const p=CONFIG.shardCost[c];if(S.shards<p)return;S.shards-=p;S.cur[c]++;SND.coin();toast(CICO[c]+' +1 · 🧩 −'+p)},
+ essOpen:()=>{essOpen=!essOpen},
+ essence:k=>{const it=cur(),d=AFM[k];if(!it||it.unid||it.frac)return;if(it[d.s].length>=3)return toast(t('noRoom'));if(all(it).some(a=>a.k===k))return;if(S.gold<CONFIG.essenceCost)return toast(t('needGold')+' '+(CONFIG.essenceCost-S.gold)+'🪙');
+  S.gold-=CONFIG.essenceCost;const tr=rollTier(it.ilvl),q=R(),af={k,t:tr,q,v:rollVal(d,tr,q),lock:false};it[d.s].push(af);discover(af);S.stats.crafts++;essOpen=false;render();anim('#wcard','shake');sparks($('#wcard'),'#7fe3ff',35);SND.craft();if(tr===1)jackpot();checkPerfect(it);save();return 'noR'},
+ salvage:()=>{const it=cur();if(!it||it.unid)return;const n=1+all(it).reduce((x,a)=>x+(6-a.t),0);S.shards+=n;finishItem();SND.shatter();sparks(null,'#9be',40);toast(t('salvaged').replace('{n}',n))},
+ charity:()=>{if(S.play<S.helpAt)return;const it=makeItem(ri(10,20),1);it.cost=0;all(it).forEach(discover);S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.helpAt=S.play+CONFIG.charityCooldown;S.tab='workshop';SND.coin()},
+ skipB:i=>{if(S.gold<CONFIG.bountySkipCost)return toast(t('noGold'));S.gold-=CONFIG.bountySkipCost;S.bounties[+i]=genBounty();SND.click()},
+ forgeAsk:()=>{const it=cur(),a=it&&getSelAff(it);if(!a)return;const o=forgeOdds(it,a);if(o.ps>=1)return ACT.forge();modal(`<div class="big">⚠️ ${t('confirmT')}</div><p style="text-align:center">${afShort(a.k)} T${a.t} → T${a.t-1}<br>${t('stability')} ${it.stab} · ${t('forgeCost')} ${o.l}–${o.h}<br><span class="good">✔ ${Math.round(o.ps*100)}%</span> · <span class="warn">💔 ${Math.round(o.pf*100)}%</span> · <span class="bad">💥 ${Math.round(o.ph*100)}%</span></p><div class="flex"><button class="red grow" id="forgeYes" data-act="forgeYes">🔥 ${t('confirmYes')}</button><button class="grow" data-act="closeModal">${t('cancel')}</button></div>`)},
+ forgeYes:()=>{closeM();return ACT.forge()},
+ use:c=>{const it=cur();if(!it||it.unid)return;if(it.frac)return toast(t('fragile'));if(S.cur[c]<=0){if(c==='lock'&&S.lvl<CONFIG.lockLvl)return;toast(t('buyHint'));shopOpen=true;return}const A=all(it);let jack=false;
   if(c==='reroll'){const f=A.filter(a=>!a.lock);if(!f.length)return toast(t('nothing'));f.forEach(a=>{a.q=R();a.v=rollVal(AFM[a.k],a.t,a.q)});A.forEach(a=>a.lock=false)}
   else if(c==='augment'){if(A.length>=6)return toast(t('full'));const a=addAffix(it);discover(a);jack=a.t===1}
   else if(c==='annul'){const f=A.filter(a=>!a.lock);if(!f.length)return toast(t('nothing'));const a=pick(f);it.p=it.p.filter(x=>x!==a);it.s=it.s.filter(x=>x!==a);A.forEach(a=>a.lock=false);S.selAff=null}
@@ -283,8 +325,8 @@ const ACT={
   S.cur[c]--;S.stats.crafts++;render();anim('#wcard','shake');sparks($('#wcard'),c==='annul'?'#9be':'#ffd76a',25);SND.craft();if(jack)jackpot();checkPerfect(it);save();return 'noR'},
  forge:()=>{const it=cur(),a=it&&getSelAff(it);if(!a||it.frac||it.unid)return;if(a.t===1)return toast(t('maxTier'));if(maxTier(it.ilvl)>a.t-1)return toast(t('ilvlLow'));if(S.gold<CONFIG.forgeGold)return toast(t('noGold'));
   S.gold-=CONFIG.forgeGold;S.stats.crafts++;const[l,h]=CONFIG.forgeCost(a.t),c=ri(l,h);
-  if(c<=it.stab){it.stab-=c;a.t--;a.v=rollVal(AFM[a.k],a.t,a.q);discover(a);render();anim('#wcard','shake');sparks($('#wcard'),['#ffb84a','#ff6a00'],45);SND.craft();toast('⚒️ −'+c+' '+t('stability'));if(a.t===1)jackpot();checkPerfect(it)}
-  else if(R()<CONFIG.fractureShare){it.frac=true;it.stab=0;render();anim('#wcard','shake');sparks($('#wcard'),'#ff3b2a',50);SND.fail();toast('<span class="bad">💔 '+t('fracturedT')+'</span>')}
+  if(c<=it.stab){const from=it.stab;it.stab-=c;a.t--;a.v=rollVal(AFM[a.k],a.t,a.q);discover(a);render();fxStab(it,c,from);anim('#wcard','shake');sparks($('#wcard'),['#ffb84a','#ff6a00'],45);SND.craft();toast('⚒️ −'+c+' '+t('stability'));if(a.t===1)jackpot();checkPerfect(it)}
+  else if(R()<CONFIG.fractureShare){const from=it.stab;it.frac=true;it.stab=0;render();fxStab(it,from,from);anim('#wcard','shake');sparks($('#wcard'),'#ff3b2a',50);SND.fail();toast('<span class="bad">💔 '+t('fracturedT')+'</span>')}
   else{S.items.splice(S.sel,1);S.sel=S.items.length?0:-1;S.selAff=null;render();sparks(null,['#aaa','#ff3b2a','#555'],120);SND.shatter();toast('<span class="bad">💥 '+t('shatteredT')+'</span>')}
   save();return 'noR'},
  sell:()=>{const it=cur();if(!it||it.unid)return;const p=sellPrice(it),pr=p-it.cost;S.gold+=p;S.stats.sold++;S.stats.profit+=pr;finishItem();addXp(Math.max(2,Math.round(pr)));SND.coin();sparks($('#gold'),'#ffd76a',30);toast(`🪙 +${p} (${t('profitW')} ${pr>=0?'+':''}${pr})`)},
@@ -293,6 +335,16 @@ const ACT={
  reset:()=>modal(`<p>${t('resetQ')}</p><p class="flex"><button class="red" data-act="resetYes">${t('yes')}</button><button data-act="closeModal">${t('no')}</button></p>`),
  resetYes:()=>{localStorage.removeItem(CONFIG.saveKey);location.reload();return 'noR'}
 };
+let shopOpen=false,essOpen=false;
+const sMax=it=>Math.max(it.stab0||60,it.stab,1);
+function sbar(it,w){return `<div class="bar sbar"><i style="width:${Math.min(100,w/sMax(it)*100)}%;background:${w<15?'#d33':''}"></i></div>`}
+function fxStab(it,c,from){document.querySelectorAll('.sbar i').forEach(i=>{i.style.transition='none';i.style.width=Math.min(100,from/sMax(it)*100)+'%';void i.offsetWidth;i.style.transition='';requestAnimationFrame(()=>requestAnimationFrame(()=>{i.style.width=Math.min(100,it.stab/sMax(it)*100)+'%'}))});
+ document.querySelectorAll('.stab,.fstab').forEach(b=>{const f=document.createElement('div');f.className='float';f.textContent='−'+c+' ⚖ '+t('stability');b.appendChild(f);setTimeout(()=>f.remove(),1700)})}
+function forgeOdds(it,a){const[l,h]=CONFIG.forgeCost(a.t),ps=Math.max(0,Math.min(1,(it.stab-l+1)/(h-l+1))),pf=(1-ps)*CONFIG.fractureShare;return{l,h,ps,pf,ph:(1-ps)-pf}}
+function shopHtml(){return `<h2>🛒 ${t('shopT')}</h2><div class="muted" style="margin-bottom:8px">🪙 ${S.gold} · 🧩 ${t('shards')}: ${S.shards}</div>`+CURS.map(c=>{const lk=c==='lock'&&S.lvl<CONFIG.lockLvl,p=curCost(c),sp=CONFIG.shardCost[c];
+ const why=lk?`🔒 ${t('unlockAt')} ${CONFIG.lockLvl} (${t('level')} ${S.lvl})`:S.gold<p?`${t('needGold')} ${p-S.gold}🪙`:S.gold<p*5?`×5: ${t('needGold')} ${p*5-S.gold}🪙`:'';
+ return `<div class="shopi"><div class="flex"><div style="font-size:30px">${CICO[c]}</div><div class="grow"><b>${t(c)}</b> · ${t('owned')}: <b id="own-${c}">${S.cur[c]}</b><div class="muted">${t(c+'D')}</div><div class="muted" style="font-size:11px">📍 ${t('src_'+c)}</div></div></div>
+ <div class="flex" style="margin-top:6px"><button class="gold grow" id="shop-${c}-1" data-act="buyCur" data-arg="${c}:1" ${lk||S.gold<p?'disabled':''}>×1 · ${p}🪙</button><button class="gold grow" id="shop-${c}-5" data-act="buyCur" data-arg="${c}:5" ${lk||S.gold<p*5?'disabled':''}>×5 · ${p*5}🪙</button><button class="grow" id="shard-${c}" data-act="buyShard" data-arg="${c}" ${lk||S.shards<sp?'disabled':''}>🧩 ${sp}</button></div>${why?`<div class="warn" style="font-size:12px;margin-top:4px">${why}</div>`:''}</div>`}).join('')+`<div class="muted" style="margin:6px 0">${t('essInfo')}</div><button style="width:100%" id="closeShop" data-act="closeShop">✖ ${t('close')}</button>`}
 function finishItem(){S.items.splice(S.sel,1);S.sel=S.items.length?S.items.length-1:-1;S.selAff=null}
 function getSelAff(it){if(!S.selAff)return null;return it[S.selAff[0]][+S.selAff.slice(1)]||null}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;ac();const r=ACT[b.dataset.act]&&ACT[b.dataset.act](b.dataset.arg);if(r!=='noR'){render();save()}});
@@ -303,28 +355,33 @@ function itemCard(it,inter,extra=''){const r=rarity(it),col=RAR[r][1];
   (it.p.length?`<div class="lbl">${t('prefixes')}</div>`+it.p.map((a,i)=>line(a,i,'p')).join(''):'')+(it.s.length?`<div class="lbl">${t('suffixes')}</div>`+it.s.map((a,i)=>line(a,i,'s')).join(''):'');
  const nm=it.unid?t('crate'):r>=2?it.name:t(it.base);
  return `<div class="card r${r}" ${inter?'id="wcard"':''} style="--rc:${col}"><div class="ch"><div class="ic">${icon(it.base)}</div><div class="grow"><div class="nm">${nm}</div><div class="sub">${t(RAR[r][0])} · ${t(it.base)} · ilvl ${it.ilvl} ${it.frac?`<span class="frac">· ${t('fractured')}</span>`:''}</div></div></div>
- ${it.unid?'':`<div class="stab">⚖ ${t('stability')}: <b>${it.stab}</b><div class="bar"><i style="width:${Math.min(100,it.stab)}%;background:${it.stab<15?'#d33':''}"></i></div></div>`}<div class="affs">${body}</div>${extra}</div>`}
+ ${it.unid?'':`<div class="stab">⚖ ${t('stability')}: <b class="stabv">${it.stab}</b> <span class="muted">· ${t('maxTierIl')} T${maxTier(it.ilvl)}</span>${sbar(it,it.stab)}</div>`}<div class="affs">${body}</div>${it.frac&&inter?`<div class="info">${t('fracInfo')}</div>`:''}${extra}</div>`}
 function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl}<div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;$('#langBtn').textContent='🌐 '+t('lang');
- $('#curs').innerHTML=CURS.map(c=>`<span title="${t(c)}">${CICO[c]} ${S.cur[c]}</span>`).join('')+`<span>📦 ${S.items.length}/${stallSize()}</span>`;
+ $('#curs').innerHTML=CURS.map(c=>`<span title="${t(c)}">${CICO[c]} ${S.cur[c]}</span>`).join('')+`<span>🧩 ${S.shards}</span><span>📦 ${S.items.length}/${stallSize()}</span><span>🛒 ${t('shop')}</span>`;
  $('#ticker').innerHTML=`<span class="hot">🔥 ${t('hot')}: ${afShort(S.hot)} ×${CONFIG.hotMul}</span> · ${t('changes')} <span class="cd" data-u="trendAt"></span>`;document.documentElement.lang=S.lang}
 function renderTabs(){$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}</button>`).join('')}
 const V={
- market:()=>`<div class="panel flex"><div class="grow muted">${t('newStock')} <span class="cd" data-u="marketAt"></span></div><button class="sm" data-act="refresh">🔄 ${t('refresh')} (${CONFIG.marketRefreshCost}🪙)</button></div>
+ market:()=>{const sel=cur(),cheap=Math.min(...S.market.map(buyPrice),999);return `${S.gold<cheap&&!S.items.length?`<div class="panel" style="border-color:#6be36b"><b>🤝 ${t('charityT')}</b><div class="muted">${t('charityD')}</div><button class="gold" style="width:100%;margin-top:6px" id="charity" data-act="charity" ${S.play<S.helpAt?'disabled':''}>${S.play<S.helpAt?t('charityWait')+' '+fmt(S.helpAt-S.play):'🎁 '+t('charityBtn')}</button></div>`:''}
+ <button class="gold" style="width:100%;margin-bottom:10px" data-act="shop" id="openShop">🛒 ${t('shopT')}</button><div class="panel flex"><div class="grow muted">${t('newStock')} <span class="cd" data-u="marketAt"></span></div><button class="sm" id="refreshBtn" data-act="refresh">🔄 ${t('refresh')} (${S.market.length?CONFIG.marketRefreshCost+'🪙':'0🪙'})</button></div>
  <div class="panel flex" style="border-color:#ffff7766"><div style="font-size:34px">🎁</div><div class="grow"><b>${t('crate')}</b><div class="muted">${S.lvl>=2?t('crateD'):t('needLvl')+' 2'}</div></div><button class="gold" data-act="crate" ${S.lvl<2?'disabled':''}>${CONFIG.crateCost}🪙</button></div>
- ${S.market.map((it,i)=>itemCard(it,false,`<div class="flex" style="margin-top:8px"><div class="grow muted">${t('value')} ~${itemValue(it)}🪙</div><button class="gold buy" data-act="buy" data-arg="${i}">${t('buy')} ${buyPrice(it)}🪙</button></div>`)).join('')}`,
+ ${S.market.map((it,i)=>{const d=sel&&!sel.unid?itemValue(it)-itemValue(sel):null;return itemCard(it,false,`<div class="flex" style="margin-top:8px"><div class="grow muted">${t('value')} ~${itemValue(it)}🪙${d!==null?`<br><span class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d}</span> ${t('compare')}`:''}</div><button class="gold buy" data-act="buy" data-arg="${i}">${t('buy')} ${buyPrice(it)}🪙</button></div>`)}).join('')}`},
  workshop:()=>{const it=cur();const strip=`<div class="strip">${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${x.unid?'<span style="font-size:28px">❓</span>':icon(x.base)}</button>`).join('')}</div>`;
-  if(!it)return strip+`<div class="panel">${t('noItem')}</div><button class="gold" data-act="tab" data-arg="market">🏪 ${t('market')}</button>`;
+  if(!it)return strip+`<div class="panel">${t('noItem')}</div><div class="flex"><button class="gold grow" data-act="tab" data-arg="market">🏪 ${t('market')}</button><button class="gold grow" data-act="shop">🛒 ${t('shop')}</button></div>`;
   if(it.unid)return strip+itemCard(it,true)+`<button class="gold" style="width:100%" data-act="identify">🔍 ${t('identify')}</button>`;
   const dis=it.frac?'disabled':'',sa=getSelAff(it);
-  let forge=`<div class="muted">${t('selectAff')}</div>`;
-  if(sa){if(sa.t===1)forge=`<div class="t1">${t('maxTier')}</div>`;else if(maxTier(it.ilvl)>sa.t-1)forge=`<div class="warn">${t('ilvlLow')} (T${sa.t-1}: ilvl ${CONFIG.tierIlvl[sa.t-1]}+)</div>`;else{const[l,h]=CONFIG.forgeCost(sa.t),ps=Math.max(0,Math.min(1,(it.stab-l+1)/(h-l+1))),pf=(1-ps)*CONFIG.fractureShare,ph=(1-ps)-pf;
-   forge=`<div class="odds"><span class="t${sa.t}">${afShort(sa.k)} T${sa.t}</span> → <span class="t${sa.t-1}">T${sa.t-1}</span><br>${t('forgeCost')}: <b>${l}–${h}</b> (${t('stability')} ${it.stab})<br><span class="good">✔ ${t('safe')} ${Math.round(ps*100)}%</span> · <span class="warn">💔 ${t('fracture')} ${Math.round(pf*100)}%</span> · <span class="bad">💥 ${t('shatter')} ${Math.round(ph*100)}%</span></div><button class="gold" id="forgeBtn" style="width:100%" data-act="forge" ${dis}>🔥 ${t('forgeBtn')} (${CONFIG.forgeGold}🪙)</button>`}}
-  return strip+itemCard(it,true)+`<div class="panel"><div class="grid2">${CURS.map(c=>{const lk=c==='lock'&&S.lvl<3;return `<div><div class="cbtn"><button id="use-${c}" data-act="use" data-arg="${c}" ${dis||lk?'disabled':''} title="${t(c+'D')}">${CICO[c]} ×${S.cur[c]}</button><button class="sm" id="buy-${c}" data-act="buyCur" data-arg="${c}" ${lk?'disabled':''}>+${curCost(c)}🪙</button></div><div class="muted" style="font-size:11px">${lk?t('needLvl')+' 3':t(c)+': '+t(c+'D')}</div></div>`}).join('')}</div></div>
-  <div class="panel"><h2>🔥 ${t('forge')}</h2>${forge}</div>
-  <button class="gold" id="sellBtn" style="width:100%;font-size:18px" data-act="sell">🪙 ${t('sell')} ${sellPrice(it)} <span class="muted">(${t('paid')} ${it.cost})</span></button>`},
+  let forge=`<div class="muted">${all(it).length?t('selectAff'):t('addFirst')}</div>`;
+  if(it.frac)forge=`<div class="info">${t('fracInfo')}</div>`;
+  else if(sa){if(sa.t===1)forge=`<div class="t1">${t('maxTier')}</div>`;else if(maxTier(it.ilvl)>sa.t-1)forge=`<div class="warn">${t('ilvlExpl').replace('{i}',it.ilvl).replace('{m}',maxTier(it.ilvl)).replace('{n}',sa.t-1).replace('{r}',CONFIG.tierIlvl[sa.t-1])}</div>`;else{const{l,h,ps,pf,ph}=forgeOdds(it,sa);
+   forge=`<div class="odds"><span class="t${sa.t}">${afShort(sa.k)} T${sa.t}</span> → <span class="t${sa.t-1}">T${sa.t-1}</span><br>${t('forgeCost')}: <b>${l}–${h}</b> (${t('stability')} ${it.stab})<br><span class="good">✔ ${t('safe')} ${Math.round(ps*100)}%</span> · <span class="warn">💔 ${t('fracture')} ${Math.round(pf*100)}%</span> · <span class="bad">💥 ${t('shatter')} ${Math.round(ph*100)}%</span></div><button class="${ps<1?'red':'gold'}" id="forgeBtn" style="width:100%" data-act="forgeAsk" ${dis}>${ps<1?'⚠️ ':''}🔥 ${t('forgeBtn')} (${CONFIG.forgeGold}🪙)</button>`}}
+  return strip+itemCard(it,true)+`<div class="panel"><div class="grid2">${CURS.map(c=>{const lk=c==='lock'&&S.lvl<3;return `<div><div class="cbtn"><button id="use-${c}" data-act="use" data-arg="${c}" ${dis||lk||(c==='lock'&&!sa)?'disabled':''} title="${t(c+'D')}">${CICO[c]} ×${S.cur[c]}</button><button id="buy-${c}" data-act="buyCur" data-arg="${c}:1" ${lk||S.gold<curCost(c)?'disabled':''}>+1 · ${curCost(c)}🪙</button></div><div class="muted" style="font-size:11px">${lk?'🔒 '+t('unlockAt')+' 3':t(c)+': '+t(c+'D')}</div></div>`}).join('')}</div></div>
+  <div class="panel"><h2>🧪 ${t('essence')}</h2><div class="muted">${t('essenceD')}</div><button style="width:100%;margin-top:6px" id="essToggle" data-act="essOpen" ${dis}>${essOpen?'▲':'▼'} ${CONFIG.essenceCost}🪙</button>
+  ${essOpen&&!it.frac?`<div class="grid2" style="margin-top:6px">${AFF.filter(a=>it[a.s].length<3&&!all(it).some(x=>x.k===a.k)).map(a=>`<button class="sm ess" data-act="essence" data-arg="${a.k}" ${S.gold<CONFIG.essenceCost?'disabled':''}>${a.s==='p'?'P':'S'} ${afShort(a.k)}${S.hot===a.k?' 🔥':''}</button>`).join('')||`<div class="muted">${t('full')}</div>`}</div>${S.gold<CONFIG.essenceCost?`<div class="warn">${t('needGold')} ${CONFIG.essenceCost-S.gold}🪙</div>`:''}`:''}</div>
+  <div class="panel"><h2>🔥 ${t('forge')}</h2><div class="fstab">⚖ ${t('stability')}: <b class="stabv">${it.stab}</b>${sbar(it,it.stab)}</div>${forge}</div>
+  ${(()=>{const sp=sellPrice(it),pr=sp-it.cost;return `<button class="gold" id="sellBtn" style="width:100%;font-size:18px" data-act="sell">🪙 ${t('sell')} ${sp} <span class="${pr>=0?'pos':'neg'}">(${pr>=0?t('profitW')+' +'+pr:t('loss')+' '+pr})</span><div class="muted" style="font-size:12px">${t('paid')} ${it.cost}🪙</div></button>
+  <button style="width:100%;margin-top:8px" id="salvageBtn" data-act="salvage">🧩 ${t('salvage')} (+${1+all(it).reduce((x,a)=>x+(6-a.t),0)} ${t('shards')})</button>`})()}`},
  bounties:()=>{const it=cur();return `<div class="panel muted">${t('selItem')}: ${it?(it.unid?t('unid'):(rarity(it)>=2?it.name:t(it.base))+' · ilvl '+it.ilvl):'—'}</div>`+S.bounties.map((b,i)=>{const m=bMatch(b,it);
   return `<div class="panel"><div class="flex"><div style="font-size:36px">${b.face}</div><div class="grow"><b>${b.name}</b> <span class="muted">· ${t('leaves')} <span class="cd" data-u="b${i}"></span></span><div>${t('wants')}: ${b.keys.map(k=>`<b class="t3">${afShort(k)}</b>`).join(' + ')} · ${t('minIlvl')} ${b.minIlvl}</div></div></div>
-  <div class="flex" style="margin-top:6px"><div class="grow ${m.m===2?'good':m.m===1?'warn':'muted'}">${m.m===2?'✔ '+t('exact'):m.m===1?'≈ '+t('partial')+` (${m.hit}/${b.keys.length})`:t('nomatch')}</div><button class="gold deliver" data-act="deliver" data-arg="${i}" ${m.m?'':'disabled'}>${t('deliver')}${m.m?' '+m.pay+'🪙':''}</button></div></div>`}).join('')},
+  <div class="flex" style="margin-top:6px"><div class="grow ${m.m===2?'good':m.m===1?'warn':'muted'}">${m.m===2?'✔ '+t('exact'):m.m===1?'≈ '+t('partial')+` (${m.hit}/${b.keys.length})`:t('nomatch')}</div>${it&&!it.unid&&m.m<2?`<div class="muted" style="width:100%;font-size:12px">${t('missing')}: ${b.keys.filter(k=>!all(it).some(a=>a.k===k)).map(afShort).join(', ')||'-'}${it.ilvl<b.minIlvl?' · ilvl '+b.minIlvl+'+':''} → 🧪 ${t('essence')}</div>`:''}<button class="sm" data-act="skipB" data-arg="${i}">↻ ${CONFIG.bountySkipCost}🪙</button><button class="gold deliver" data-act="deliver" data-arg="${i}" ${m.m?'':'disabled'}>${t('deliver')}${m.m?' '+m.pay+'🪙':''}</button></div></div>`}).join('')},
  codex:()=>{const n=Object.keys(S.codex).length;return `<div class="panel"><h2>📖 ${t('codexT')} ${n}/${AFF.length*5}</h2><div class="cx"><div></div>${[5,4,3,2,1].map(x=>`<div class="t${x}" style="text-align:center">T${x}</div>`).join('')}
   ${AFF.map(a=>`<div>${a.s==='p'?'P':'S'} ${afShort(a.k)}${rowDone(a.k)?' ✨':''}</div>`+[5,4,3,2,1].map(x=>`<div class="c t${x} ${S.codex[a.k+x]?'on':''}"><span>${S.codex[a.k+x]?'✓':''}</span></div>`).join('')).join('')}</div></div>
   <div class="panel"><h2>${t('bonuses')}</h2><div>${codexRows()?'✅':'⬜'} ${t('rowB')} (${codexRows()})</div><div>${pageDone('p')?'✅':'⬜'} ${t('pageP')}</div><div>${pageDone('s')?'✅':'⬜'} ${t('pageS')}</div></div>
@@ -335,7 +392,7 @@ const V={
   ${UPS.map(u=>{const l=S.up[u.k],mx=l>=u.max,rq=u.req(l);return `<div class="panel flex"><div class="grow"><b>${t('up_'+u.k)}</b> (${l}/${u.max})<div class="muted">${t('up_'+u.k+'D')}${!mx&&S.lvl<rq?' · '+t('needLvl')+' '+rq:''}</div></div><button class="gold" data-act="upgrade" data-arg="${u.k}" ${mx||S.lvl<rq?'disabled':''}>${mx?t('maxed'):u.cost(l)+'🪙'}</button></div>`}).join('')}
   <button class="red sm" data-act="reset">🗑 ${t('reset')}</button>`
 };
-function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();updCd()}
+function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();if(shopOpen){$('#shopBox').innerHTML=shopHtml();$('#shop').classList.remove('hidden')}else $('#shop').classList.add('hidden');updCd()}
 function updCd(){document.querySelectorAll('.cd').forEach(e=>{const u=e.dataset.u,until=u[0]==='b'&&u!=='b'?(S.bounties[+u.slice(1)]||{}).until:S[u];e.textContent=fmt((until||0)-S.play)})}
 // ================= LOOP =================
 function tick(){if(document.hidden)return;S.play++;let rr=false;
