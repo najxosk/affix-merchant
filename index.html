@@ -195,9 +195,9 @@ button.void{background:linear-gradient(#6a2a9a,#2a0838);border-color:#c070ff;col
 .shg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}.shc{border:1px solid #4a3b28;border-radius:9px;background:#0005;padding:4px;display:flex;flex-direction:column;gap:2px;text-align:center}
 .shi{font-size:18px}.shi b{font-size:12px;color:#ffd76a}.shi sub{font-size:9px}.shn{font-size:10.5px;line-height:1.1;min-height:23px;display:flex;align-items:center;justify-content:center}
 .shb{display:grid;grid-template-columns:1.6fr 1fr;gap:3px}.shb button{min-height:32px;padding:2px;font-size:12px}
-.mk .list{overflow:hidden}.mkrow{display:flex;gap:6px;align-items:center;border:1px solid #4a3b28;border-left:4px solid var(--rc);border-radius:9px;padding:5px 6px;margin-bottom:5px;background:#0006}
-.mkrow .ic{width:40px;height:40px;flex:none}.mkrow .nm{font-size:13.5px}.mkrow .sub{font-size:10.5px}.mkrow .buy{min-height:40px;padding:4px 8px;font-size:14px}
-.mkpg{flex:none;display:flex;align-items:center;justify-content:center;gap:10px;font-size:12.5px}.mkpg button{min-height:34px;min-width:44px}
+.mk .list{overflow:hidden}
+.mkrow{display:flex;gap:6px;align-items:center;border:1px solid #4a3b28;border-left:4px solid var(--rc);border-radius:8px;padding:3px 5px;margin-bottom:4px;background:#0006;cursor:pointer}.mkt{min-width:0}.mkt .nm,.mkt .sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mkrow .ic{width:34px;height:34px;flex:none}.mkrow .nm{font-size:13.5px}.mkrow .sub{font-size:10.5px}.mkrow .buy{min-height:36px;padding:4px 8px;font-size:14px}
+
 .cxleg{font-size:10px;margin:0 0 2px;opacity:.8;line-height:1.2}.cxleg b{color:#e8c77a}
 .mphint{font-size:11px;color:#d898ff;margin-top:2px}
 </style></head>
@@ -435,7 +435,7 @@ function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=af
 const sellPrice=it=>Math.round(itemValue(it)*CONFIG.sellMul*sellBonus());
 const buyPrice=it=>Math.max(1,Math.round(itemValue(it)*it.pf*buyMul()));
 const salvageN=it=>1+Math.floor(all(it).length/2)+(it.frac?2:0)+(!it.frac&&it.stab<=0?1:0);
-function genMarket(){const mx=marketMax();S.market=[];S.mkPage=0;for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(5,mx-30),mx);const it=makeItem(il,+wpick({0:35,1:25,2:20,3:12,4:6,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);if(R()<.1+.03*S.mup.mlp)it.lp=1;S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
+function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(5,mx-30),mx);const it=makeItem(il,+wpick({0:35,1:25,2:20,3:12,4:6,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);if(R()<.1+.03*S.mup.mlp)it.lp=1;S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
 function rotateTrend(){const prev=S.hot;let k;do k=pick(AFF).k;while(k===prev);S.hot=k;for(const a of AFF)S.demand[a.k]=Math.min(1.5,Math.max(.6,(S.demand[a.k]||1)*(.85+R()*.3)));S.trendAt=S.play+CONFIG.trendSec}
 function genBounty(){const keys=[pick(AFF.filter(a=>a.s==='p')).k,pick(AFF.filter(a=>a.s==='s')).k];if(S.lvl>=4&&R()<.4){let k;do k=pick(AFF).k;while(keys.includes(k));keys.push(k)}
  const used=S.bounties.filter(Boolean).map(x=>x.bu);let bu,g=0;do bu=ri(0,BUYERS.length-1);while(used.includes(bu)&&++g<20);return{id:S.nid++,bu,keys,minIlvl:Math.max(1,Math.round(ri(1,marketMax()*.6)/5)*5),minStab:R()<.35?ri(1,4)*5:0,until:S.play+CONFIG.bountyRefreshSec+ri(0,60),bonus:ri(5,30)}}
@@ -723,7 +723,8 @@ const ACT={
  setLang:l=>{S.lang=l;S.langSet=true;renderTitle();if(window._daily&&mq.length&&String(mq[0]).includes('🎁'))showDaily();render()},snd:()=>{S.snd=!S.snd;renderTitle();if(S.snd)SND.coin()},
  toTitle:()=>{sheet=null;renderTitle();$('#title').classList.remove('out','hidden')},
  play:()=>{ac();SND.coin();$('#title').classList.add('out');setTimeout(()=>{if($('#title').classList.contains('out'))$('#title').classList.add('hidden');if(window._daily)showDaily()},500)},
- mkPage:d=>{S.mkPage=Math.max(0,(S.mkPage||0)+(+d));},
+ mkInfo:i=>{const it=S.market[+i];if(!it)return;modal(itemCard(it,false,{foot:`<div class="muted" style="margin-top:3px">${t('value')} ~${itemValue(it)}🪙</div>`},'m'+i)+`<div class="flex" style="margin-top:8px"><button class="gold grow" id="mkBuy" data-act="mkBuy" data-arg="${i}">${t('buy')} ${buyPrice(it)}🪙</button><button class="grow" data-act="closeModal">${t('close')}</button></div>`);setTimeout(paintAll,0);return'noR'},
+ mkBuy:i=>{closeM();return ACT.buy(i)},
  closeModal:()=>{closeM();return'noR'},sheet:m=>{sheet=m;SND.click()},closeSheet:()=>{if(sheet==='aff')S.selAff=null;sheet=null},
  buy:i=>{const it=S.market[+i];if(!it)return;const p=buyPrice(it);if(S.gold<p)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));
   S.gold-=p;it.cost=p;delete it.pf;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.market.splice(+i,1);if(S.guide===0)S.guide=1;all(it).forEach(discover);SND.coin();toast('🪙 −'+p)},
@@ -810,10 +811,8 @@ const V={
   return `<div class="mk"><div class="top"><button id="refreshBtn" data-act="refresh">🔄 ${t('refresh')}<br><span class="cd" data-u="marketAt"></span> · ${S.market.length?CONFIG.marketRefreshCost:0}🪙</button>
   <button class="gold" data-act="crate" id="crateBtn" ${S.lvl<2?'disabled':''}>🎁 ${t('crate')}<br>${S.lvl<2?t('needLvl')+' 2':CONFIG.crateCost+'🪙'}</button><button data-act="sheet" data-arg="stash" id="stashBtn">📦 ${t('stash')}<br>${S.items.length}/${stallSize()}</button></div>
   ${S.guide===0?`<div class="gbar">${t('g1')}</div>`:''}${broke?`<button class="gold" id="charity" data-act="charity" ${S.play<S.helpAt?'disabled':''}>${t('charityT')} ${S.play<S.helpAt?t('charityWait')+' '+fmt(S.helpAt-S.play):t('charityBtn')}</button>`:''}
-  ${(()=>{const PS=2,pages=Math.max(1,Math.ceil(S.market.length/PS));S.mkPage=Math.min(S.mkPage||0,pages-1);const from=S.mkPage*PS,slice=S.market.slice(from,from+PS);
-   return `<div class="list">${slice.map((it,j)=>{const i=from+j,d=sel&&!sel.unid?itemValue(it)-itemValue(sel):null,r=rarity(it),col=RAR[r][1];
-    return `<div class="mkrow" style="--rc:${col}"><div class="ic">${wcv('m'+i,40)}</div><div class="grow"><div class="nm" style="color:${col}">${nameOf(it)}</div><div class="sub">${t(RAR[r][0])} · ilvl ${it.ilvl}${it.lp?' ✦':''}${it.unid?'':` · ${all(it).length} ${t('affN')}`}${isJunk(it)?' · ♻':''}${d!==null?` · <span class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d}</span>`:''}</div></div><button class="gold buy" data-act="buy" data-arg="${i}">${buyPrice(it)}🪙</button></div>`}).join('')}</div>
-   <div class="mkpg"><button id="mkPrev" data-act="mkPage" data-arg="-1" ${S.mkPage<=0?'disabled':''}>◀</button><span>${t('page').replace('{a}',S.market.length?S.mkPage+1:0).replace('{b}',S.market.length?pages:0)} · ${S.market.length}</span><button id="mkNext" data-act="mkPage" data-arg="1" ${S.mkPage>=pages-1||!S.market.length?'disabled':''}>▶</button></div>`})()}</div>`},
+  <div class="list">${S.market.map((it,i)=>{const d=sel&&!sel.unid?itemValue(it)-itemValue(sel):null,r=rarity(it),col=RAR[r][1],A=all(it),best=A.length?Math.min(...A.map(a=>a.t)):0;
+    return `<div class="mkrow" style="--rc:${col}" data-act="mkInfo" data-arg="${i}"><div class="ic">${wcv('m'+i,30)}</div><div class="grow mkt"><div class="nm" style="color:${col}">${nameOf(it)}${it.lp?' ✦':''}</div><div class="sub">ilvl ${it.ilvl} · ${A.length}× ${best?`<span class="t${best}">T${best}</span>`:'—'}${isJunk(it)?' · ♻':''}${d!==null?` · <span class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d}</span>`:''}</div></div><button class="gold buy" data-act="buy" data-arg="${i}">${buyPrice(it)}🪙</button></div>`}).join('')}</div></div>`},
  workshop:()=>{const it=cur();const strip=`<div class="strip"><button data-act="sheet" data-arg="stash" id="stashBtn2" data-help="stash">📦<small>${S.items.length}/${stallSize()}</small></button>${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${wcv('i'+i,32)}</button>`).join('')}</div>`;
   if(!it)return `<div class="ws">${strip}<div class="panel">${t('noItem')}</div><div class="flex"><button class="gold grow" data-act="tab" data-arg="market">🏪 ${t('market')}</button><button class="gold grow" data-act="sheet" data-arg="shop">🛒 ${t('s_shop')}</button></div></div>`;
   if(it.unid)return `<div class="ws">${strip}${itemCard(it,true,{},'i'+S.sel)}<button class="gold" style="min-height:56px" id="identifyBtn" data-act="identify">🔍 ${t('identify')}</button></div>`;
