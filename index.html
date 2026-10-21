@@ -118,6 +118,40 @@ h2{font-size:16px;margin:4px 0 6px;color:#e8c77a}
 .cx div.c{height:20px;border-radius:4px;background:#0008;border:1px solid #3a2e20;text-align:center;line-height:18px}
 .cx div.c.on{background:currentColor}.cx div.c.on span{color:#000}
 @media (max-height:700px){#gold{font-size:17px}.ab{height:48px}.ab .ai{font-size:17px}.af{font-size:12.5px;padding:3px 6px}.ic{width:38px;height:38px}.nm{font-size:14px}.sb{height:18px;margin:4px 0 2px}.sb span{line-height:16px;font-size:12px}.sellrow button{min-height:44px}nav button{min-height:48px}nav button b{font-size:17px}.strip button{width:38px;height:38px}#hint{min-height:30px;font-size:11.5px}}
+.ic{width:auto;height:auto;padding:1px}.ic canvas{display:block}
+.card.el{box-shadow:0 0 16px -2px var(--ec),0 0 4px var(--rc),inset 0 0 26px #000;animation:elg 2.4s infinite alternate}
+@keyframes elg{to{box-shadow:0 0 28px 2px var(--ec),0 0 4px var(--rc),inset 0 0 26px #000}}
+.af .pips{flex:none;font-size:9px;letter-spacing:-1px;min-width:38px}
+.af .tt{flex:none;font-size:10px;opacity:.8}
+.sl{font-size:9.5px;text-transform:uppercase;letter-spacing:1px;opacity:.55;margin:2px 0 0 2px}
+.lpb{display:inline-block;font-size:10.5px;color:#ff9a3c;border:1px solid #ff9a3c;border-radius:6px;padding:0 4px;margin-top:2px;text-shadow:0 0 6px #ff6a00;animation:pulse 1.4s infinite alternate}
+.ab .an{font-size:10px;white-space:normal;text-align:center;line-height:1.05;max-width:100%}
+.ab.act{border-color:#c86bff;box-shadow:0 0 10px #c86bff}
+.arow{display:flex;gap:8px;align-items:center;text-align:left;min-height:56px;width:100%}.arow .ai{font-size:26px}.arow.dim{opacity:.55}
+.strip button{width:40px;height:40px}.strip button small{display:block;font-size:9px}
+.guide{position:relative;animation:gp 1s infinite!important;z-index:3}
+@keyframes gp{50%{box-shadow:0 0 0 3px #ffd76a,0 0 18px #ffd76a}}
+.guide::after{content:'👆';position:absolute;right:2px;bottom:-12px;font-size:22px;animation:bob .7s infinite alternate;pointer-events:none;filter:drop-shadow(0 0 4px #000)}
+@keyframes bob{to{transform:translateY(-6px)}}
+.gbar{flex:none;font-size:12.5px;padding:5px 8px;border:1px solid #ffd76a;border-radius:8px;background:#3a2e1a;color:#ffd76a}
+#sellov{position:fixed;inset:0;z-index:22;background:radial-gradient(circle at 50% 40%,#3a2a14f0,#000 75%);display:flex;align-items:center;justify-content:center;padding:10px}
+.sellbox{width:100%;max-width:420px;max-height:96dvh;overflow:auto;display:flex;flex-direction:column;gap:5px}
+.sbtitle{text-align:center;font-size:22px;color:#ffd76a;text-shadow:0 0 12px #ff9a3c;letter-spacing:2px}
+.buyer{display:flex;align-items:center;gap:8px;justify-content:center}.buyer canvas{width:72px;height:72px;border-radius:50%;border:2px solid #8a6d3e;box-shadow:0 0 12px #000}
+.bubble{background:#f3e6c4;color:#2a1a0a;border-radius:12px;padding:6px 10px;font-size:14px;max-width:60%}
+.bubble.pop2{animation:pop .4s}
+.ped{position:relative;display:flex;justify-content:center;height:150px;flex:none}
+.ped canvas{position:relative;z-index:1;filter:drop-shadow(0 0 12px var(--ec))}
+.pedestal{position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:170px;height:34px;border-radius:50%;background:radial-gradient(ellipse,var(--ec) 0,#0000 70%);opacity:.7;animation:pulse2 1.6s infinite alternate}
+@keyframes pulse2{to{opacity:1;transform:translateX(-50%) scale(1.1)}}
+.ped:before{content:'';position:absolute;top:-10px;bottom:-10px;left:22%;right:22%;background:conic-gradient(from 0deg,transparent,var(--rc),transparent 30%,var(--ec),transparent 60%);opacity:.2;border-radius:50%;animation:rot 6s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.bd{background:#0008;border:1px solid #4a3b28;border-radius:8px;padding:6px 10px;font-size:13px}
+.bdl{display:flex;justify-content:space-between;opacity:0;transform:translateX(-10px);transition:.25s}.bdl.on{opacity:1;transform:none}
+.sprice{text-align:center;font-size:40px;font-weight:bold;color:#ffd76a;text-shadow:0 0 16px #ff9a3c}
+.sprice.done{animation:pop .4s}
+.sprofit{text-align:center;font-size:18px;min-height:24px}
+.skg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.skc{text-align:center;margin:0}.skc.on{border-color:#ffd76a;box-shadow:0 0 10px #ffd76a66}.skc canvas{display:block;margin:0 auto}
 </style></head>
 <body>
 <div id="app">
@@ -130,7 +164,7 @@ h2{font-size:16px;margin:4px 0 6px;color:#e8c77a}
 </div>
 <div id="sheet" class="hidden"><div class="box" id="sheetBox"></div></div>
 <div id="modal" class="hidden"><div class="box" id="modalBox"></div></div>
-<div id="toast"></div>
+<div id="sellov" class="hidden"></div><div id="toast"></div>
 <canvas id="fx"></canvas>
 <div id="flash"></div>
 <script>
@@ -138,8 +172,8 @@ h2{font-size:16px;margin:4px 0 6px;color:#e8c77a}
 // ================= CONFIG (tuning) =================
 const CONFIG={
  startGold:100,
- startCur:{augment:5,reroll:3,preroll:1,sroll:1,annul:2,tannul:1,swap:1,lock:0,embers:1},
- curCost:{augment:7,reroll:5,preroll:6,sroll:6,annul:6,tannul:14,swap:12,lock:40},
+ startCur:{augment:5,reroll:3,preroll:1,sroll:1,annul:2,tannul:1,swap:1,lock:0,embers:1,omenP:0,omenS:0,omenF:1},
+ curCost:{augment:7,reroll:5,preroll:6,sroll:6,annul:6,tannul:14,swap:12,lock:40,omenP:15,omenS:15,omenF:30},
  lockEmbers:1,
  stabCost:{augment:6,reroll:4,preroll:3,sroll:3,annul:3,tannul:5,swap:6,essence:8,lock:0,ember:0},
  forgeGold:3, t1ForgeEmbers:2, emberRestore:15, essenceCost:24,
@@ -153,22 +187,32 @@ const CONFIG={
 };
 window.CONFIG=CONFIG;
 const AFF=[
- {k:'pphys',s:'p',b:8},{k:'fphys',s:'p',b:3},{k:'ffire',s:'p',b:4},{k:'fcold',s:'p',b:4},{k:'flight',s:'p',b:5},{k:'pele',s:'p',b:7},
+ {k:'pphys',s:'p',b:8},{k:'fphys',s:'p',b:3},{k:'ffire',s:'p',b:4},{k:'fcold',s:'p',b:4},{k:'flight',s:'p',b:5},{k:'pele',s:'p',b:7},{k:'fchaos',s:'p',b:4},
  {k:'aspd',s:'s',b:2},{k:'crit',s:'s',b:2},{k:'cmult',s:'s',b:6},{k:'rfire',s:'s',b:4},{k:'rcold',s:'s',b:4},{k:'rlight',s:'s',b:4},{k:'cspd',s:'s',b:3}];
 const AFM={};AFF.forEach(a=>AFM[a.k]=a);
 const BASES=[['sword',1],['axe',1],['dagger',1],['bow',2],['staff',3],['wand',4]];
 const RAR=[['normal','#c8c8c8'],['magic','#8c8cff'],['rare','#ffff77'],['exalted','#ff9a3c']];
 const NA=['Doom','Storm','Grim','Blood','Dusk','Rune','Ash','Frost','Bane','Dread','Gale','Soul'],NB=['Bite','Song','Edge','Fang','Thirst','Call','Spire','Wail','Mark','Gnash','Reaver','Kiss'];
 const FACES=['🧙','🛡️','🏹','🗡️','👑','🧝','🧔','👩‍🦰','🧛','🤠'],CUSTN=['Marek','Zuzka','Brom','Ilsa','Vlado','Kael','Eva','Tibor','Nyx','Oskar'];
-const CURS=['augment','reroll','preroll','sroll','annul','tannul','swap','lock'];
-const CICO={augment:'💠',reroll:'🎲',preroll:'🎲',sroll:'🎲',annul:'🌀',tannul:'✂️',swap:'🔁',lock:'🔒',embers:'🔆',ember:'🔆',essence:'🧪',forge:'🔥',shop:'🛒'};
+const CURS=['augment','reroll','preroll','sroll','annul','tannul','swap','lock','omenP','omenS','omenF'];
+const CICO={augment:'💠',reroll:'🎲',preroll:'🎲',sroll:'🎲',annul:'🌀',tannul:'✂️',swap:'🔁',lock:'🔒',embers:'🔆',ember:'🔆',essence:'🧪',forge:'🔥',shop:'🛒',omen:'🔮',omenP:'🔮',omenS:'🔮',omenF:'🔮'};
 const CTAG={preroll:'P',sroll:'S'};
-const ACTS={augment:{cur:'augment'},reroll:{cur:'reroll'},preroll:{cur:'preroll'},sroll:{cur:'sroll'},annul:{cur:'annul'},tannul:{cur:'tannul',sel:1},swap:{cur:'swap',sel:1},essence:{},forge:{sel:1},lock:{cur:'lock',sel:1},ember:{cur:'embers'},shop:{}};
+const ACTS={augment:{cur:'augment'},reroll:{cur:'reroll'},preroll:{cur:'preroll'},sroll:{cur:'sroll'},annul:{cur:'annul'},tannul:{cur:'tannul',sel:1},swap:{cur:'swap',sel:1},essence:{},forge:{sel:1},lock:{cur:'lock',sel:1},ember:{cur:'embers'},shop:{},omen:{}};
 const AORDER=['augment','reroll','preroll','sroll','annul','tannul','swap','essence','forge','lock','ember','shop'];
 const UPS=[{k:'stall',max:4,cost:l=>60*2**l,req:l=>l+1},{k:'stab',max:5,cost:l=>50*2**l,req:l=>l+1},{k:'haggle',max:5,cost:l=>40*2**l,req:l=>l+2},{k:'tongue',max:5,cost:l=>70*2**l,req:l=>l+2}];
 const QPOOL=['sell','t1','forge','bounty','salvage','rare','crafts','profit'];
 const I18N={
-sk:{market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Rozvoj',
+sk:{b_augment:'Pridať afix',b_reroll:'Prehodiť všetko',b_preroll:'Prehodiť prefixy',b_sroll:'Prehodiť sufixy',b_annul:'Zrušiť náhodný',b_essence:'Esencia (cielene)',b_ember:'Obnoviť stabilitu',b_omen:'Znamenie',b_forge:'Vyhňa – zvýšiť tier',b_swap:'Vymeniť afix',b_tannul:'Vystrihnúť afix',b_lock:'Zamknúť afix',
+prefixes:'Prefixy',suffixes:'Sufixy',omenP:'Znamenie prefixu',omenS:'Znamenie sufixu',omenF:'Znamenie istoty',omenPD:'Ďalšie „Pridať afix“ pridá určite PREFIX.',omenSD:'Ďalšie „Pridať afix“ pridá určite SUFIX.',omenFD:'Ďalšie kovanie: pri neúspechu predmet nepraskne ani sa nerozbije (len stratí stabilitu).',
+omenActive:'Aktívne znamenie',activate:'Aktivovať',omenFull:'Na strane znamenia nie je miesto.',omenSaved:'🔮 Znamenie istoty zachránilo predmet!',
+lp:'Legendárny potenciál',collection:'Zbierka',skins:'Vzhľady zbraní',equip:'Použiť',equipped:'Používaš',sk_default:'Klasický',sk_obsidian:'Obsidián',sk_bone:'Pradávna kosť',sk_celestial:'Nebeský',sk_void:'Prázdnota',
+un_quests:'Splň {n} úloh',un_salvaged:'Rozober {n} predmetov',un_t1:'Hoď {n}× T1',un_codex:'Objav {n} záznamov kódexu',skinNew:'🎨 Nový vzhľad odomknutý!',skinInfo:'Vzhľad sa použije na tvoje zbrane (sklad, dielňa, predaj). Získavaš ich úlohami a kódexom.',
+g1:'Krok 1/3: Kúp zbraň – ťukni na zlatú cenu 👆',g2:'Krok 2/3: Vylepši ju – ťukni na „Pridať afix“',g3:'Krok 3/3: Predaj so ziskom – ťukni na Predať',gDone:'<div class="big">🎉 Výborne!</div><p style="text-align:center">Poznáš celý cyklus: kúp → vylepši → predaj.<br>Tip: ťukni na afix na karte pre Vyhňu a ďalšie akcie. Podrž tlačidlo = vysvetlenie.</p>',
+tapAff:'👆 Ťukni na afix → Vyhňa / Výmena / Vystrihnúť / Zámok · podrž tlačidlo = info',
+sellT:'PREDANÉ',bd_base:'Základ (ilvl)',bd_aff:'Afixy T{t} ×{n}',bd_hot:'Horúci trend',bd_count:'Počet afixov',bd_pristine:'Nedotknutosť',bd_lp:'Legendárny potenciál',bd_pen:'Smeť / prasknutie',bd_fee:'Poplatok / bonusy',bd_bounty:'Prémia zákazky',cont:'Pokračovať',
+moods:['Hmm, beriem.','Slušný kúsok.','Výborne!','NEUVERITEĽNÉ!'],considering:'Hmm… ukáž…',range:'rozsah',nextT:'ďalší',
+h_essence:'Vyber konkrétny afix, ktorý sa pridá (24🪙, ⚖8). Ideálne na zákazky.',h_ember:'Spotrebuje 1 🔆 uhlík a obnoví +15 stability. Uhlíky získaš rozobratím predmetov.',h_omen:'Znamenia menia nasledujúcu úpravu (napr. ďalšie pridanie bude sufix). Aktivuj jedno a potom urob úpravu.',h_forge:'Zvýši tier vybraného afixu. Míňa náhodnú stabilitu; ak nestačí, predmet môže prasknúť alebo sa rozbiť. T1 chce 2 🔆.',h_stash:'Sklad – všetky tvoje predmety. Predaj alebo rozober ich priamo odtiaľto.',h_lp:'Legendárny potenciál: +1 miesto na afix (až 4 prefixy alebo sufixy) a +15 % hodnoty.',
+market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Rozvoj',
  normal:'Bežný',magic:'Magický',rare:'Vzácny',exalted:'Vznešený',sword:'Meč',axe:'Sekera',dagger:'Dýka',bow:'Luk',staff:'Palica',wand:'Prútik',
  augment:'Kameň rozšírenia',reroll:'Kameň prehodenia',preroll:'Kameň prehodenia prefixov',sroll:'Kameň prehodenia sufixov',annul:'Kameň zrušenia',tannul:'Kameň vystrihnutia',swap:'Kameň výmeny',lock:'Runa zámku',embers:'Uhlíky vyhne',essence:'Esencia',forge:'Vyhňa',
  augmentD:'Pridá náhodný afix.',rerollD:'Nanovo hodí hodnoty všetkých afixov.',prerollD:'Nanovo hodí hodnoty len prefixov.',srollD:'Nanovo hodí hodnoty len sufixov.',annulD:'Odstráni náhodný afix.',tannulD:'Odstráni afix, ktorý si vyberieš.',swapD:'Vymení vybraný afix za nový náhodný na tej istej strane.',lockD:'Zamkne vybraný afix – ochráni ho pri ďalšej náhodnej úprave.',embersD:'Obnoví +15 stability. Potrebné na T1 kovanie a Runu zámku. Získaš ich LEN rozobratím predmetov.',
@@ -199,8 +243,18 @@ sk:{market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:
 <p><b>Afixy:</b> max. <b>3 prefixy (P)</b> – poškodenie, a <b>3 sufixy (S)</b> – rýchlosť, kritické zásahy, odolnosti. Tiery <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1</span>. <b>ilvl</b> určuje najvyšší možný tier.</p>
 <p><b>⚖ Stabilita = rozpočet predmetu.</b> KAŽDÁ úprava ju míňa (cena je modrou na tlačidle vpravo hore). Na 0 je predmet <b>zapečatený</b>. Zvyšná stabilita zvyšuje predajnú cenu (nedotknutosť) a niektorí zákazníci ju vyžadujú.</p>
 <p><b>Akcie:</b> 💠 pridá afix · 🎲 prehodí hodnoty (P/S len prefixy/sufixy) · 🌀 zruší náhodný · ✂️ zruší vybraný · 🔁 vymení vybraný · 🧪 pridá konkrétny afix · 🔥 Vyhňa zvýši tier (riziko prasknutia) · 🔒 zamkne afix.</p>
-<p><b>♻ Rozobratie</b> dá <b>🔆 uhlíky</b> (nedajú sa kúpiť): obnovia stabilitu, treba ich na T1 kovanie a Runu zámku. Smeť a prasknuté predmety sa oplatí rozobrať – predaj dá málo.</p>`},
-en:{market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'Upgrades',
+<p><b>♻ Rozobratie</b> dá <b>🔆 uhlíky</b> (nedajú sa kúpiť): obnovia stabilitu, treba ich na T1 kovanie a Runu zámku. Smeť a prasknuté predmety sa oplatí rozobrať – predaj dá málo.</p><p><b>Ovládanie:</b> ťukni na afix na karte → Vyhňa, Výmena, Vystrihnutie, Zámok. Spodná lišta = akcie pre celý predmet. <b>Podrž</b> tlačidlo = vysvetlenie. 🔮 Znamenie zmení ďalšiu úpravu. ✦ Legendárny potenciál = +1 miesto na afix. Živly (oheň, mráz, blesk, chaos) rozžiaria zbraň efektmi. 🎨 Zbierka = nové vzhľady zbraní.</p>`},
+en:{b_augment:'Add affix',b_reroll:'Reroll all',b_preroll:'Reroll prefixes',b_sroll:'Reroll suffixes',b_annul:'Annul random',b_essence:'Essence (targeted)',b_ember:'Restore stability',b_omen:'Omen',b_forge:'Forge – raise tier',b_swap:'Swap affix',b_tannul:'Excise affix',b_lock:'Lock affix',
+prefixes:'Prefixes',suffixes:'Suffixes',omenP:'Omen of the Prefix',omenS:'Omen of the Suffix',omenF:'Omen of Certainty',omenPD:'Next "Add affix" always adds a PREFIX.',omenSD:'Next "Add affix" always adds a SUFFIX.',omenFD:'Next forge: on failure the item does not fracture or shatter (only loses stability).',
+omenActive:'Active omen',activate:'Activate',omenFull:'No room on the omen\'s side.',omenSaved:'🔮 Omen of Certainty saved the item!',
+lp:'Legendary Potential',collection:'Collection',skins:'Weapon skins',equip:'Equip',equipped:'Equipped',sk_default:'Classic',sk_obsidian:'Obsidian',sk_bone:'Ancient Bone',sk_celestial:'Celestial',sk_void:'Void',
+un_quests:'Complete {n} goals',un_salvaged:'Salvage {n} items',un_t1:'Roll T1 {n}×',un_codex:'Discover {n} codex entries',skinNew:'🎨 New skin unlocked!',skinInfo:'The skin applies to your weapons (stash, workshop, sale). Earn them through goals and the codex.',
+g1:'Step 1/3: Buy a weapon – tap a gold price 👆',g2:'Step 2/3: Improve it – tap "Add affix"',g3:'Step 3/3: Sell for profit – tap Sell',gDone:'<div class="big">🎉 Well done!</div><p style="text-align:center">You know the loop: buy → craft → sell.<br>Tip: tap an affix on the card for Forge and more. Hold any button = explanation.</p>',
+tapAff:'👆 Tap an affix → Forge / Swap / Excise / Lock · hold a button = info',
+sellT:'SOLD',bd_base:'Base (ilvl)',bd_aff:'T{t} affixes ×{n}',bd_hot:'Hot trend',bd_count:'Affix count',bd_pristine:'Pristine stability',bd_lp:'Legendary Potential',bd_pen:'Junk / fracture',bd_fee:'Fee / bonuses',bd_bounty:'Bounty premium',cont:'Continue',
+moods:['Hmm, fine.','Decent piece.','Excellent!','INCREDIBLE!'],considering:'Hmm… let me see…',range:'range',nextT:'next',
+h_essence:'Choose a specific affix to add (24🪙, ⚖8). Perfect for bounties.',h_ember:'Uses 1 🔆 ember to restore +15 stability. Embers come from salvaging items.',h_omen:'Omens change your next craft (e.g. next add will be a suffix). Activate one, then craft.',h_forge:'Raises the selected affix tier. Costs random stability; if not enough, the item may fracture or shatter. T1 needs 2 🔆.',h_stash:'Stash – all your items. Sell or salvage them right here.',h_lp:'Legendary Potential: +1 affix slot (up to 4 prefixes or suffixes) and +15% value.',
+market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'Upgrades',
  normal:'Normal',magic:'Magic',rare:'Rare',exalted:'Exalted',sword:'Sword',axe:'Axe',dagger:'Dagger',bow:'Bow',staff:'Staff',wand:'Wand',
  augment:'Augment Stone',reroll:'Reroll Stone',preroll:'Prefix Reroll Stone',sroll:'Suffix Reroll Stone',annul:'Annul Stone',tannul:'Excise Stone',swap:'Swap Stone',lock:'Lock Rune',embers:'Forge Embers',essence:'Essence',forge:'Forge',
  augmentD:'Adds a random affix.',rerollD:'Rerolls values of all affixes.',prerollD:'Rerolls values of prefixes only.',srollD:'Rerolls values of suffixes only.',annulD:'Removes a random affix.',tannulD:'Removes the affix you choose.',swapD:'Replaces the selected affix with a new random one of the same side.',lockD:'Locks the selected affix – protects it from the next random craft.',embersD:'Restores +15 stability. Needed for T1 forging and Lock Runes. ONLY from salvaging items.',
@@ -231,9 +285,9 @@ en:{market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrad
 <p><b>Affixes:</b> up to <b>3 prefixes (P)</b> – damage, and <b>3 suffixes (S)</b> – speed, crits, resistances. Tiers <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1</span>. <b>ilvl</b> limits the best tier.</p>
 <p><b>⚖ Stability = the item's crafting budget.</b> EVERY craft spends it (blue cost, top-right of each button). At 0 the item is <b>sealed</b>. Leftover stability raises the sale price (pristine bonus) and some customers require it.</p>
 <p><b>Actions:</b> 💠 add affix · 🎲 reroll values (P/S prefixes/suffixes only) · 🌀 annul random · ✂️ remove chosen · 🔁 swap chosen · 🧪 add a specific affix · 🔥 Forge raises tier (fracture risk) · 🔒 lock affix.</p>
-<p><b>♻ Salvage</b> gives <b>🔆 Embers</b> (can't be bought): restore stability, needed for T1 forging and Lock Runes. Junk and fractured items are worth salvaging – selling them pays little.</p>`}};
-const AT={sk:{pphys:['+{v}% fyzického poškodenia','Fyz. %'],fphys:['+{v} fyzického poškodenia','Fyz. plošné'],ffire:['+{v} ohnivého poškodenia','Oheň'],fcold:['+{v} mrazivého poškodenia','Mráz'],flight:['+{v} bleskového poškodenia','Blesk'],pele:['+{v}% elementálneho poškodenia','Element %'],aspd:['+{v}% rýchlosti útoku','Rýchl. útoku'],crit:['+{v}% šance na kritický zásah','Krit. šanca'],cmult:['+{v}% kritického násobiča','Krit. násobič'],rfire:['+{v}% odolnosti voči ohňu','Odol. oheň'],rcold:['+{v}% odolnosti voči mrazu','Odol. mráz'],rlight:['+{v}% odolnosti voči blesku','Odol. blesk'],cspd:['+{v}% rýchlosti kúzlenia','Rýchl. kúzlenia']},
-en:{pphys:['+{v}% Physical Damage','Phys %'],fphys:['+{v} Physical Damage','Flat Phys'],ffire:['+{v} Fire Damage','Fire'],fcold:['+{v} Cold Damage','Cold'],flight:['+{v} Lightning Damage','Lightning'],pele:['+{v}% Elemental Damage','Elemental %'],aspd:['+{v}% Attack Speed','Attack Speed'],crit:['+{v}% Critical Chance','Crit Chance'],cmult:['+{v}% Critical Multiplier','Crit Multi'],rfire:['+{v}% Fire Resistance','Fire Res'],rcold:['+{v}% Cold Resistance','Cold Res'],rlight:['+{v}% Lightning Resistance','Lightning Res'],cspd:['+{v}% Cast Speed','Cast Speed']}};
+<p><b>♻ Salvage</b> gives <b>🔆 Embers</b> (can't be bought): restore stability, needed for T1 forging and Lock Runes. Junk and fractured items are worth salvaging – selling them pays little.</p><p><b>Controls:</b> tap an affix on the card → Forge, Swap, Excise, Lock. The bottom bar = whole-item actions. <b>Hold</b> any button = explanation. 🔮 Omens change your next craft. ✦ Legendary Potential = +1 affix slot. Elements (fire, cold, lightning, chaos) light up the weapon. 🎨 Collection = new weapon skins.</p>`}};
+const AT={sk:{pphys:['+{v}% fyzického poškodenia','Fyz. %'],fphys:['+{v} fyzického poškodenia','Fyz. plošné'],ffire:['+{v} ohnivého poškodenia','Oheň'],fcold:['+{v} mrazivého poškodenia','Mráz'],flight:['+{v} bleskového poškodenia','Blesk'],pele:['+{v}% elementálneho poškodenia','Element %'],aspd:['+{v}% rýchlosti útoku','Rýchl. útoku'],crit:['+{v}% šance na kritický zásah','Krit. šanca'],cmult:['+{v}% kritického násobiča','Krit. násobič'],rfire:['+{v}% odolnosti voči ohňu','Odol. oheň'],rcold:['+{v}% odolnosti voči mrazu','Odol. mráz'],rlight:['+{v}% odolnosti voči blesku','Odol. blesk'],cspd:['+{v}% rýchlosti kúzlenia','Rýchl. kúzlenia'],fchaos:['+{v} chaotického poškodenia','Chaos']},
+en:{pphys:['+{v}% Physical Damage','Phys %'],fphys:['+{v} Physical Damage','Flat Phys'],ffire:['+{v} Fire Damage','Fire'],fcold:['+{v} Cold Damage','Cold'],flight:['+{v} Lightning Damage','Lightning'],pele:['+{v}% Elemental Damage','Elemental %'],aspd:['+{v}% Attack Speed','Attack Speed'],crit:['+{v}% Critical Chance','Crit Chance'],cmult:['+{v}% Critical Multiplier','Crit Multi'],rfire:['+{v}% Fire Resistance','Fire Res'],rcold:['+{v}% Cold Resistance','Cold Res'],rlight:['+{v}% Lightning Resistance','Lightning Res'],cspd:['+{v}% Cast Speed','Cast Speed'],fchaos:['+{v} Chaos Damage','Chaos']}};
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.en[k]||k;
 const afText=a=>AT[S.lang][a.k][0].replace('{v}','<span class="v">'+a.v+'</span>'),afShort=k=>AT[S.lang][k][1];
 const $=s=>document.querySelector(s),R=Math.random,ri=(a,b)=>a+Math.floor(R()*(b-a+1)),pick=a=>a[Math.floor(R()*a.length)];
@@ -272,11 +326,11 @@ function icon(b){const P={
  wand:'<path d="M13 53 L37 29" stroke="#d8cbb0" stroke-width="4" stroke-linecap="round"/><path d="M13 53 L20 46" stroke="url(#gd)" stroke-width="5" stroke-linecap="round"/><path d="M44 9 L47.5 19 L57 22 L47.5 25 L44 35 L40.5 25 L31 22 L40.5 19Z" fill="url(#gd)"/><circle cx="44" cy="22" r="2.5" fill="#fff"/>'};
  return `<svg viewBox="0 0 64 64">${GR}${P[b]}</svg>`}
 let S;
-function fresh(){return{v:2,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],quests:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0},login:{last:'',streak:0},tut:false,nid:1,helpAt:0}}
+function fresh(){return{v:3,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],quests:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0,salvaged:0,quests:0},login:{last:'',streak:0},tut:false,nid:1,helpAt:0,guide:0,skin:'default',skins:{default:1},omen:null}}
 function save(){try{localStorage.setItem(CONFIG.saveKey,JSON.stringify(S))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&(d.v===1||d.v===2)){S=Object.assign(fresh(),d);
+function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&(d.v>=1&&d.v<=3)){S=Object.assign(fresh(),d);
   for(const k in CONFIG.startCur)if(S.cur[k]==null)S.cur[k]=CONFIG.startCur[k];
-  if(d.v===1){S.cur.embers+=Math.floor((d.shards||0)/5);delete S.shards;S.v=2}
+  if(d.v===1){S.cur.embers+=Math.floor((d.shards||0)/5);delete S.shards;S.v=2}if(S.v<3){S.guide=S.stats.sold>0?3:0;S.v=3}S.stats=Object.assign(fresh().stats,S.stats);S.skins=S.skins||{default:1};if(!SKINS.hasOwnProperty(S.skin))S.skin='default';
   S.items.concat(S.market).forEach(it=>{if(!it.stab0)it.stab0=Math.max(it.stab,40)});S.bounties.forEach(b=>{if(b.minStab==null)b.minStab=0});return true}}catch(e){}S=fresh();return false}
 const all=it=>[...it.p,...it.s];
 const rarity=it=>{const n=it.unid?3:all(it).length;return n===0?0:n<=2?1:n<=5?2:3};
@@ -295,17 +349,17 @@ const sellBonus=()=>1+S.up.tongue*.04+(pageDone('s')?.1:0);
 const buyMul=()=>1-S.up.haggle*.04;
 const needXp=l=>Math.round(CONFIG.repBase*Math.pow(l,1.6));
 function rollTier(il,boost){const m=maxTier(il),w={};for(let x=5;x>=m;x--)w[x]=CONFIG.rollW[x]*(boost&&x<=3?3:1);return+wpick(w)}
-function addAffix(it,boost){const sides=[];if(it.p.length<3)sides.push('p');if(it.s.length<3)sides.push('s');if(!sides.length)return null;const side=pick(sides);
+function addAffix(it,boost,force){const cap=3+(it.lp||0);if(all(it).length>=6+(it.lp||0))return null;const sides=[];if(it.p.length<cap)sides.push('p');if(it.s.length<cap)sides.push('s');if(!sides.length)return null;const side=force&&sides.includes(force)?force:pick(sides);
  const used=new Set(all(it).map(a=>a.k));const a=pick(AFF.filter(x=>x.s===side&&!used.has(x.k)));const tr=rollTier(it.ilvl,boost),q=R();const af={k:a.k,t:tr,q,v:rollVal(a,tr,q),lock:false};it[side].push(af);return af}
 function makeItem(il,n,boost){const it={id:S.nid++,base:pick(unlockedBases()),ilvl:il,p:[],s:[],stab:0,frac:false,cost:0,name:pick(NA)+' '+pick(NB)};it.stab=it.stab0=ri(...CONFIG.baseStab)+stabBonus();for(let i=0;i<n;i++)addAffix(it,boost);return it}
 const affVal=a=>CONFIG.tierW[a.t]*(S.demand[a.k]||1)*(.7+.6*a.q)*(S.hot===a.k?CONFIG.hotMul:1);
 const isJunk=it=>all(it).length<=1||it.frac;
 function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=affVal(a);if(A.length>=6)v*=1.3;else if(A.length>=4)v*=1.1;
- v*=1+CONFIG.pristine*Math.max(0,it.stab)/Math.max(1,it.stab0);if(it.frac)v*=CONFIG.fracMul;else if(A.length<=1)v*=CONFIG.junkMul;return Math.max(1,Math.round(v))}
+ v*=1+CONFIG.pristine*Math.max(0,it.stab)/Math.max(1,it.stab0);if(it.lp)v*=1+.15*it.lp;if(it.frac)v*=CONFIG.fracMul;else if(A.length<=1)v*=CONFIG.junkMul;return Math.max(1,Math.round(v))}
 const sellPrice=it=>Math.round(itemValue(it)*CONFIG.sellMul*sellBonus());
 const buyPrice=it=>Math.max(1,Math.round(itemValue(it)*it.pf*buyMul()));
 const salvageN=it=>1+Math.floor(all(it).length/2)+(it.frac?2:0)+(!it.frac&&it.stab<=0?1:0);
-function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(5,mx-30),mx);const it=makeItem(il,+wpick({0:35,1:25,2:20,3:12,4:6,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
+function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(5,mx-30),mx);const it=makeItem(il,+wpick({0:35,1:25,2:20,3:12,4:6,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);if(R()<.1)it.lp=1;S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
 function rotateTrend(){const prev=S.hot;let k;do k=pick(AFF).k;while(k===prev);S.hot=k;for(const a of AFF)S.demand[a.k]=Math.min(1.5,Math.max(.6,(S.demand[a.k]||1)*(.85+R()*.3)));S.trendAt=S.play+CONFIG.trendSec}
 function genBounty(){const keys=[pick(AFF.filter(a=>a.s==='p')).k,pick(AFF.filter(a=>a.s==='s')).k];if(S.lvl>=4&&R()<.4){let k;do k=pick(AFF).k;while(keys.includes(k));keys.push(k)}
  return{id:S.nid++,face:pick(FACES),name:pick(CUSTN),keys,minIlvl:Math.max(1,Math.round(ri(1,marketMax()*.6)/5)*5),minStab:R()<.35?ri(1,4)*5:0,until:S.play+CONFIG.bountyRefreshSec+ri(0,60),bonus:ri(5,30)}}
@@ -320,13 +374,13 @@ function addXp(n){S.xp+=n;while(S.xp>=needXp(S.lvl)){S.xp-=needXp(S.lvl);S.lvl++
 function celebrate(){SND.lvl();anim('#flash','go');setTimeout(()=>{sparks(null,['#ffd76a','#ff8c1a','#6fd0ff','#c86bff','#fff'],160,true)},100);
  modal(`<div class="lvl">⭐</div><div class="big">${t('lvlUp')}</div><p style="text-align:center;font-size:18px">${t('level')} <b>${S.lvl}</b></p><p style="text-align:center">${S.lvl<=4?'🔓 '+t('u'+S.lvl)+'<br>':''}${t('uI')} (${marketMax()})</p>`)}
 function jackpot(){S.stats.t1++;qp('t1',1);anim('#flash','go');sparks($('#wcard'),['#ffd76a','#ff8c1a','#fff'],90);SND.jackpot();floatAt($('#wcard'),'🌟 '+t('jackpot'),'#ff8c1a')}
-function checkPerfect(it){const A=all(it);if(A.length===6&&A.every(a=>a.t===1)&&!it.hof){it.hof=1;S.hof.push({name:it.name,base:it.base,ilvl:it.ilvl,at:new Date().toLocaleDateString()});setTimeout(()=>{anim('#flash','go');SND.jackpot()},500);modal(`<div class="lvl">👑</div><div class="big">${t('perfect')}</div><p style="text-align:center">${it.name}<br>${t('perfectD')}</p>`)}}
+function checkPerfect(it){const A=all(it);if(A.length>=6&&A.every(a=>a.t===1)&&!it.hof){it.hof=1;S.hof.push({name:it.name,base:it.base,ilvl:it.ilvl,at:new Date().toLocaleDateString()});setTimeout(()=>{anim('#flash','go');SND.jackpot()},500);modal(`<div class="lvl">👑</div><div class="big">${t('perfect')}</div><p style="text-align:center">${it.name}<br>${t('perfectD')}</p>`)}}
 const cur=()=>S.items[S.sel];
 function getSelAff(it){if(!S.selAff||!it)return null;return it[S.selAff[0]][+S.selAff.slice(1)]||null}
 const idOf=(it,a)=>{let i=it.p.indexOf(a);if(i>=0)return'p'+i;i=it.s.indexOf(a);return i>=0?'s'+i:null};
 function forgeOdds(it,a){const[l,h]=CONFIG.forgeCost(a.t),ps=Math.max(0,Math.min(1,(it.stab-l+1)/(h-l+1))),pf=(1-ps)*CONFIG.fractureShare;return{l,h,ps,pf,ph:(1-ps)-pf}}
 const ilvlTxt=(it,sa)=>t('ilvlShort').replace('{i}',it.ilvl).replace('{m}',maxTier(it.ilvl)).replace('{n}',sa.t-1).replace('{r}',CONFIG.tierIlvl[sa.t-1]);
-function why(a){if(a==='shop')return'';const it=cur();if(!it)return t('noItem');if(it.unid)return t('needId');if(it.frac)return t('fracShort');
+function why(a){if(a==='shop'||a==='omen')return'';const it=cur();if(!it)return t('noItem');if(it.unid)return t('needId');if(it.frac)return t('fracShort');
  const A=all(it),sa=getSelAff(it),d=ACTS[a];
  if(a==='ember'){if(S.cur.embers<1)return t('noEmbers');if(it.stab>=it.stab0)return t('stabFull');return''}
  if(it.stab<=0)return t('sealedShort');
@@ -335,7 +389,7 @@ function why(a){if(a==='shop')return'';const it=cur();if(!it)return t('noItem');
  const sc=CONFIG.stabCost[a]||0;if(sc&&it.stab<sc)return t('lowStab')+' (⚖'+sc+')';
  if(d.cur&&S.cur[d.cur]<1)return'BUY';
  const free=x=>!x.lock;
- if((a==='augment'||a==='essence')&&A.length>=6)return t('full');
+ if((a==='augment'||a==='essence')&&A.length>=totCap(it))return t('full');if(a==='augment'&&(S.omen==='omenP'||S.omen==='omenS')&&it[S.omen==='omenP'?'p':'s'].length>=sideCap(it))return t('omenFull');
  if((a==='reroll'||a==='annul')&&!A.some(free))return t('nothing');
  if(a==='preroll'&&!it.p.some(free))return t('nothing');
  if(a==='sroll'&&!it.s.some(free))return t('nothing');
@@ -345,9 +399,137 @@ function why(a){if(a==='shop')return'';const it=cur();if(!it)return t('noItem');
  if(a==='forge'){if(sa.t===1)return t('maxTier');if(maxTier(it.ilvl)>sa.t-1)return ilvlTxt(it,sa);if(sa.t===2&&S.cur.embers<CONFIG.t1ForgeEmbers)return t('needEmbers')+'×'+CONFIG.t1ForgeEmbers;if(S.gold<CONFIG.forgeGold)return t('noGold')}
  return''}
 let sheet=null;
+// ================= WEAPON ART (code-drawn) =================
+const SKINS={default:null,
+ obsidian:{blade:['#3d2a52','#1a1024','#07040c'],edge:'#c39bff',hilt:'#2a2030',trim:'#7a5cff',glow:'#9b6bff',wood:'#2a2030'},
+ bone:{blade:['#fbf4df','#d6c9a6','#8f8160'],edge:'#fff8e6',hilt:'#7a6a4a',trim:'#e8dcc0',glow:'#fff1c0',wood:'#cfc2a0'},
+ celestial:{blade:['#ffffff','#dfe9ff','#8fa8ef'],edge:'#fff',hilt:'#e8c96a',trim:'#ffe58a',glow:'#bcd4ff',wood:'#f4f0ff'},
+ void:{blade:['#6a2a8a','#2a0838','#0a0010'],edge:'#e08bff',hilt:'#1a0a22',trim:'#8a2cff',glow:'#b040ff',wood:'#24102e'}};
+const SKIN_UNLOCK={obsidian:['quests',3],bone:['salvaged',10],celestial:['t1',3],void:['codex',35]};
+const MATS=[{blade:['#e3e6e8','#9aa2a8','#5d656b'],edge:'#f4f6f8',hilt:'#5a3c22',trim:'#8a8a8a',glow:null,wood:'#7a5230'},
+ {blade:['#e0f0ff','#7fa8d8','#2f4f7a'],edge:'#eaf6ff',hilt:'#2a3a5a',trim:'#6fa8ff',glow:'#6fa8ff',wood:'#3a4a6a'},
+ {blade:['#fafaf6','#b8bcc0','#6a6e72'],edge:'#fff',hilt:'#5a2a1a',trim:'#ffd76a',glow:'#ffe08a',wood:'#5a2a1a'},
+ {blade:['#fff4e0','#e0a860','#7a3a10'],edge:'#fff',hilt:'#3a0f0a',trim:'#ffb040',glow:'#ff9a3c',wood:'#3a0f0a'}];
+const EL={ffire:'fire',fcold:'cold',flight:'light',fchaos:'chaos',pphys:'phys',fphys:'phys'};
+const ECOL={fire:'#ff6a20',cold:'#7fdcff',light:'#fff36a',chaos:'#b44cff',phys:'#e8e8e8'};
+function elemProf(it){const p={fire:0,cold:0,light:0,chaos:0,phys:0};if(!it||it.unid)return p;all(it).forEach(a=>{const w=6-a.t;if(EL[a.k])p[EL[a.k]]+=w;if(a.k==='pele'){p.fire+=w*.4;p.cold+=w*.4;p.light+=w*.4}});if(p.phys<5)p.phys=0;return p}
+function elemColor(it){const p=elemProf(it);let k=null,mx=1.5;for(const e in p)if(p[e]>mx){mx=p[e];k=e}return k?ECOL[k]:null}
+const SAMPLE={base:'sword',ilvl:60,p:[{k:'pphys',t:2}],s:[{k:'crit',t:2},{k:'aspd',t:3}],stab:1,stab0:1};
+function drawWeapon(ctx,it,W,tm,skin){const r=rarity(it),m=(skin&&SKINS[skin])||MATS[r],lt=it.ilvl<25?0:it.ilvl<50?1:2,ex=r===3,b=it.base,ec=elemColor(it)||m.trim;
+ ctx.save();ctx.scale(W/64,W/64);ctx.translate(32,32);if(b!=='bow')ctx.rotate(Math.PI/4);ctx.lineJoin='round';ctx.lineCap='round';
+ const glow=()=>{if(m.glow&&(r>=1||skin)){ctx.shadowColor=m.glow;ctx.shadowBlur=(r+1)*2+(ex?3+2*Math.sin(tm/300):0)}};
+ const P=pts=>{ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath()};
+ const bg=w=>{const g=ctx.createLinearGradient(-w,0,w,0);g.addColorStop(0,m.blade[2]);g.addColorStop(.42,m.blade[0]);g.addColorStop(.58,m.blade[1]);g.addColorStop(1,m.blade[2]);return g};
+ const gem=(x,y,rr,c)=>{ctx.save();ctx.shadowColor=c;ctx.shadowBlur=6;ctx.fillStyle=c;ctx.beginPath();ctx.arc(x,y,rr,0,7);ctx.fill();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x-rr*.3,y-rr*.3,rr*.35,0,7);ctx.fill();ctx.restore()};
+ const runes=(x,y0,y1)=>{if(!ex&&lt<2&&!skin)return;ctx.save();ctx.shadowBlur=4;ctx.shadowColor=ec;ctx.fillStyle=m.glow||ec;ctx.globalAlpha=.55+.45*Math.sin(tm/250);for(let y=y0;y<y1;y+=5)ctx.fillRect(x-.6,y,1.2,2.4);ctx.restore()};
+ const wrap=(y0,y1,w)=>{ctx.strokeStyle=m.trim;ctx.lineWidth=.5;for(let y=y0;y<y1;y+=2){ctx.beginPath();ctx.moveTo(-w,y);ctx.lineTo(w,y+1);ctx.stroke()}};
+ switch(b){
+ case'sword':{const w=3.6+lt*.6;glow();ctx.fillStyle=bg(w);P([[0,-30],[w,-24],[w,12],[-w,12],[-w,-24]]);ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=m.edge;ctx.lineWidth=.6;ctx.stroke();
+  ctx.strokeStyle='#0006';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,-22);ctx.lineTo(0,9);ctx.stroke();runes(0,-20,8);
+  const gw=8+lt*3;ctx.fillStyle=m.trim;if(lt===2||ex)P([[-gw,11],[-gw-3,7],[-gw+1,15],[gw-1,15],[gw+3,7],[gw,11]]);else P([[-gw,11],[gw,11],[gw,15],[-gw,15]]);ctx.fill();
+  ctx.fillStyle=m.hilt;ctx.fillRect(-1.7,15,3.4,10);wrap(16,25,1.7);ctx.fillStyle=m.trim;ctx.beginPath();ctx.arc(0,27,2.8+lt*.4,0,7);ctx.fill();
+  if(r>=2||skin)gem(0,13,1.8+(ex?.6:0),ec);if(ex){gem(-gw,10,1.2,ec);gem(gw,10,1.2,ec)}break}
+ case'dagger':{const w=3+lt*.4;glow();ctx.fillStyle=bg(w);
+  if(lt===2){ctx.beginPath();ctx.moveTo(0,-25);let s=1;for(let y=-20;y<=6;y+=4){ctx.lineTo(w+s,y);s=-s}ctx.lineTo(-w,6);s=1;for(let y=6;y>=-20;y-=4){ctx.lineTo(-w-s,y);s=-s}ctx.closePath()}else P([[0,-24],[w,-18],[w,6],[-w,6],[-w,-18]]);
+  ctx.fill();ctx.shadowBlur=0;ctx.strokeStyle=m.edge;ctx.lineWidth=.6;ctx.stroke();runes(0,-16,4);
+  ctx.fillStyle=m.trim;P([[-7-lt,6],[7+lt,6],[5,9],[-5,9]]);ctx.fill();ctx.fillStyle=m.hilt;ctx.fillRect(-1.6,9,3.2,11);wrap(10,20,1.6);ctx.fillStyle=m.trim;ctx.beginPath();ctx.arc(0,22,2.4,0,7);ctx.fill();if(r>=2||skin)gem(0,7.5,1.5,ec);break}
+ case'axe':{ctx.strokeStyle=m.wood;ctx.lineWidth=3.2;ctx.beginPath();ctx.moveTo(0,-26);ctx.lineTo(0,28);ctx.stroke();wrap(14,26,1.6);
+  const head=s=>{ctx.fillStyle=bg(14);ctx.beginPath();ctx.moveTo(s*1.5,-24);ctx.quadraticCurveTo(s*(14+lt*2),-30-lt,s*(16+lt*2),-14);ctx.quadraticCurveTo(s*(14+lt*2),2+lt,s*1.5,-6);ctx.closePath();ctx.fill();ctx.strokeStyle=m.edge;ctx.lineWidth=.7;ctx.stroke()};
+  glow();head(1);if(lt===2||ex)head(-1);ctx.shadowBlur=0;ctx.fillStyle=m.trim;ctx.fillRect(-2.4,-25,4.8,20);if(ex||lt>=1){P([[0,-35],[2,-26],[-2,-26]]);ctx.fill()}runes(9,-20,-8);if(r>=2||skin)gem(0,-15,1.8,ec);break}
+ case'staff':{ctx.strokeStyle=m.wood;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(0,-20);ctx.lineTo(0,30);ctx.stroke();ctx.strokeStyle=m.trim;ctx.lineWidth=1.2;[-6,6,18].forEach(y=>{ctx.beginPath();ctx.moveTo(-2,y);ctx.lineTo(2,y);ctx.stroke()});
+  ctx.lineWidth=1.6;if(lt>=1){ctx.beginPath();ctx.moveTo(0,-18);ctx.quadraticCurveTo(-10,-24,-5,-34);ctx.moveTo(0,-18);ctx.quadraticCurveTo(10,-24,5,-34);ctx.stroke()}if(lt===2||ex){ctx.beginPath();ctx.arc(0,-26,9,0,7);ctx.stroke()}
+  const g=ctx.createRadialGradient(-1,-27,0,0,-26,6);g.addColorStop(0,'#fff');g.addColorStop(.4,ec);g.addColorStop(1,'#0008');ctx.shadowColor=ec;ctx.shadowBlur=8+3*Math.sin(tm/200);ctx.fillStyle=g;ctx.beginPath();ctx.arc(0,-26,5+lt*.5,0,7);ctx.fill();break}
+ case'wand':{ctx.strokeStyle=m.blade[1];ctx.lineWidth=2.6;ctx.beginPath();ctx.moveTo(0,-8);ctx.lineTo(0,24);ctx.stroke();ctx.strokeStyle=m.trim;ctx.lineWidth=3.4;ctx.beginPath();ctx.moveTo(0,16);ctx.lineTo(0,25);ctx.stroke();
+  ctx.shadowColor=ec;ctx.shadowBlur=8;const star=(x,y,s)=>{ctx.fillStyle=ec;ctx.beginPath();for(let i=0;i<8;i++){const a=i*Math.PI/4+tm/1500,rr=i%2?s*.4:s;ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr)}ctx.closePath();ctx.fill()};
+  star(0,-15,7+lt);if(lt===2||ex){star(-6,-7,3);star(6,-7,3)}ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(0,-15,1.8,0,7);ctx.fill();break}
+ case'bow':{ctx.rotate(Math.PI/10);glow();ctx.strokeStyle=m.wood;ctx.lineWidth=3.2;ctx.beginPath();ctx.moveTo(-6,-28);ctx.quadraticCurveTo(18,0,-6,28);ctx.stroke();
+  if(lt>=1){ctx.beginPath();ctx.moveTo(-6,-28);ctx.quadraticCurveTo(-10,-31,-12,-27);ctx.moveTo(-6,28);ctx.quadraticCurveTo(-10,31,-12,27);ctx.stroke()}
+  ctx.shadowBlur=0;ctx.strokeStyle=m.trim;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(-6,-28);ctx.quadraticCurveTo(15,0,-6,28);ctx.stroke();ctx.strokeStyle='#eee9';ctx.lineWidth=.6;ctx.beginPath();ctx.moveTo(-6,-28);ctx.lineTo(-6,28);ctx.stroke();
+  ctx.fillStyle=m.trim;ctx.fillRect(4,-4,3.5,8);if(r>=2||skin)gem(5.8,0,1.6,ec);if(ex){gem(-2,-21,1.2,ec);gem(-2,21,1.2,ec)}break}}
+ ctx.restore()}
+function vfxBack(ctx,it,tm,sc){const p=elemProf(it);ctx.save();ctx.scale(sc,sc);
+ const gl=(c,a,r)=>{const g=ctx.createRadialGradient(32,32,2,32,32,r);g.addColorStop(0,c);g.addColorStop(1,'rgba(0,0,0,0)');ctx.globalAlpha=Math.max(0,a);ctx.fillStyle=g;ctx.fillRect(0,0,64,64)};
+ if(p.fire)gl('#ff5a1a',Math.min(.55,.12+p.fire*.04)*(.85+.15*Math.sin(tm/110)),30);
+ if(p.cold)gl('#7fdcff',Math.min(.45,.1+p.cold*.035),28+2*Math.sin(tm/600));
+ if(p.chaos)gl('#7a1aff',Math.min(.5,.12+p.chaos*.04),29);
+ if(p.light)gl('#fff36a',Math.min(.35,.05+p.light*.025)*(R()<.12?2:1),26);
+ ctx.restore()}
+function mkP(k,x,y){const o={k,x,y,vx:(R()-.5)*.3,vy:-.5-R()*.5,l:18+R()*18,s:1.3+R()*1.4};if(k==='ember'){o.vy=-.8-R();o.vx=(R()-.5)*.8;o.s=.6;o.l=30}if(k==='ice'){o.vy=.12+R()*.2;o.vx=(R()-.5)*.5;o.s=1+R()*1.4;o.l=34}if(k==='smoke'){o.vy=-.3;o.s=2+R()*2;o.l=40}if(k==='glint'){o.vx=0;o.vy=0;o.s=.8;o.l=10}o.ml=o.l;return o}
+function vfxFront(ctx,cv,it,tm,sc){const p=elemProf(it),F=cv._f||(cv._f=[]);ctx.save();ctx.scale(sc,sc);
+ const pt=()=>{const u=R();return[14+36*u+(R()-.5)*6,50-36*u+(R()-.5)*6]};
+ const sp=(I,k)=>{if(I&&F.length<40&&R()<Math.min(.95,I/7)){const q=pt();F.push(mkP(k,q[0],q[1]))}};
+ sp(p.fire,'fire');sp(p.fire,'fire');sp(p.fire*.4,'ember');sp(p.cold,'ice');sp(p.chaos,'smoke');sp(p.phys*.3,'glint');
+ ctx.globalCompositeOperation='lighter';
+ for(let i=F.length-1;i>=0;i--){const q=F[i];q.x+=q.vx;q.y+=q.vy;q.l--;if(q.l<=0){F.splice(i,1);continue}const a=q.l/q.ml;
+  if(q.k==='smoke'){ctx.globalCompositeOperation='source-over';ctx.globalAlpha=a*.35;ctx.fillStyle='#8a2cff';ctx.beginPath();ctx.arc(q.x,q.y,q.s*(2-a),0,7);ctx.fill();ctx.globalCompositeOperation='lighter'}
+  else if(q.k==='ice'){ctx.globalAlpha=a;ctx.fillStyle='#d8f6ff';ctx.save();ctx.translate(q.x,q.y);ctx.rotate(q.l/8);ctx.fillRect(-q.s/2,-q.s/2,q.s,q.s);ctx.restore()}
+  else{ctx.globalAlpha=a;ctx.fillStyle=q.k==='fire'?(a>.6?'#ffd060':a>.3?'#ff7a20':'#c02000'):q.k==='ember'?'#ffcf70':'#ffffff';ctx.beginPath();ctx.arc(q.x,q.y,q.s*(q.k==='fire'?a+.3:1),0,7);ctx.fill()}}
+ if(p.light&&R()<Math.min(.6,p.light/10)){ctx.globalAlpha=1;ctx.strokeStyle='#fffbd0';ctx.shadowColor='#ffee55';ctx.shadowBlur=6;ctx.lineWidth=.9;const a0=pt(),a1=pt();ctx.beginPath();ctx.moveTo(a0[0],a0[1]);for(let i=1;i<=6;i++)ctx.lineTo(a0[0]+(a1[0]-a0[0])*i/6+(R()-.5)*7,a0[1]+(a1[1]-a0[1])*i/6+(R()-.5)*7);ctx.stroke()}
+ ctx.restore()}
+function srcItem(s){if(!s)return null;if(s==='sell')return sellView&&sellView.it;if(s.startsWith('skin:'))return SAMPLE;if(s[0]==='i')return S.items[+s.slice(1)];if(s[0]==='m')return S.market[+s.slice(1)];return null}
+function wcv(src,px,an){return `<canvas class="wpn" width="${px*2}" height="${px*2}" style="width:${px}px;height:${px}px" data-src="${src}" ${an?'data-anim="1"':''}></canvas>`}
+function paintCv(cv,tm){const it=srcItem(cv.dataset.src),ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);if(!it)return;const sc=cv.width/64;
+ if(it.unid){ctx.font=`${cv.width*.6}px serif`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('❓',cv.width/2,cv.height/2);return}
+ const sk=cv.dataset.skin||(cv.dataset.src[0]==='m'?null:(S.skin!=='default'?S.skin:null));if(cv.dataset.anim)vfxBack(ctx,it,tm,sc);drawWeapon(ctx,it,cv.width,tm,sk);if(cv.dataset.anim)vfxFront(ctx,cv,it,tm,sc)}
+let vfxRun=false,lastF=0,FR={n:0};
+function paintAll(){const tm=performance.now();document.querySelectorAll('canvas.wpn').forEach(c=>paintCv(c,tm));if(!vfxRun&&document.querySelector('canvas.wpn[data-anim]')){vfxRun=true;requestAnimationFrame(vfxLoop)}}
+function vfxLoop(ts){const list=document.querySelectorAll('canvas.wpn[data-anim]');if(!list.length){vfxRun=false;return}requestAnimationFrame(vfxLoop);if(document.hidden||ts-lastF<32)return;lastF=ts;FR.n++;list.forEach(c=>paintCv(c,ts))}
+// ================= BUYER + SELL SCREEN =================
+function drawBuyer(cv,seed,mood){if(!cv)return;const c=cv.getContext('2d'),W=cv.width;c.clearRect(0,0,W,W);c.save();c.scale(W/100,W/100);
+ const rn=k=>{const x=Math.sin(seed*99.1+k*12.7)*43758.5;return x-Math.floor(x)};
+ const skin=['#f1c9a0','#d9a679','#a8754f','#7a5236'][Math.floor(rn(1)*4)],hood=['#3a2a6a','#6a1a1a','#1a4a3a','#4a3a1a','#2a2a2a'][Math.floor(rn(2)*5)],hair=['#2a1a0a','#6a4a1a','#c9b38a','#8a2a1a'][Math.floor(rn(3)*4)];
+ const g=c.createRadialGradient(50,40,5,50,50,60);g.addColorStop(0,'#5a4630');g.addColorStop(1,'#120d09');c.fillStyle=g;c.fillRect(0,0,100,100);
+ c.fillStyle=hood;c.beginPath();c.moveTo(8,100);c.quadraticCurveTo(12,18,50,12);c.quadraticCurveTo(88,18,92,100);c.fill();
+ c.fillStyle=skin;c.beginPath();c.ellipse(50,50,20,24,0,0,7);c.fill();c.fillStyle=hair;c.beginPath();c.ellipse(50,32,20,9,0,Math.PI,0);c.fill();
+ if(rn(4)>.5){c.beginPath();c.moveTo(32,56);c.quadraticCurveTo(50,88,68,56);c.quadraticCurveTo(50,70,32,56);c.fill()}
+ const big=mood>=3;[42,58].forEach(x=>{c.fillStyle='#fff';c.beginPath();c.ellipse(x,46,big?4.5:3.5,big?4.5:2.5,0,0,7);c.fill();c.fillStyle='#222';c.beginPath();c.arc(x,46,big?2.4:1.6,0,7);c.fill();if(big){c.fillStyle='#fff';c.beginPath();c.arc(x+1,45,.9,0,7);c.fill()}});
+ c.strokeStyle=hair;c.lineWidth=2;const bl=mood>=2?-3:mood===0?1:0;c.beginPath();c.moveTo(37,40+bl);c.lineTo(46,39);c.moveTo(54,39);c.lineTo(63,40+bl);c.stroke();
+ c.strokeStyle='#5a2a1a';c.lineWidth=2;if(big){c.fillStyle='#5a1a10';c.beginPath();c.ellipse(50,62,6,5,0,0,7);c.fill()}else{const cu=[0,3,6][mood];c.beginPath();c.moveTo(43,61);c.quadraticCurveTo(50,61+cu,57,61);c.stroke()}
+ if(mood>=2){c.fillStyle='rgba(255,106,106,.35)';c.beginPath();c.arc(36,56,4,0,7);c.arc(64,56,4,0,7);c.fill()}c.restore()}
+let sellView=null;
+function sellBreak(it){const A=all(it),L=[];let v=5+it.ilvl*.4;L.push([t('bd_base'),v]);const byT={};
+ A.forEach(a=>{const raw=affVal(a)/(S.hot===a.k?CONFIG.hotMul:1);byT[a.t]=byT[a.t]||{n:0,v:0};byT[a.t].n++;byT[a.t].v+=raw});
+ [1,2,3,4,5].forEach(x=>{if(byT[x]){L.push([`<span class="t${x}">${pips(x)}</span> `+t('bd_aff').replace('{t}',x).replace('{n}',byT[x].n),byT[x].v]);v+=byT[x].v}});
+ const hot=A.filter(a=>S.hot===a.k).reduce((s,a)=>s+affVal(a)*(1-1/CONFIG.hotMul),0);if(hot){L.push(['🔥 '+t('bd_hot'),hot]);v+=hot}
+ const cm=A.length>=6?1.3:A.length>=4?1.1:1;if(cm>1){L.push([t('bd_count'),v*(cm-1)]);v*=cm}
+ const pm=1+CONFIG.pristine*Math.max(0,it.stab)/Math.max(1,it.stab0);if(pm>1.001){L.push(['⚖ '+t('bd_pristine'),v*(pm-1)]);v*=pm}
+ if(it.lp){L.push(['✦ '+t('bd_lp'),v*.15*it.lp]);v*=1+.15*it.lp}
+ const pen=it.frac?CONFIG.fracMul:A.length<=1?CONFIG.junkMul:1;if(pen<1){L.push(['♻ '+t('bd_pen'),v*(pen-1)]);v*=pen}return L}
+function sellLines(it,final){const out=sellBreak(it).map(l=>[l[0],Math.round(l[1])]);const d=final-out.reduce((s,l)=>s+l[1],0);if(d)out.push([t('bd_fee'),d]);return out}
+function openSell(sv){sellView=sv;const it=sv.it,r=rarity(it),col=RAR[r][1],ec=elemColor(it)||col;
+ $('#sellov').innerHTML=`<div class="sellbox" style="--rc:${col};--ec:${ec}"><div class="sbtitle">${sv.bounty?'📜 '+t('bd_bounty'):'🪙 '+t('sellT')}</div>
+ <div class="buyer"><canvas id="buyerCv" width="160" height="160"></canvas><div class="bubble" id="bubble">${t('considering')}</div></div>
+ <div class="ped">${wcv('sell',150,1)}<div class="pedestal"></div></div><div class="nm" style="text-align:center;color:${col}">${nameOf(it)} <span class="muted">· ${t(RAR[r][0])} · ilvl ${it.ilvl}</span></div>
+ <div class="bd">${sv.lines.map(l=>`<div class="bdl"><span>${l[0]}</span><b class="${l[1]>=0?'pos':'neg'}">${l[1]>=0?'+':''}${l[1]}</b></div>`).join('')}</div>
+ <div class="sprice" id="spPrice">0🪙</div><div id="spProfit" class="sprofit"></div><button class="gold" id="sellCont" data-act="closeSell" style="width:100%;min-height:50px">${t('cont')} ▶</button></div>`;
+ $('#sellov').classList.remove('hidden');drawBuyer($('#buyerCv'),sv.seed,0);paintAll();
+ const ls=[...document.querySelectorAll('.bdl')];ls.forEach((l,i)=>setTimeout(()=>{l.classList.add('on');SND.tick()},150+i*200));setTimeout(()=>countUp(sv),200+ls.length*200)}
+function countUp(sv){let n=0;const N=18,iv=setInterval(()=>{const el=$('#spPrice');if(!el||sellView!==sv){clearInterval(iv);return}n++;
+ if(n<N){el.textContent=Math.max(0,Math.round(sv.price*(n/N)+(R()-.5)*sv.price*.4*(1-n/N)))+'🪙';SND.tick()}else{clearInterval(iv);el.textContent=sv.price+'🪙';anim(el,'done');finale(sv)}},50)}
+function finale(sv){const pr=sv.price-sv.cost,r=rarity(sv.it),ratio=sv.price/Math.max(1,sv.cost),mood=sv.price<15?0:ratio<1.3?1:ratio<3?2:3;
+ drawBuyer($('#buyerCv'),sv.seed,mood);$('#bubble').textContent=t('moods')[mood];anim('#bubble','pop2');
+ $('#spProfit').innerHTML=`<span class="${pr>=0?'pos':'neg'}">${pr>=0?'+':''}${pr}🪙 ${pr>=0?t('profitW'):t('loss')}</span>`;
+ for(let i=0;i<Math.min(7,2+r*2);i++)setTimeout(()=>sparks({getBoundingClientRect:()=>({left:R()*innerWidth,top:-10,width:0,height:0})},['#ffd76a','#ffe9a8','#b8862f'],22),i*120);
+ [SND.coin,SND.coins,()=>{SND.coins();SND.tierup()},()=>{SND.coins();SND.jackpot()}][r]();
+ const A=all(sv.it),perf=A.length>=6&&A.every(a=>a.t===1);if(perf||A.some(a=>a.t===1))setTimeout(()=>{anim('#flash','go');SND.jackpot();sparks(null,['#ff8c1a','#ffd76a','#fff'],perf?200:100,true)},500)}
+// ================= SKINS / HELP / GUIDE =================
+const skinProg=k=>k==='codex'?Object.keys(S.codex).length:(S.stats[k]||0);
+function checkSkins(){for(const k in SKIN_UNLOCK){const[c,n]=SKIN_UNLOCK[k];if(!S.skins[k]&&skinProg(c)>=n){S.skins[k]=1;toast(t('skinNew')+' '+t('sk_'+k));SND.tierup()}}}
+function showHelp(k){const nm=I18N.en['b_'+k]?t('b_'+k):t(k),d=(I18N[S.lang][k+'D']||I18N[S.lang]['h_'+k]||''),sc=CONFIG.stabCost[k];modal(`<div class="big">${CICO[k]||'❔'} ${nm}</div><p>${d}</p>${sc?`<p>⚖ ${t('stability')}: −${sc}</p>`:''}${ACTS[k]&&ACTS[k].cur&&k!=='ember'?`<p class="muted">${t('src')}</p>`:''}`)}
+let lpT=null,lpFired=false,lpXY=null;
+document.addEventListener('pointerdown',e=>{lpFired=false;const b=e.target.closest('[data-help]');if(!b)return;lpXY=[e.clientX,e.clientY];clearTimeout(lpT);lpT=setTimeout(()=>{lpFired=true;SND.click();showHelp(b.dataset.help)},550)});
+['pointerup','pointercancel'].forEach(ev=>document.addEventListener(ev,()=>{clearTimeout(lpT);if(lpFired)setTimeout(()=>lpFired=false,450)}));
+document.addEventListener('pointermove',e=>{if(lpXY&&Math.hypot(e.clientX-lpXY[0],e.clientY-lpXY[1])>12)clearTimeout(lpT)});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('[data-help]'))e.preventDefault()});
+function applyGuide(){if(S.guide>=3)return;const sel=S.guide===0?(S.tab==='market'?'.buy':'#tab-market'):(S.tab==='workshop'&&cur()?(S.guide===1?'#a-augment':'#sellBtn'):'#tab-workshop');const e=$(sel);if(e)e.classList.add('guide')}
+const pips=tr=>'●'.repeat(6-tr)+'○'.repeat(tr-1);
+const nameOf=it=>it.unid?t('crate'):rarity(it)>=2?it.name:t(it.base);
+const sideCap=it=>3+(it.lp||0),totCap=it=>6+(it.lp||0);
+const pct=x=>Math.round(x*100)+'%';
+
 function doCraft(a){const it=cur(),A=all(it),sa=getSelAff(it),sc=CONFIG.stabCost[a]||0,d=ACTS[a],from=it.stab;let slot=[],jack=false;
  switch(a){
-  case'augment':{const x=addAffix(it);discover(x);jack=x.t===1;slot=[idOf(it,x)];break}
+  case'augment':{let fs=null;if(S.omen==='omenP'||S.omen==='omenS'){fs=S.omen==='omenP'?'p':'s';S.omen=null}const x=addAffix(it,false,fs);discover(x);jack=x.t===1;slot=[idOf(it,x)];break}
   case'reroll':case'preroll':case'sroll':{const f=A.filter(x=>!x.lock&&(a==='reroll'||(a==='preroll'?it.p.includes(x):it.s.includes(x))));f.forEach(x=>{x.q=R();x.v=rollVal(AFM[x.k],x.t,x.q)});slot=f.map(x=>idOf(it,x));A.forEach(x=>x.lock=false);break}
   case'annul':{const x=pick(A.filter(x=>!x.lock));it.p=it.p.filter(y=>y!==x);it.s=it.s.filter(y=>y!==x);A.forEach(x=>x.lock=false);S.selAff=null;break}
   case'tannul':it.p=it.p.filter(y=>y!==sa);it.s=it.s.filter(y=>y!==sa);S.selAff=null;break;
@@ -355,7 +537,7 @@ function doCraft(a){const it=cur(),A=all(it),sa=getSelAff(it),sc=CONFIG.stabCost
   case'lock':sa.lock=true;break;
   case'ember':it.stab=Math.min(it.stab0,it.stab+CONFIG.emberRestore);break;
  }
- if(d.cur)S.cur[d.cur]--;it.stab=Math.max(0,it.stab-sc);S.stats.crafts++;qp('crafts',1);qp('rare',all(it).length,1);
+ if(d.cur)S.cur[d.cur]--;it.stab=Math.max(0,it.stab-sc);S.stats.crafts++;if(S.guide===1)S.guide=2;qp('crafts',1);qp('rare',all(it).length,1);
  render();const card=$('#wcard');anim(card,'shake');sparks(card,a==='annul'||a==='tannul'?'#9be':a==='ember'?'#ffb84a':'#ffd76a',25);SND.craft();
  slotAnim(slot);if(it.stab!==from)fxStab(it,from);if(jack)setTimeout(jackpot,650);if(it.stab<=0&&from>0)toast('🔒 '+t('sealedShort'));checkPerfect(it);save()}
 function slotAnim(ids){const els=ids.filter(Boolean).map(id=>document.querySelector(`#wcard .af[data-arg="${id}"]`)).filter(Boolean);if(!els.length)return;
@@ -366,78 +548,83 @@ function fxStab(it,from){document.querySelectorAll('#wcard .sb i').forEach(i=>{i
 function finishItem(){S.items.splice(S.sel,1);S.sel=S.items.length?S.items.length-1:-1;S.selAff=null}
 const ACT={
  tab:a=>{S.tab=a;sheet=null},lang:()=>{S.lang=S.lang==='sk'?'en':'sk'},help:()=>modal(t('tutorial')),
- closeModal:()=>{closeM();return'noR'},sheet:m=>{sheet=m;SND.click()},closeSheet:()=>{sheet=null},
+ closeModal:()=>{closeM();return'noR'},sheet:m=>{sheet=m;SND.click()},closeSheet:()=>{if(sheet==='aff')S.selAff=null;sheet=null},
  buy:i=>{const it=S.market[+i];if(!it)return;const p=buyPrice(it);if(S.gold<p)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));
-  S.gold-=p;it.cost=p;delete it.pf;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.market.splice(+i,1);all(it).forEach(discover);SND.coin();toast('🪙 −'+p)},
+  S.gold-=p;it.cost=p;delete it.pf;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.market.splice(+i,1);if(S.guide===0)S.guide=1;all(it).forEach(discover);SND.coin();toast('🪙 −'+p)},
  crate:()=>{if(S.lvl<2)return toast(t('needLvl')+' 2');if(S.gold<CONFIG.crateCost)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));const mx=marketMax();
-  S.gold-=CONFIG.crateCost;const it=makeItem(ri(Math.round(mx*.6),mx),ri(2,6),true);it.unid=true;it.cost=CONFIG.crateCost;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.tab='workshop';SND.coin()},
+  S.gold-=CONFIG.crateCost;const it=makeItem(ri(Math.round(mx*.6),mx),ri(2,6),true);it.unid=true;it.cost=CONFIG.crateCost;if(R()<.2)it.lp=1;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.tab='workshop';SND.coin()},
  refresh:()=>{const rc=S.market.length?CONFIG.marketRefreshCost:0;if(S.gold<rc)return toast(t('noGold'));S.gold-=rc;genMarket();SND.click()},
  selItem:i=>{S.sel=+i;S.selAff=null;sheet=null;S.tab='workshop';SND.click()},
- selAff:a=>{S.selAff=S.selAff===a?null:a;SND.click()},
+ selAff:a=>{S.selAff=a;sheet='aff';SND.click()},
  identify:()=>{const it=cur();if(!it||!it.unid)return;it.unid=false;render();anim('#wcard','reveal');all(it).forEach(discover);SND.tierup();sparks($('#wcard'),'#ffff77',50);if(all(it).some(a=>a.t===1))setTimeout(jackpot,400);checkPerfect(it);save();return'noR'},
  buyCur:a=>{const[c,nn]=a.split(':'),n=+(nn||1);if(c==='lock'&&S.lvl<CONFIG.lockLvl)return toast(t('unlockAt')+' '+CONFIG.lockLvl);const p=curCost(c)*n,e=c==='lock'?CONFIG.lockEmbers*n:0;
   if(S.gold<p)return toast(t('needGold')+' '+(p-S.gold)+'🪙');if(S.cur.embers<e)return toast(t('noEmbers'));S.gold-=p;S.cur.embers-=e;S.cur[c]+=n;SND.coin();toast(CICO[c]+' +'+n+' · 🪙 −'+p)},
- act:a=>{if(a==='shop'){sheet='shop';return}const r=why(a),btn=$('#a-'+a);
+ act:a=>{if(a==='shop'){sheet='shop';return}if(a==='omen'){sheet='omen';return}const r=why(a),btn=$('#a-'+a);
   if(r==='BUY'){toast(t('buyHint'));sheet='shop';return}if(r){toast(r);anim(btn,'no');if(r===t('pickAff'))anim('#wcard .affs','shake');return'noR'}
-  if(a==='essence'){sheet='essence';return}if(a==='forge')return ACT.forgeAsk();doCraft(a);return'noR'},
- essence:k=>{const it=cur(),d=AFM[k];sheet=null;if(why('essence'))return;if(it[d.s].length>=3||all(it).some(a=>a.k===k))return;const from=it.stab;
-  S.gold-=CONFIG.essenceCost;const tr=rollTier(it.ilvl),q=R(),af={k,t:tr,q,v:rollVal(d,tr,q),lock:false};it[d.s].push(af);discover(af);it.stab=Math.max(0,it.stab-CONFIG.stabCost.essence);S.stats.crafts++;qp('crafts',1);qp('rare',all(it).length,1);
+  if(a==='essence'){sheet='essence';return}if(a==='forge')return ACT.forgeAsk();if(ACTS[a].sel)sheet=null;doCraft(a);return'noR'},
+ essence:k=>{const it=cur(),d=AFM[k];sheet=null;if(why('essence'))return;if(it[d.s].length>=sideCap(it)||all(it).some(a=>a.k===k))return;const from=it.stab;
+  S.gold-=CONFIG.essenceCost;if(S.guide===1)S.guide=2;const tr=rollTier(it.ilvl),q=R(),af={k,t:tr,q,v:rollVal(d,tr,q),lock:false};it[d.s].push(af);discover(af);it.stab=Math.max(0,it.stab-CONFIG.stabCost.essence);S.stats.crafts++;qp('crafts',1);qp('rare',all(it).length,1);
   render();anim('#wcard','shake');sparks($('#wcard'),'#7fe3ff',35);SND.craft();slotAnim([idOf(it,af)]);fxStab(it,from);if(tr===1)setTimeout(jackpot,650);checkPerfect(it);save();return'noR'},
- salvage:i=>{const btn=i!=null?$('#sv-'+i):$('#salvageBtn');if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const n=salvageN(it),r=btn?btn.getBoundingClientRect():null;S.cur.embers+=n;qp('salvage',1);finishItem();SND.salvage();render();
+ salvage:i=>{const btn=i!=null?$('#sv-'+i):$('#salvageBtn');if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const n=salvageN(it),r=btn?btn.getBoundingClientRect():null;S.cur.embers+=n;qp('salvage',1);S.stats.salvaged=(S.stats.salvaged||0)+1;finishItem();SND.salvage();render();
   const ph={getBoundingClientRect:()=>r||{left:innerWidth/2,top:innerHeight/2,width:0,height:0}};sparks(ph,['#ffb84a','#ff6a00','#ffd76a'],45,true);floatAt(ph,t('salvaged').replace('{n}',n),'#ffb84a');save();return'noR'},
  charity:()=>{if(S.play<S.helpAt)return;const it=makeItem(ri(10,20),1);it.cost=0;all(it).forEach(discover);S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.helpAt=S.play+CONFIG.charityCooldown;S.tab='workshop';SND.coin()},
  skipB:i=>{if(S.gold<CONFIG.bountySkipCost)return toast(t('noGold'));S.gold-=CONFIG.bountySkipCost;S.bounties[+i]=genBounty();SND.click()},
- claim:i=>{const q=S.quests[+i];if(!q||q.p<q.n)return;S.gold+=q.g;S.cur[q.c]+=q.cn;S.cur.embers+=q.e;S.quests[+i]=null;S.quests[+i]=genQuest();SND.coins();sparks($('#gold'),'#ffd76a',40);toast(`🎯 +${q.g}🪙 +${q.cn}${CICO[q.c]}${q.e?' +'+q.e+'🔆':''}`)},
+ claim:i=>{const q=S.quests[+i];if(!q||q.p<q.n)return;S.gold+=q.g;S.cur[q.c]+=q.cn;S.cur.embers+=q.e;S.stats.quests=(S.stats.quests||0)+1;S.quests[+i]=null;S.quests[+i]=genQuest();SND.coins();sparks($('#gold'),'#ffd76a',40);toast(`🎯 +${q.g}🪙 +${q.cn}${CICO[q.c]}${q.e?' +'+q.e+'🔆':''}`)},
  forgeAsk:()=>{const it=cur(),a=getSelAff(it),o=forgeOdds(it,a);if(o.ps>=1)return ACT.forge();
   modal(`<div class="big">⚠️ ${t('confirmT')}</div><p style="text-align:center">${afShort(a.k)} T${a.t} → T${a.t-1}<br>⚖ ${it.stab} · ${t('forgeCost')} ${o.l}–${o.h}<br><span class="good">✔ ${Math.round(o.ps*100)}%</span> · <span class="warn">💔 ${Math.round(o.pf*100)}%</span> · <span class="bad">💥 ${Math.round(o.ph*100)}%</span></p><div class="flex"><button class="red grow" id="forgeYes" data-act="forgeYes">🔥 ${t('confirmYes')}</button><button class="grow" data-act="closeModal">${t('cancel')}</button></div>`);return'noR'},
  forgeYes:()=>{closeM();return ACT.forge()},
- forge:()=>{const it=cur(),a=getSelAff(it);if(!a||why('forge'))return;S.gold-=CONFIG.forgeGold;if(a.t===2)S.cur.embers-=CONFIG.t1ForgeEmbers;S.stats.crafts++;qp('crafts',1);qp('forge',1);
-  const[l,h]=CONFIG.forgeCost(a.t),c=ri(l,h),from=it.stab,id=S.selAff;
+ forge:()=>{const it=cur(),a=getSelAff(it);sheet=null;if(!a||why('forge'))return;S.gold-=CONFIG.forgeGold;if(a.t===2)S.cur.embers-=CONFIG.t1ForgeEmbers;S.stats.crafts++;qp('crafts',1);qp('forge',1);if(S.guide===1)S.guide=2;
+  const[l,h]=CONFIG.forgeCost(a.t),c=ri(l,h),from=it.stab,id=S.selAff,saved=S.omen==='omenF';if(saved)S.omen=null;
   if(c<=it.stab){it.stab-=c;a.t--;a.v=rollVal(AFM[a.k],a.t,a.q);discover(a);render();const ln=$(`#wcard .af[data-arg="${id}"]`);anim(ln,'tierup');sparks(ln||$('#wcard'),['#ffb84a','#ff6a00','#fff'],45,true);SND.tierup();fxStab(it,from);if(a.t===1)setTimeout(jackpot,400);if(it.stab<=0)toast('🔒 '+t('sealedShort'));checkPerfect(it)}
+  else if(saved){it.stab=Math.max(0,it.stab-c);render();fxStab(it,from);SND.fail();toast(t('omenSaved'))}
   else if(R()<CONFIG.fractureShare){it.frac=true;it.stab=0;render();anim('#wcard','shake');sparks($('#wcard'),'#ff3b2a',60);SND.fail();fxStab(it,from);toast('<span class="bad">💔 '+t('fracturedT')+'</span>')}
   else{finishItem();render();sparks(null,['#aaa','#ff3b2a','#555'],120);SND.shatter();toast('<span class="bad">💥 '+t('shatteredT')+'</span>')}
   save();return'noR'},
- sell:i=>{const btn=i!=null?$('#sl-'+i):$('#sellBtn');if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const p=sellPrice(it),pr=p-it.cost,r=btn?btn.getBoundingClientRect():null;S.gold+=p;S.stats.sold++;S.stats.profit+=pr;qp('sell',p,1);if(pr>0)qp('profit',pr);finishItem();
-  SND.coins();render();const ph={getBoundingClientRect:()=>r||{left:innerWidth/2,top:innerHeight/2,width:0,height:0}};sparks(ph,['#ffd76a','#ffe9a8','#b8862f'],50,true);floatAt(ph,`+${p}🪙 <span style="font-size:15px;color:${pr>=0?'#6be36b':'#ff6a5a'}">(${pr>=0?'+':''}${pr})</span>`);anim('#gold','shake');addXp(Math.max(2,Math.round(pr)));save();return'noR'},
- deliver:i=>{const b=S.bounties[+i],it=cur(),m=bMatch(b,it);if(!m.m)return;const btn=$('#dl-'+i),r=btn.getBoundingClientRect();S.gold+=m.pay;const pr=m.pay-it.cost;S.stats.sold++;S.stats.profit+=pr;if(pr>0)qp('profit',pr);qp('bounty',1);finishItem();S.bounties[+i]=genBounty();
-  SND.coins();if(m.m===2)SND.jackpot();render();const ph={getBoundingClientRect:()=>r};sparks(ph,'#ffd76a',60,true);floatAt(ph,'+'+m.pay+'🪙');addXp(Math.max(5,Math.round(pr*(m.m===2?1.5:1))));save();return'noR'},
+ sell:i=>{if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const p=sellPrice(it),pr=p-it.cost,snap=JSON.parse(JSON.stringify(it)),lines=sellLines(it,p);
+  S.gold+=p;S.stats.sold++;S.stats.profit+=pr;qp('sell',p,1);if(pr>0)qp('profit',pr);finishItem();sheet=null;const g=S.guide===2;if(S.guide<3)S.guide=3;
+  render();save();openSell({it:snap,price:p,cost:snap.cost,lines,seed:R()*1000,xp:Math.max(2,Math.round(pr)),guideDone:g});return'noR'},
+ deliver:i=>{const b=S.bounties[+i],it=cur(),m=bMatch(b,it);if(!m.m)return;const v=itemValue(it),snap=JSON.parse(JSON.stringify(it)),lines=sellLines(it,v);lines.push(['📜 '+t('bd_bounty')+(m.m===2?' ✔':' ≈'),m.pay-v]);
+  S.gold+=m.pay;const pr=m.pay-it.cost;S.stats.sold++;S.stats.profit+=pr;if(pr>0)qp('profit',pr);qp('bounty',1);finishItem();S.bounties[+i]=genBounty();
+  render();save();openSell({it:snap,price:m.pay,cost:snap.cost,lines,seed:b.id,bounty:1,xp:Math.max(5,Math.round(pr*(m.m===2?1.5:1)))});return'noR'},
+ closeSell:()=>{const sv=sellView;sellView=null;$('#sellov').innerHTML='';$('#sellov').classList.add('hidden');if(sv){addXp(sv.xp);if(sv.guideDone)modal(t('gDone'))}},
+ equip:k=>{if(!S.skins[k])return;S.skin=k;SND.tierup();toast('🎨 '+t('sk_'+k))},
+ useOmen:o=>{if(!S.cur[o])return;if(S.omen)S.cur[S.omen]++;S.cur[o]--;S.omen=o;sheet=null;SND.tierup();toast('🔮 '+t(o))},
  upgrade:k=>{const u=UPS.find(x=>x.k===k),l=S.up[k];if(l>=u.max||S.lvl<u.req(l))return;const c=u.cost(l);if(S.gold<c)return toast(t('noGold'));S.gold-=c;S.up[k]++;SND.lvl()},
  reset:()=>modal(`<p>${t('resetQ')}</p><p class="flex"><button class="red" data-act="resetYes">${t('yes')}</button><button data-act="closeModal">${t('no')}</button></p>`),
  resetYes:()=>{localStorage.removeItem(CONFIG.saveKey);location.reload();return'noR'}
 };
-document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;ac();const r=ACT[b.dataset.act]&&ACT[b.dataset.act](b.dataset.arg);if(r!=='noR'){render();save()}});
-$('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet'){sheet=null;render()}});
-function itemCard(it,inter,extra={}){const r=rarity(it),col=RAR[r][1];
- const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" data-arg="${id}" ${inter?'data-act="selAff"':''}><span class="tg">${s.toUpperCase()}·T${a.t}</span><span class="grow">${afText(a)}</span>${S.hot===a.k?'🔥':''}${a.lock?'🔒':''}</div>`};
- const body=it.unid?`<div class="af t5" style="justify-content:center">❓ ${t('unid')} ❓</div>`:it.p.map((a,i)=>line(a,i,'p')).join('')+it.s.map((a,i)=>line(a,i,'s')).join('');
- const nm=it.unid?t('crate'):r>=2?it.name:t(it.base);const tag=it.frac?`<span class="tagx">${t('fractured')}</span>`:it.stab<=0&&!it.unid?`<span class="tagx">${t('sealed')}</span>`:'';
- return `<div class="card r${r} ${inter?'':'mini'}" ${inter?'id="wcard"':''} style="--rc:${col}"><div class="ch"><div class="ic">${icon(it.base)}</div><div class="grow"><div class="nm">${nm}</div><div class="sub">${t(RAR[r][0])} · ilvl ${it.ilvl} · ${t('maxT')} T${maxTier(it.ilvl)} ${tag}</div></div>${extra.head||''}</div>
+document.addEventListener('click',e=>{if(lpFired){lpFired=false;return}const b=e.target.closest('[data-act]');if(!b||b.disabled)return;ac();const r=ACT[b.dataset.act]&&ACT[b.dataset.act](b.dataset.arg);if(r!=='noR'){render();save()}});
+$('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet'){if(sheet==='aff')S.selAff=null;sheet=null;render()}});
+function itemCard(it,inter,extra={},src){const r=rarity(it),col=RAR[r][1],ec=elemColor(it);
+ const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" data-arg="${id}" ${inter?'data-act="selAff"':''}><span class="pips">${pips(a.t)}</span><span class="grow">${afText(a)}</span>${S.hot===a.k?'🔥':''}${a.lock?'🔒':''}<span class="tt">T${a.t}</span></div>`};
+ const body=it.unid?`<div class="af t5" style="justify-content:center">❓ ${t('unid')} ❓</div>`:(it.p.length?`<div class="sl">${t('prefixes')}</div>`:'')+it.p.map((a,i)=>line(a,i,'p')).join('')+(it.s.length?`<div class="sl">${t('suffixes')}</div>`:'')+it.s.map((a,i)=>line(a,i,'s')).join('');
+ const tag=it.frac?`<span class="tagx">${t('fractured')}</span>`:it.stab<=0&&!it.unid?`<span class="tagx">${t('sealed')}</span>`:'';
+ return `<div class="card r${r} ${inter?'':'mini'} ${ec?'el':''}" ${inter?'id="wcard"':''} style="--rc:${col};--ec:${ec||col}"><div class="ch"><div class="ic">${wcv(src,inter?60:40,inter)}</div><div class="grow"><div class="nm">${nameOf(it)}</div><div class="sub">${t(RAR[r][0])} · ilvl ${it.ilvl} · ${t('maxT')} T${maxTier(it.ilvl)} ${tag}</div>${it.lp?`<span class="lpb" data-help="lp">✦ ${t('lp')}</span>`:''}</div>${extra.head||''}</div>
  ${it.unid?'':`<div class="sb ${it.stab<12?'low':''}"><i style="width:${Math.min(100,it.stab/it.stab0*100)}%"></i><span>⚖ ${t('stability')} ${it.stab}/${it.stab0}</span></div>`}<div class="affs">${body}</div>${extra.foot||''}</div>`}
 function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl} · 🔆${S.cur.embers} · 📦${S.items.length}/${stallSize()}<div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;$('#langBtn').textContent=t('lang');
  $('#ticker').innerHTML=`<span class="hot">🔥 ${t('hot')}: ${afShort(S.hot)} ×${CONFIG.hotMul}</span> · ${t('changes')} <span class="cd" data-u="trendAt"></span>`;document.documentElement.lang=S.lang}
-function renderTabs(){const qd=S.quests.filter(q=>q&&q.p>=q.n).length;$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}${k==='bounties'&&qd?`<span class="badge">${qd}</span>`:''}</button>`).join('')}
-function abtn(a){const it=cur(),r=why(a),d=ACTS[a],sc=CONFIG.stabCost[a],sa=it&&getSelAff(it);const cnt=d.cur?'×'+S.cur[d.cur]:a==='essence'?CONFIG.essenceCost+'🪙':a==='forge'?CONFIG.forgeGold+'🪙':'';
- const st=sc?'⚖'+sc:a==='forge'&&sa&&sa.t>1?'⚖'+CONFIG.forgeCost(sa.t).join('-'):a==='ember'?'+'+CONFIG.emberRestore:'';
- return `<button class="ab ${r&&r!=='BUY'?'dim':''}" id="a-${a}" data-act="act" data-arg="${a}" title="${t(a==='ember'?'embers':a)}">${cnt?`<span class="ac">${cnt}</span>`:''}${st?`<span class="as">${st}</span>`:''}<span class="ai">${CICO[a]}</span>${CTAG[a]?`<span class="ax">${CTAG[a]}</span>`:''}<span class="an">${t('s_'+a)}</span></button>`}
-function hintHtml(it){if(it.frac)return '<span class="bad">'+t('fracShort')+'</span>';if(it.stab<=0)return '<span class="warn">'+t('sealedShort')+'</span>';
- const sa=getSelAff(it);if(!sa)return all(it).length?t('pickHint'):'💠 '+t('augmentD');
- let s=`<span class="t${sa.t}">${afShort(sa.k)} T${sa.t}</span>&nbsp;`;
- if(sa.t===1)return s+'· '+t('maxTier');if(maxTier(it.ilvl)>sa.t-1)return s+'· <span class="warn">'+ilvlTxt(it,sa)+'</span>';
- const o=forgeOdds(it,sa);return s+`🔥→T${sa.t-1}: ⚖${o.l}–${o.h} · <span class="good">✔${Math.round(o.ps*100)}%</span>&nbsp;<span class="warn">💔${Math.round(o.pf*100)}%</span>&nbsp;<span class="bad">💥${Math.round(o.ph*100)}%</span>${sa.t===2?` · 🔆×${CONFIG.t1ForgeEmbers}`:''}`}
+function renderTabs(){const qd=S.quests.filter(q=>q&&q.p>=q.n).length;$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['collection','🎨'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}${k==='bounties'&&qd?`<span class="badge">${qd}</span>`:''}</button>`).join('')}
+const BAR=['augment','reroll','preroll','sroll','annul','essence','ember','omen'];
+function abtn(a){const r=why(a),d=ACTS[a],sc=CONFIG.stabCost[a];const cnt=d.cur?'×'+S.cur[d.cur]:a==='essence'?CONFIG.essenceCost+'🪙':a==='omen'?'×'+(S.cur.omenP+S.cur.omenS+S.cur.omenF):'';const st=sc?'⚖'+sc:a==='ember'?'+'+CONFIG.emberRestore:'';
+ return `<button class="ab ${r&&r!=='BUY'?'dim':''} ${a==='omen'&&S.omen?'act':''}" id="a-${a}" data-act="act" data-arg="${a}" data-help="${a}">${cnt?`<span class="ac">${cnt}</span>`:''}${st?`<span class="as">${st}</span>`:''}<span class="ai">${CICO[a]}</span><span class="an">${t('b_'+a)}</span></button>`}
+function hintHtml(it){const g=S.guide<3?`<b class="warn">${t('g'+(S.guide+1))}</b>&nbsp;`:'';if(it.frac)return g+'<span class="bad">'+t('fracShort')+'</span>';if(it.stab<=0)return g+'<span class="warn">'+t('sealedShort')+'</span>';
+ return g+(S.omen?`<span style="color:#c86bff">🔮 ${t(S.omen)}</span>&nbsp;· `:'')+(S.guide<3?'':t('tapAff'))}
 const V={
  market:()=>{const sel=cur(),cheap=Math.min(...S.market.map(buyPrice),999),broke=S.gold<cheap&&!S.items.length;
   return `<div class="mk"><div class="top"><button id="refreshBtn" data-act="refresh">🔄 ${t('refresh')}<br><span class="cd" data-u="marketAt"></span> · ${S.market.length?CONFIG.marketRefreshCost:0}🪙</button>
   <button class="gold" data-act="crate" id="crateBtn" ${S.lvl<2?'disabled':''}>🎁 ${t('crate')}<br>${S.lvl<2?t('needLvl')+' 2':CONFIG.crateCost+'🪙'}</button><button data-act="sheet" data-arg="stash" id="stashBtn">📦 ${t('stash')}<br>${S.items.length}/${stallSize()}</button></div>
-  ${broke?`<button class="gold" id="charity" data-act="charity" ${S.play<S.helpAt?'disabled':''}>${t('charityT')} ${S.play<S.helpAt?t('charityWait')+' '+fmt(S.helpAt-S.play):t('charityBtn')}</button>`:''}
+  ${S.guide===0?`<div class="gbar">${t('g1')}</div>`:''}${broke?`<button class="gold" id="charity" data-act="charity" ${S.play<S.helpAt?'disabled':''}>${t('charityT')} ${S.play<S.helpAt?t('charityWait')+' '+fmt(S.helpAt-S.play):t('charityBtn')}</button>`:''}
   <div class="list">${S.market.map((it,i)=>{const d=sel&&!sel.unid?itemValue(it)-itemValue(sel):null;
-   return itemCard(it,false,{head:`<button class="gold buy" data-act="buy" data-arg="${i}">${buyPrice(it)}🪙</button>`,foot:`<div class="muted" style="margin-top:3px">${t('value')} ~${itemValue(it)}🪙${isJunk(it)?' · ♻ '+t('junk'):''}${d!==null?` · <span class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d}</span> ${t('compare')}`:''}</div>`})}).join('')}</div></div>`},
- workshop:()=>{const it=cur();const strip=`<div class="strip"><button data-act="sheet" data-arg="stash" id="stashBtn2">📦</button>${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${x.unid?'<span style="font-size:22px">❓</span>':icon(x.base)}</button>`).join('')}</div>`;
+   return itemCard(it,false,{head:`<button class="gold buy" data-act="buy" data-arg="${i}">${buyPrice(it)}🪙</button>`,foot:`<div class="muted" style="margin-top:3px">${t('value')} ~${itemValue(it)}🪙${isJunk(it)?' · ♻ '+t('junk'):''}${d!==null?` · <span class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d}</span> ${t('compare')}`:''}</div>`},'m'+i)}).join('')}</div></div>`},
+ workshop:()=>{const it=cur();const strip=`<div class="strip"><button data-act="sheet" data-arg="stash" id="stashBtn2" data-help="stash">📦<small>${S.items.length}/${stallSize()}</small></button>${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${wcv('i'+i,32)}</button>`).join('')}</div>`;
   if(!it)return `<div class="ws">${strip}<div class="panel">${t('noItem')}</div><div class="flex"><button class="gold grow" data-act="tab" data-arg="market">🏪 ${t('market')}</button><button class="gold grow" data-act="sheet" data-arg="shop">🛒 ${t('s_shop')}</button></div></div>`;
-  if(it.unid)return `<div class="ws">${strip}${itemCard(it,true)}<button class="gold" style="min-height:56px" id="identifyBtn" data-act="identify">🔍 ${t('identify')}</button></div>`;
+  if(it.unid)return `<div class="ws">${strip}${itemCard(it,true,{},'i'+S.sel)}<button class="gold" style="min-height:56px" id="identifyBtn" data-act="identify">🔍 ${t('identify')}</button></div>`;
   const sp=sellPrice(it),pr=sp-it.cost;
-  return `<div class="ws">${strip}${itemCard(it,true)}<div id="hint">${hintHtml(it)}</div><div class="agrid">${AORDER.map(abtn).join('')}</div>
+  return `<div class="ws">${strip}${itemCard(it,true,{},'i'+S.sel)}<div id="hint">${hintHtml(it)}</div><div class="agrid">${BAR.map(abtn).join('')}</div>
   <div class="sellrow"><button class="${isJunk(it)?'':'gold'}" id="sellBtn" data-act="sell">🪙 ${t('sell')} ${sp} <span style="font-size:12px" class="${pr>=0?'pos':'neg'}">${pr>=0?'+'+pr:pr}</span><br><span class="muted" style="font-size:11px">${pr>=0?t('profitW'):t('loss')} · ${t('paid')} ${it.cost}</span></button>
   <button id="salvageBtn" data-act="salvage" ${isJunk(it)?'class="gold"':''}>♻ ${t('salvage')}<br><span style="font-size:12px">+${salvageN(it)} 🔆</span></button></div></div>`},
+ collection:()=>`<div class="panel"><h2>🎨 ${t('skins')}</h2><div class="muted">${t('skinInfo')}</div></div><div class="skg">${Object.keys(SKINS).map(k=>{const un=S.skins[k],cond=SKIN_UNLOCK[k],prog=cond?Math.min(cond[1],skinProg(cond[0])):0;
+  return `<div class="panel skc ${S.skin===k?'on':''}"><canvas class="wpn" width="144" height="144" style="width:72px;height:72px" data-src="skin:${k}" data-skin="${k==='default'?'':k}"></canvas><b>${t('sk_'+k)}</b><div class="muted">${cond?t('un_'+cond[0]).replace('{n}',cond[1])+` (${prog}/${cond[1]})`:'—'}</div><button class="${un?'gold':''}" id="eq-${k}" data-act="equip" data-arg="${k}" ${un&&S.skin!==k?'':'disabled'}>${S.skin===k?t('equipped'):un?t('equip'):'🔒'}</button></div>`}).join('')}</div>`,
  bounties:()=>{const it=cur();return `<div class="panel"><h2>🎯 ${t('quests')}</h2>${S.quests.map((q,i)=>`<div class="q"><div class="grow">${t('q'+q.k).replace('{n}',q.n)}<div class="bar"><i style="width:${q.p/q.n*100}%"></i></div></div><span class="muted">+${q.g}🪙 ${q.cn}${CICO[q.c]}${q.e?' 🔆':''}</span><button class="sm ${q.p>=q.n?'gold':''}" id="cl-${i}" data-act="claim" data-arg="${i}" ${q.p>=q.n?'':'disabled'}>${q.p>=q.n?t('claim'):q.p+'/'+q.n}</button></div>`).join('')}</div>
   <div class="muted" style="margin:0 0 6px">${t('selItem')}: ${it?(it.unid?t('unid'):(rarity(it)>=2?it.name:t(it.base))+' · ilvl '+it.ilvl+' · ⚖'+it.stab):'—'}</div>`+S.bounties.map((b,i)=>{const m=bMatch(b,it);
   const miss=it&&!it.unid&&m.m<2?[...b.keys.filter(k=>!all(it).some(a=>a.k===k)).map(afShort),...(it.ilvl<b.minIlvl?['ilvl '+b.minIlvl]:[]),...(it.stab<b.minStab?['⚖'+b.minStab]:[])]:[];
@@ -459,13 +646,20 @@ const SH={
   return `<div class="shopi"><div class="flex"><div style="font-size:24px">${CICO[c]}${CTAG[c]?`<sub style="font-size:11px">${CTAG[c]}</sub>`:''}</div><div class="grow"><b>${t(c)}</b> · ${t('owned')}: <b id="own-${c}">${S.cur[c]}</b>${CONFIG.stabCost[c]?` · <span style="color:#7fd0ff">⚖${CONFIG.stabCost[c]}</span>`:''}<div class="muted">${t(c+'D')}</div></div>
   <button class="gold" id="shop-${c}-1" data-act="buyCur" data-arg="${c}:1" ${w?'disabled':''}>×1<br>${p}🪙${e?'+'+e+'🔆':''}</button><button class="gold" id="shop-${c}-5" data-act="buyCur" data-arg="${c}:5" ${w||S.gold<p*5||S.cur.embers<e*5?'disabled':''}>×5<br>${p*5}🪙</button></div>${w?`<div class="warn" style="font-size:12px">${w}</div>`:''}</div>`}).join('')+
   `<div class="shopi"><div class="flex"><div style="font-size:24px">🔆</div><div class="grow"><b>${t('embers')}</b> · ${t('owned')}: <b>${S.cur.embers}</b><div class="muted">${t('embersD')}</div><div class="warn" style="font-size:12px">${t('srcE')}</div></div></div></div><div class="muted" style="margin:4px 0 8px">${t('src')}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
- stash:()=>`<h2>📦 ${t('stash')} ${S.items.length}/${stallSize()}</h2>${S.items.length?S.items.map((x,i)=>`<div class="si" style="--rc:${RAR[rarity(x)][1]}"><div class="ic">${x.unid?'':icon(x.base)}</div><div class="grow" data-act="selItem" data-arg="${i}"><b style="color:var(--rc)">${x.unid?t('crate'):rarity(x)>=2?x.name:t(x.base)}</b>${x.frac?' <span class="tagx">💔</span>':''}<div class="muted">ilvl ${x.ilvl} · ${x.unid?'?':all(x).length+'× afix · ⚖'+x.stab+'/'+x.stab0}</div></div>
+ stash:()=>`<h2>📦 ${t('stash')} ${S.items.length}/${stallSize()}</h2>${S.items.length?S.items.map((x,i)=>`<div class="si" style="--rc:${RAR[rarity(x)][1]}"><div class="ic">${wcv('i'+i,40)}</div><div class="grow" data-act="selItem" data-arg="${i}"><b style="color:var(--rc)">${nameOf(x)}</b>${x.frac?' <span class="tagx">💔</span>':''}${x.lp?' <span class="lpb">✦</span>':''}<div class="muted">ilvl ${x.ilvl} · ${x.unid?'?':all(x).length+'× afix · ⚖'+x.stab+'/'+x.stab0}</div></div>
   <button class="sm" data-act="selItem" data-arg="${i}">⚒️</button>${x.unid?'':`<button class="sm ${isJunk(x)?'':'gold'}" id="sl-${i}" data-act="sell" data-arg="${i}">${sellPrice(x)}🪙</button><button class="sm ${isJunk(x)?'gold':''}" id="sv-${i}" data-act="salvage" data-arg="${i}">♻${salvageN(x)}🔆</button>`}</div>`).join(''):`<div class="muted">${t('noItem')}</div>`}<button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
- essence:()=>{const it=cur();return `<h2>${t('essenceT')}</h2><div class="muted">${t('essenceD2')} · ${CONFIG.essenceCost}🪙 · ⚖${CONFIG.stabCost.essence}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0">${it?AFF.filter(a=>it[a.s].length<3&&!all(it).some(x=>x.k===a.k)).map(a=>`<button class="ess" data-act="essence" data-arg="${a.k}">${a.s.toUpperCase()} · ${afShort(a.k)}${S.hot===a.k?' 🔥':''}</button>`).join(''):''}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`}
+ essence:()=>{const it=cur();return `<h2>${t('essenceT')}</h2><div class="muted">${t('essenceD2')} · ${CONFIG.essenceCost}🪙 · ⚖${CONFIG.stabCost.essence}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0">${it?AFF.filter(a=>it[a.s].length<sideCap(it)&&!all(it).some(x=>x.k===a.k)).map(a=>`<button class="ess" data-act="essence" data-arg="${a.k}">${t(a.s==='p'?'prefixes':'suffixes').slice(0,4)}. · ${afShort(a.k)}${S.hot===a.k?' 🔥':''}</button>`).join(''):''}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`},
+ aff:()=>{const it=cur(),a=getSelAff(it);if(!a)return `<button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`;const d=AFM[a.k],rg=range(d,a.t),nx=a.t>1?range(d,a.t-1):null;
+  const row=k=>{const r=why(k),cnt=k==='forge'?CONFIG.forgeGold+'🪙'+(a.t===2?' + 🔆×'+CONFIG.t1ForgeEmbers:''):'×'+S.cur[ACTS[k].cur];let info='';
+   if(k==='forge'&&!r){const o=forgeOdds(it,a);info=`→ <span class="t${a.t-1}">T${a.t-1}</span> · ⚖${o.l}–${o.h} · <span class="good">✔${pct(o.ps)}</span> <span class="warn">💔${pct(o.pf)}</span> <span class="bad">💥${pct(o.ph)}</span>${S.omen==='omenF'?' · 🔮':''}`}else if(k!=='forge')info=CONFIG.stabCost[k]?'⚖ −'+CONFIG.stabCost[k]:'⚖ 0';
+   return `<button class="arow ${r&&r!=='BUY'?'dim':''}" id="aa-${k}" data-act="act" data-arg="${k}" data-help="${k}"><span class="ai">${CICO[k]}</span><span class="grow"><b>${t('b_'+k)}</b> <span class="muted">${cnt}</span><br><span style="font-size:12px">${r&&r!=='BUY'?'<span class="warn">'+r+'</span>':info}</span></span></button>`};
+  return `<h2><span class="t${a.t}">${pips(a.t)} T${a.t}</span> · ${afShort(a.k)} <span class="muted">(${t(d.s==='p'?'prefixes':'suffixes')})</span></h2><div class="af t${a.t}">${afText(a)}</div><div class="muted">${t('range')} T${a.t}: ${rg[0]}–${rg[1]}${nx?` · ${t('nextT')} T${a.t-1}: ${nx[0]}–${nx[1]}`:''}</div><div style="display:grid;gap:5px;margin:8px 0">${['forge','swap','tannul','lock'].map(row).join('')}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`},
+ omen:()=>`<h2>🔮 ${t('b_omen')}</h2>${S.omen?`<div class="good">${t('omenActive')}: ${t(S.omen)}</div>`:''}${['omenP','omenS','omenF'].map(o=>`<div class="shopi flex"><div class="grow"><b>${t(o)}</b> · ×${S.cur[o]}<div class="muted">${t(o+'D')}</div></div><button class="gold" id="om-${o}" data-act="useOmen" data-arg="${o}" ${S.cur[o]&&S.omen!==o?'':'disabled'}>${t('activate')}</button><button id="ob-${o}" data-act="buyCur" data-arg="${o}:1">+${curCost(o)}🪙</button></div>`).join('')}<button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`
 };
-function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();if(sheet&&SH[sheet]){$('#sheetBox').innerHTML=SH[sheet]();$('#sheet').classList.remove('hidden')}else $('#sheet').classList.add('hidden');updCd()}
+function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();if(sheet&&SH[sheet]){$('#sheetBox').innerHTML=SH[sheet]();$('#sheet').classList.remove('hidden')}else $('#sheet').classList.add('hidden');updCd();applyGuide();paintAll()}
+
 function updCd(){document.querySelectorAll('.cd').forEach(e=>{const u=e.dataset.u,until=u[0]==='b'?(S.bounties[+u.slice(1)]||{}).until:S[u];e.textContent=fmt((until||0)-S.play)})}
-function tick(){if(document.hidden)return;S.play++;let rr=false;
+function tick(){if(document.hidden)return;S.play++;checkSkins();let rr=false;
  if(S.play>=S.marketAt){genMarket();rr=S.tab==='market'}
  if(S.play>=S.trendAt){rotateTrend();toast('🔥 '+t('hot')+': '+afShort(S.hot));rr=true}
  S.bounties.forEach((b,i)=>{if(S.play>=b.until){S.bounties[i]=genBounty();if(S.tab==='bounties')rr=true}});
@@ -476,7 +670,7 @@ function init(){load();if(!S.hot)rotateTrend();if(!S.market.length)genMarket();w
  if(S.login.last!==today){S.login.streak=S.login.last===y?S.login.streak+1:1;S.login.last=today;const g=CONFIG.daily.gold*Math.min(S.login.streak,7);S.gold+=g;S.cur.augment+=CONFIG.daily.aug;S.cur.reroll+=1;S.cur.embers+=CONFIG.daily.embers;
   modal(`<div class="lvl">🎁</div><div class="big">${t('daily')}</div><p style="text-align:center">${t('streak')}: <b>${S.login.streak}</b> 🔥<br>+${g}🪙 · +${CONFIG.daily.aug}💠 · +1🎲 · +${CONFIG.daily.embers}🔆</p>`)}
  render();save();setInterval(tick,1000)}
-window.G={get S(){return S},ACT,render,itemValue,makeItem,save,why};
+window.G={get S(){return S},FR,ACT,render,itemValue,makeItem,save,why};
 init();
 </script>
 </body></html>
