@@ -152,6 +152,27 @@ h2{font-size:16px;margin:4px 0 6px;color:#e8c77a}
 .sprice.done{animation:pop .4s}
 .sprofit{text-align:center;font-size:18px;min-height:24px}
 .skg{display:grid;grid-template-columns:1fr 1fr;gap:6px}.skc{text-align:center;margin:0}.skc.on{border-color:#ffd76a;box-shadow:0 0 10px #ffd76a66}.skc canvas{display:block;margin:0 auto}
+html,body{overflow:hidden}
+nav button{font-size:9.5px}
+.agrid{grid-template-columns:repeat(5,1fr)}
+#vflash{position:fixed;inset:0;pointer-events:none;z-index:24;opacity:0;background:radial-gradient(#f0c0ff,#8a2cffaa 40%,#12001fe6 85%)}
+#vflash.go{animation:flash 1.6s}
+.card.corr{border-color:#a040ff;--rc:#b060ff;box-shadow:0 0 18px #8a2cff,inset 0 0 30px #2a0040;animation:corr 2s infinite alternate}
+@keyframes corr{to{box-shadow:0 0 30px 4px #b040ff,inset 0 0 30px #3a0060}}
+.tagv{color:#d898ff;font-weight:bold;text-shadow:0 0 6px #8a2cff}
+.af.imp{border-color:#8a2cff88;background:#2a0a3acc;color:#e6b8ff}
+.vsw{animation:vsw 1s}
+@keyframes vsw{0%{filter:none}35%{filter:brightness(2.2) saturate(3) hue-rotate(70deg);transform:scale(1.05) rotate(-1deg)}70%{filter:brightness(.4) saturate(2);transform:scale(.97)}100%{filter:none}}
+button.void{background:linear-gradient(#6a2a9a,#2a0838);border-color:#c070ff;color:#f4e0ff;box-shadow:0 0 12px #8a2cff88}
+.ab.vd .ai{filter:drop-shadow(0 0 5px #b040ff)}
+.req{display:inline-block;font-size:11.5px;padding:0 5px;border-radius:5px;margin:1px 2px 1px 0;background:#0008;border:1px solid #6a5232;line-height:18px}
+.req.ok{border-color:#6be36b;color:#8ff08f}.req.no{border-color:#8a3a30}
+.ordc{padding:6px 8px}.ordc .flex{gap:6px}
+.pbar{height:12px}.pbar i{background:linear-gradient(90deg,#7a1aff,#ffd76a)}
+.mrow{display:flex;gap:6px;align-items:center;border:1px solid #4a3b28;border-radius:8px;padding:4px 8px;margin-bottom:5px;background:#0005;font-size:13px}
+.mrow button{min-height:38px}
+.lvg{display:grid;grid-template-columns:1fr 1fr;gap:0 8px;font-size:12px}
+.skg{grid-template-columns:1fr 1fr 1fr}
 </style></head>
 <body>
 <div id="app">
@@ -166,14 +187,14 @@ h2{font-size:16px;margin:4px 0 6px;color:#e8c77a}
 <div id="modal" class="hidden"><div class="box" id="modalBox"></div></div>
 <div id="sellov" class="hidden"></div><div id="toast"></div>
 <canvas id="fx"></canvas>
-<div id="flash"></div>
+<div id="flash"></div><div id="vflash"></div>
 <script>
 'use strict';
 // ================= CONFIG (tuning) =================
 const CONFIG={
  startGold:100,
- startCur:{augment:5,reroll:3,preroll:1,sroll:1,annul:2,tannul:1,swap:1,lock:0,embers:1,omenP:0,omenS:0,omenF:1},
- curCost:{augment:7,reroll:5,preroll:6,sroll:6,annul:6,tannul:14,swap:12,lock:40,omenP:15,omenS:15,omenF:30},
+ startCur:{augment:5,reroll:3,preroll:1,sroll:1,annul:2,tannul:1,swap:1,lock:0,embers:1,omenP:0,omenS:0,omenF:1,void:0},
+ curCost:{augment:7,reroll:5,preroll:6,sroll:6,annul:6,tannul:14,swap:12,lock:40,omenP:15,omenS:15,omenF:30,void:150},
  lockEmbers:1,
  stabCost:{augment:6,reroll:4,preroll:3,sroll:3,annul:3,tannul:5,swap:6,essence:8,lock:0,ember:0},
  forgeGold:3, t1ForgeEmbers:2, emberRestore:15, essenceCost:24,
@@ -183,7 +204,11 @@ const CONFIG={
  sellMul:.95, junkMul:.5, fracMul:.4, pristine:.35, priceFactor:[.8,1.3],
  bountyExact:2.6, bountyPartial:1.3, hotMul:2,
  forgeCost:t=>[4+(5-t)*3,12+(5-t)*6], fractureShare:.88,
- daily:{gold:25,aug:2,embers:1}, repBase:60, saveKey:'affixMerchant.v1'
+ daily:{gold:25,aug:2,embers:1}, repBase:60, saveKey:'affixMerchant.v1',
+ // v4: orders / prestige / void corruption
+ daySec:240, orderBoard:3, orderMul:3.2, orderSkipCost:10, orderSellShare:.5, orderVoidChance:.3,
+ voidLvl:3, corrupt:{good:.35,neutral:.40,brick:.25}, implicitVal:120,
+ prestigeGoal:50000, prestigeGrow:1.6, mpBase:5
 };
 window.CONFIG=CONFIG;
 const AFF=[
@@ -194,15 +219,24 @@ const BASES=[['sword',1],['axe',1],['dagger',1],['bow',2],['staff',3],['wand',4]
 const RAR=[['normal','#c8c8c8'],['magic','#8c8cff'],['rare','#ffff77'],['exalted','#ff9a3c']];
 const NA=['Doom','Storm','Grim','Blood','Dusk','Rune','Ash','Frost','Bane','Dread','Gale','Soul'],NB=['Bite','Song','Edge','Fang','Thirst','Call','Spire','Wail','Mark','Gnash','Reaver','Kiss'];
 const FACES=['🧙','🛡️','🏹','🗡️','👑','🧝','🧔','👩‍🦰','🧛','🤠'],CUSTN=['Marek','Zuzka','Brom','Ilsa','Vlado','Kael','Eva','Tibor','Nyx','Oskar'];
-const CURS=['augment','reroll','preroll','sroll','annul','tannul','swap','lock','omenP','omenS','omenF'];
-const CICO={augment:'💠',reroll:'🎲',preroll:'🎲',sroll:'🎲',annul:'🌀',tannul:'✂️',swap:'🔁',lock:'🔒',embers:'🔆',ember:'🔆',essence:'🧪',forge:'🔥',shop:'🛒',omen:'🔮',omenP:'🔮',omenS:'🔮',omenF:'🔮'};
+const CURS=['augment','reroll','preroll','sroll','annul','tannul','swap','lock','omenP','omenS','omenF','void'];
+const CICO={augment:'💠',reroll:'🎲',preroll:'🎲',sroll:'🎲',annul:'🌀',tannul:'✂️',swap:'🔁',lock:'🔒',embers:'🔆',ember:'🔆',essence:'🧪',forge:'🔥',shop:'🛒',omen:'🔮',omenP:'🔮',omenS:'🔮',omenF:'🔮',void:'🌑',corrupt:'🌑',order:'📋'};
 const CTAG={preroll:'P',sroll:'S'};
-const ACTS={augment:{cur:'augment'},reroll:{cur:'reroll'},preroll:{cur:'preroll'},sroll:{cur:'sroll'},annul:{cur:'annul'},tannul:{cur:'tannul',sel:1},swap:{cur:'swap',sel:1},essence:{},forge:{sel:1},lock:{cur:'lock',sel:1},ember:{cur:'embers'},shop:{},omen:{}};
+const ACTS={augment:{cur:'augment'},reroll:{cur:'reroll'},preroll:{cur:'preroll'},sroll:{cur:'sroll'},annul:{cur:'annul'},tannul:{cur:'tannul',sel:1},swap:{cur:'swap',sel:1},essence:{},forge:{sel:1},lock:{cur:'lock',sel:1},ember:{cur:'embers'},shop:{},omen:{},corrupt:{cur:'void'},order:{}};
+const CURLV={lock:'lockLvl',void:'voidLvl'};
+const MUPS=[{k:'mstab',max:5},{k:'mcheap',max:5},{k:'mbuy',max:5},{k:'msell',max:5},{k:'morder',max:5},{k:'mgold',max:5},{k:'mvoid',max:3}];
 const AORDER=['augment','reroll','preroll','sroll','annul','tannul','swap','essence','forge','lock','ember','shop'];
 const UPS=[{k:'stall',max:4,cost:l=>60*2**l,req:l=>l+1},{k:'stab',max:5,cost:l=>50*2**l,req:l=>l+1},{k:'haggle',max:5,cost:l=>40*2**l,req:l=>l+2},{k:'tongue',max:5,cost:l=>70*2**l,req:l=>l+2}];
 const QPOOL=['sell','t1','forge','bounty','salvage','rare','crafts','profit'];
 const I18N={
-sk:{b_augment:'Pridať afix',b_reroll:'Prehodiť všetko',b_preroll:'Prehodiť prefixy',b_sroll:'Prehodiť sufixy',b_annul:'Zrušiť náhodný',b_essence:'Esencia (cielene)',b_ember:'Obnoviť stabilitu',b_omen:'Znamenie',b_forge:'Vyhňa – zvýšiť tier',b_swap:'Vymeniť afix',b_tannul:'Vystrihnúť afix',b_lock:'Zamknúť afix',
+sk:{orders:'Objednávky',ordInfo:'Zákazník chce presnú zbraň. Splň VŠETKY požiadavky do termínu → veľká odmena + reputácia.',day:'Deň',dLeft:'ešte {n} d.',dToday:'posledný deň!',tierReq:'T{t}+',ordReward:'Odmena',ordNone:'Nemáš zbraň, ktorá spĺňa všetko',ordNext:'Ďalšia objednávka príde na začiatku nového dňa',ordExp:'⌛ Objednávka vypršala',ordNew:'📋 Nový deň – nové objednávky!',bd_order:'Odmena objednávky',b_order:'Objednávka',h_order:'Ak vybraný predmet spĺňa objednávku, ťukni a odovzdaj ho za veľkú odmenu. Inak ťa prenesie na Objednávky.',ordT:'📋 OBJEDNÁVKA',ordBonus:'+50 % predajnej ceny zbrane',ordHint:'„T3+“ = afix musí byť T3, T2 alebo T1 (T1 je najlepší). ✔ = spĺňa tvoja zbraň.',
+void:'Esencia prázdnoty',voidD:'Korupcia: veľké zlepšenie, zmena hodnôt alebo ZNIČENIE predmetu. Potom sa už nedá upravovať.',b_corrupt:'Korupcia',h_corrupt:'Jednorazová, nevratná akcia s Esenciou prázdnoty (🌑, obchod / objednávky). Výsledok: veľké zlepšenie, zmena alebo zničenie predmetu.',
+corrupted:'KORUMPOVANÝ',corrShort:'🌑 Korumpovaný – už sa nedá upravovať. Predaj ho alebo odovzdaj.',alreadyCorr:'Už je korumpovaný.',corrT:'VOID KORUPCIA',corrQ:'Jednorazová a <b>NEVRATNÁ</b> akcia. Potom sa predmet už <b>nedá upravovať</b>.',cGood:'Veľké zlepšenie (tier / afix navyše / implicit / cena ×2)',cNeu:'Zmena hodnôt afixov',cBad:'Predmet sa ZNIČÍ',corrYes:'🌑 Korumpovať',
+c_tier:'Afix prekročil hranice: +1 tier!',c_affix:'Prázdnota pridala afix navyše!',c_imp:'Získal implicitný afix!',c_price:'Prekliata krása: cena ×2!',c_neu:'Prázdnota prehodila hodnoty afixov.',c_bad:'Prázdnota pohltila predmet…',implicit:'Implicit',bd_imp:'🌑 Implicitný afix',bd_corr:'🌑 Korupcia ×2',
+prestige:'Prestíž',presD:'Zarob cieľové zlato, predaj obchod a začni odznova s Majstrovskými bodmi (MB) na trvalé vylepšenia.',life:'Zarobené zlato',presBtn:'👑 Predať obchod',presLock:'Ešte {g}🪙',mp:'Majstrovské body',mpS:'MB',master:'⭐ Majstrovské vylepšenia',presQ:'Predať obchod a začať odznova?',presKeep:'✅ Ostáva: Majstrovské body a vylepšenia, kódex, vzhľady, Sieň slávy, štatistiky.',presLose:'❌ Stratíš: zlato, predmety, meny, úroveň a Rozvoj.',presYes:'👑 Áno, predať',presDone:'NOVÝ ZAČIATOK!',presGot:'Získal si {n} MB. Míňaj ich v Rozvoji → Majstrovské vylepšenia.',mpCost:'{n} MB',
+m_mstab:'Majstrovská stabilita',m_mstabD:'+6 % stability nových predmetov',m_mcheap:'Lacnejšie kamene',m_mcheapD:'Meny a esencie −6 %',m_mbuy:'Lepšie ponuky',m_mbuyD:'Nákup na trhu −4 %',m_msell:'Slávne meno',m_msellD:'Predaj +4 %',m_morder:'Cechové kontakty',m_morderD:'Odmeny objednávok +12 %',m_mgold:'Dedičstvo',m_mgoldD:'+200 🪙 na štart behu',m_mvoid:'Pakt s prázdnotou',m_mvoidD:'Korupcia: zničenie −4 %, zlepšenie +4 %',
+skinsBtn:'🎨 Vzhľady',hofBtn:'👑 Sieň slávy a štatistiky',
+b_augment:'Pridať afix',b_reroll:'Prehodiť všetko',b_preroll:'Prehodiť prefixy',b_sroll:'Prehodiť sufixy',b_annul:'Zrušiť náhodný',b_essence:'Esencia (cielene)',b_ember:'Obnoviť stabilitu',b_omen:'Znamenie',b_forge:'Vyhňa – zvýšiť tier',b_swap:'Vymeniť afix',b_tannul:'Vystrihnúť afix',b_lock:'Zamknúť afix',
 prefixes:'Prefixy',suffixes:'Sufixy',omenP:'Znamenie prefixu',omenS:'Znamenie sufixu',omenF:'Znamenie istoty',omenPD:'Ďalšie „Pridať afix“ pridá určite PREFIX.',omenSD:'Ďalšie „Pridať afix“ pridá určite SUFIX.',omenFD:'Ďalšie kovanie: pri neúspechu predmet nepraskne ani sa nerozbije (len stratí stabilitu).',
 omenActive:'Aktívne znamenie',activate:'Aktivovať',omenFull:'Na strane znamenia nie je miesto.',omenSaved:'🔮 Znamenie istoty zachránilo predmet!',
 lp:'Legendárny potenciál',collection:'Zbierka',skins:'Vzhľady zbraní',equip:'Použiť',equipped:'Používaš',sk_default:'Klasický',sk_obsidian:'Obsidián',sk_bone:'Pradávna kosť',sk_celestial:'Nebeský',sk_void:'Prázdnota',
@@ -243,8 +277,15 @@ market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Roz
 <p><b>Afixy:</b> max. <b>3 prefixy (P)</b> – poškodenie, a <b>3 sufixy (S)</b> – rýchlosť, kritické zásahy, odolnosti. Tiery <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1</span>. <b>ilvl</b> určuje najvyšší možný tier.</p>
 <p><b>⚖ Stabilita = rozpočet predmetu.</b> KAŽDÁ úprava ju míňa (cena je modrou na tlačidle vpravo hore). Na 0 je predmet <b>zapečatený</b>. Zvyšná stabilita zvyšuje predajnú cenu (nedotknutosť) a niektorí zákazníci ju vyžadujú.</p>
 <p><b>Akcie:</b> 💠 pridá afix · 🎲 prehodí hodnoty (P/S len prefixy/sufixy) · 🌀 zruší náhodný · ✂️ zruší vybraný · 🔁 vymení vybraný · 🧪 pridá konkrétny afix · 🔥 Vyhňa zvýši tier (riziko prasknutia) · 🔒 zamkne afix.</p>
-<p><b>♻ Rozobratie</b> dá <b>🔆 uhlíky</b> (nedajú sa kúpiť): obnovia stabilitu, treba ich na T1 kovanie a Runu zámku. Smeť a prasknuté predmety sa oplatí rozobrať – predaj dá málo.</p><p><b>Ovládanie:</b> ťukni na afix na karte → Vyhňa, Výmena, Vystrihnutie, Zámok. Spodná lišta = akcie pre celý predmet. <b>Podrž</b> tlačidlo = vysvetlenie. 🔮 Znamenie zmení ďalšiu úpravu. ✦ Legendárny potenciál = +1 miesto na afix. Živly (oheň, mráz, blesk, chaos) rozžiaria zbraň efektmi. 🎨 Zbierka = nové vzhľady zbraní.</p>`},
-en:{b_augment:'Add affix',b_reroll:'Reroll all',b_preroll:'Reroll prefixes',b_sroll:'Reroll suffixes',b_annul:'Annul random',b_essence:'Essence (targeted)',b_ember:'Restore stability',b_omen:'Omen',b_forge:'Forge – raise tier',b_swap:'Swap affix',b_tannul:'Excise affix',b_lock:'Lock affix',
+<p><b>♻ Rozobratie</b> dá <b>🔆 uhlíky</b> (nedajú sa kúpiť): obnovia stabilitu, treba ich na T1 kovanie a Runu zámku. Smeť a prasknuté predmety sa oplatí rozobrať – predaj dá málo.</p><p><b>Ovládanie:</b> ťukni na afix na karte → Vyhňa, Výmena, Vystrihnutie, Zámok. Spodná lišta = akcie pre celý predmet. <b>Podrž</b> tlačidlo = vysvetlenie. 🔮 Znamenie zmení ďalšiu úpravu. ✦ Legendárny potenciál = +1 miesto na afix. Živly (oheň, mráz, blesk, chaos) rozžiaria zbraň efektmi. 🎨 Zbierka = nové vzhľady zbraní.</p><p><b>📋 Objednávky:</b> zákazníci chcú konkrétnu zbraň (druh, afixy, tier) do termínu (1 deň = 4 min.) – veľká odmena. <b>🌑 Korupcia:</b> riskantná jednorazová akcia – zlepšenie alebo zničenie. <b>👑 Prestíž:</b> po dosiahnutí cieľa predaj obchod a získaj trvalé Majstrovské body (Rozvoj).</p>`},
+en:{orders:'Orders',ordInfo:'A customer wants an exact weapon. Meet ALL requirements before the deadline → big reward + reputation.',day:'Day',dLeft:'{n} d left',dToday:'last day!',tierReq:'T{t}+',ordReward:'Reward',ordNone:'None of your weapons meet everything',ordNext:'A new order arrives at the start of the next day',ordExp:'⌛ An order expired',ordNew:'📋 New day – new orders!',bd_order:'Order reward',b_order:'Order',h_order:'If the selected item fulfils an order, tap to deliver it for a big reward. Otherwise it opens Orders.',ordT:'📋 ORDER',ordBonus:'+50% of the weapon\'s sell price',ordHint:'"T3+" = the affix must be T3, T2 or T1 (T1 is best). ✔ = your weapon meets it.',
+void:'Void Essence',voidD:'Corruption: big boost, value change or the item is DESTROYED. No crafting afterwards.',b_corrupt:'Corrupt',h_corrupt:'One-time, irreversible action using a Void Essence (🌑, shop / orders). Outcome: big boost, change, or the item is destroyed.',
+corrupted:'CORRUPTED',corrShort:'🌑 Corrupted – cannot be crafted any more. Sell or deliver it.',alreadyCorr:'Already corrupted.',corrT:'VOID CORRUPTION',corrQ:'One-time and <b>IRREVERSIBLE</b>. Afterwards the item <b>cannot be crafted</b>.',cGood:'Big boost (tier / extra affix / implicit / price ×2)',cNeu:'Affix values change',cBad:'Item is DESTROYED',corrYes:'🌑 Corrupt',
+c_tier:'An affix broke its limits: +1 tier!',c_affix:'The Void added an extra affix!',c_imp:'Gained an implicit affix!',c_price:'Cursed beauty: price ×2!',c_neu:'The Void rerolled the affix values.',c_bad:'The Void consumed the item…',implicit:'Implicit',bd_imp:'🌑 Implicit affix',bd_corr:'🌑 Corruption ×2',
+prestige:'Prestige',presD:'Earn the goal gold, sell the shop and restart with Master points (MP) for permanent upgrades.',life:'Gold earned',presBtn:'👑 Sell the shop',presLock:'{g}🪙 to go',mp:'Master points',mpS:'MP',master:'⭐ Master upgrades',presQ:'Sell the shop and start over?',presKeep:'✅ Kept: Master points & upgrades, codex, skins, Hall of Fame, stats.',presLose:'❌ Lost: gold, items, currencies, level and Upgrades.',presYes:'👑 Yes, sell',presDone:'A NEW BEGINNING!',presGot:'You earned {n} MP. Spend them in Upgrades → Master upgrades.',mpCost:'{n} MP',
+m_mstab:'Master stability',m_mstabD:'+6% stability on new items',m_mcheap:'Cheaper stones',m_mcheapD:'Currencies & essences −6%',m_mbuy:'Better offers',m_mbuyD:'Market buy −4%',m_msell:'Famous name',m_msellD:'Sell +4%',m_morder:'Guild contacts',m_morderD:'Order rewards +12%',m_mgold:'Inheritance',m_mgoldD:'+200 🪙 at run start',m_mvoid:'Void pact',m_mvoidD:'Corruption: destroy −4%, boost +4%',
+skinsBtn:'🎨 Skins',hofBtn:'👑 Hall of Fame & stats',
+b_augment:'Add affix',b_reroll:'Reroll all',b_preroll:'Reroll prefixes',b_sroll:'Reroll suffixes',b_annul:'Annul random',b_essence:'Essence (targeted)',b_ember:'Restore stability',b_omen:'Omen',b_forge:'Forge – raise tier',b_swap:'Swap affix',b_tannul:'Excise affix',b_lock:'Lock affix',
 prefixes:'Prefixes',suffixes:'Suffixes',omenP:'Omen of the Prefix',omenS:'Omen of the Suffix',omenF:'Omen of Certainty',omenPD:'Next "Add affix" always adds a PREFIX.',omenSD:'Next "Add affix" always adds a SUFFIX.',omenFD:'Next forge: on failure the item does not fracture or shatter (only loses stability).',
 omenActive:'Active omen',activate:'Activate',omenFull:'No room on the omen\'s side.',omenSaved:'🔮 Omen of Certainty saved the item!',
 lp:'Legendary Potential',collection:'Collection',skins:'Weapon skins',equip:'Equip',equipped:'Equipped',sk_default:'Classic',sk_obsidian:'Obsidian',sk_bone:'Ancient Bone',sk_celestial:'Celestial',sk_void:'Void',
@@ -285,7 +326,7 @@ market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'
 <p><b>Affixes:</b> up to <b>3 prefixes (P)</b> – damage, and <b>3 suffixes (S)</b> – speed, crits, resistances. Tiers <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1</span>. <b>ilvl</b> limits the best tier.</p>
 <p><b>⚖ Stability = the item's crafting budget.</b> EVERY craft spends it (blue cost, top-right of each button). At 0 the item is <b>sealed</b>. Leftover stability raises the sale price (pristine bonus) and some customers require it.</p>
 <p><b>Actions:</b> 💠 add affix · 🎲 reroll values (P/S prefixes/suffixes only) · 🌀 annul random · ✂️ remove chosen · 🔁 swap chosen · 🧪 add a specific affix · 🔥 Forge raises tier (fracture risk) · 🔒 lock affix.</p>
-<p><b>♻ Salvage</b> gives <b>🔆 Embers</b> (can't be bought): restore stability, needed for T1 forging and Lock Runes. Junk and fractured items are worth salvaging – selling them pays little.</p><p><b>Controls:</b> tap an affix on the card → Forge, Swap, Excise, Lock. The bottom bar = whole-item actions. <b>Hold</b> any button = explanation. 🔮 Omens change your next craft. ✦ Legendary Potential = +1 affix slot. Elements (fire, cold, lightning, chaos) light up the weapon. 🎨 Collection = new weapon skins.</p>`}};
+<p><b>♻ Salvage</b> gives <b>🔆 Embers</b> (can't be bought): restore stability, needed for T1 forging and Lock Runes. Junk and fractured items are worth salvaging – selling them pays little.</p><p><b>Controls:</b> tap an affix on the card → Forge, Swap, Excise, Lock. The bottom bar = whole-item actions. <b>Hold</b> any button = explanation. 🔮 Omens change your next craft. ✦ Legendary Potential = +1 affix slot. Elements (fire, cold, lightning, chaos) light up the weapon. 🎨 Collection = new weapon skins.</p><p><b>📋 Orders:</b> customers want a specific weapon (type, affixes, tier) before a deadline (1 day = 4 min) – big reward. <b>🌑 Corruption:</b> risky one-time action – boost or destruction. <b>👑 Prestige:</b> reach the goal, sell the shop and earn permanent Master points (Upgrades).</p>`}};
 const AT={sk:{pphys:['+{v}% fyzického poškodenia','Fyz. %'],fphys:['+{v} fyzického poškodenia','Fyz. plošné'],ffire:['+{v} ohnivého poškodenia','Oheň'],fcold:['+{v} mrazivého poškodenia','Mráz'],flight:['+{v} bleskového poškodenia','Blesk'],pele:['+{v}% elementálneho poškodenia','Element %'],aspd:['+{v}% rýchlosti útoku','Rýchl. útoku'],crit:['+{v}% šance na kritický zásah','Krit. šanca'],cmult:['+{v}% kritického násobiča','Krit. násobič'],rfire:['+{v}% odolnosti voči ohňu','Odol. oheň'],rcold:['+{v}% odolnosti voči mrazu','Odol. mráz'],rlight:['+{v}% odolnosti voči blesku','Odol. blesk'],cspd:['+{v}% rýchlosti kúzlenia','Rýchl. kúzlenia'],fchaos:['+{v} chaotického poškodenia','Chaos']},
 en:{pphys:['+{v}% Physical Damage','Phys %'],fphys:['+{v} Physical Damage','Flat Phys'],ffire:['+{v} Fire Damage','Fire'],fcold:['+{v} Cold Damage','Cold'],flight:['+{v} Lightning Damage','Lightning'],pele:['+{v}% Elemental Damage','Elemental %'],aspd:['+{v}% Attack Speed','Attack Speed'],crit:['+{v}% Critical Chance','Crit Chance'],cmult:['+{v}% Critical Multiplier','Crit Multi'],rfire:['+{v}% Fire Resistance','Fire Res'],rcold:['+{v}% Cold Resistance','Cold Res'],rlight:['+{v}% Lightning Resistance','Lightning Res'],cspd:['+{v}% Cast Speed','Cast Speed'],fchaos:['+{v} Chaos Damage','Chaos']}};
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.en[k]||k;
@@ -304,6 +345,7 @@ const SND={click:()=>tone(620,.05,'square',.03),tick:()=>tone(1200+R()*400,.03,'
  fail:()=>{tone(180,.5,'sawtooth',.12,0,70);noise(.3,.15)},
  jackpot:()=>[523,659,784,1047,1319,1568].forEach((f,i)=>tone(f,.3,'square',.07,i*.08)),
  shatter:()=>{noise(.8,.35);tone(90,.8,'sawtooth',.13,0,40)},salvage:()=>{noise(.25,.2);tone(300,.3,'triangle',.12,.05,900)},
+ void:()=>{tone(220,1.3,'sawtooth',.1,0,40);tone(55,1.6,'sine',.25,0,30);tone(880,.6,'triangle',.05,.2,110);noise(1,.18)},
  lvl:()=>[392,523,659,784,1047].forEach((f,i)=>{tone(f,.35,'triangle',.12,i*.11);tone(f*1.5,.3,'sine',.05,i*.11)})};
 const cv=$('#fx'),cx=cv.getContext('2d');let parts=[],fxOn=false;
 function resize(){cv.width=innerWidth;cv.height=innerHeight}addEventListener('resize',resize);resize();
@@ -326,11 +368,11 @@ function icon(b){const P={
  wand:'<path d="M13 53 L37 29" stroke="#d8cbb0" stroke-width="4" stroke-linecap="round"/><path d="M13 53 L20 46" stroke="url(#gd)" stroke-width="5" stroke-linecap="round"/><path d="M44 9 L47.5 19 L57 22 L47.5 25 L44 35 L40.5 25 L31 22 L40.5 19Z" fill="url(#gd)"/><circle cx="44" cy="22" r="2.5" fill="#fff"/>'};
  return `<svg viewBox="0 0 64 64">${GR}${P[b]}</svg>`}
 let S;
-function fresh(){return{v:3,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],quests:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0,salvaged:0,quests:0},login:{last:'',streak:0},tut:false,nid:1,helpAt:0,guide:0,skin:'default',skins:{default:1},omen:null}}
+function fresh(){return{v:4,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],quests:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0,salvaged:0,quests:0},login:{last:'',streak:0},tut:false,nid:1,helpAt:0,guide:0,skin:'default',skins:{default:1},omen:null,day:1,dayAt:0,orders:[],life:0,pres:0,mp:0,mup:{mstab:0,mcheap:0,mbuy:0,msell:0,morder:0,mgold:0,mvoid:0}}}
 function save(){try{localStorage.setItem(CONFIG.saveKey,JSON.stringify(S))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&(d.v>=1&&d.v<=3)){S=Object.assign(fresh(),d);
+function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&(d.v>=1&&d.v<=4)){S=Object.assign(fresh(),d);
   for(const k in CONFIG.startCur)if(S.cur[k]==null)S.cur[k]=CONFIG.startCur[k];
-  if(d.v===1){S.cur.embers+=Math.floor((d.shards||0)/5);delete S.shards;S.v=2}if(S.v<3){S.guide=S.stats.sold>0?3:0;S.v=3}S.stats=Object.assign(fresh().stats,S.stats);S.skins=S.skins||{default:1};if(!SKINS.hasOwnProperty(S.skin))S.skin='default';
+  if(d.v===1){S.cur.embers+=Math.floor((d.shards||0)/5);delete S.shards;S.v=2}if(S.v<3){S.guide=S.stats.sold>0?3:0;S.v=3}if(S.v<4){S.life=Math.max(0,S.stats.profit||0);S.v=4}S.mup=Object.assign(fresh().mup,S.mup);if(!Array.isArray(S.orders))S.orders=[];if(S.tab==='collection')S.tab='codex';S.stats=Object.assign(fresh().stats,S.stats);S.skins=S.skins||{default:1};if(!SKINS.hasOwnProperty(S.skin))S.skin='default';
   S.items.concat(S.market).forEach(it=>{if(!it.stab0)it.stab0=Math.max(it.stab,40)});S.bounties.forEach(b=>{if(b.minStab==null)b.minStab=0});return true}}catch(e){}S=fresh();return false}
 const all=it=>[...it.p,...it.s];
 const rarity=it=>{const n=it.unid?3:all(it).length;return n===0?0:n<=2?1:n<=5?2:3};
@@ -343,19 +385,21 @@ const unlockedBases=()=>BASES.filter(b=>b[1]<=S.lvl).map(b=>b[0]);
 const rowDone=k=>[1,2,3,4,5].every(x=>S.codex[k+x]);
 const codexRows=()=>AFF.filter(a=>rowDone(a.k)).length;
 const pageDone=s=>AFF.filter(a=>a.s===s).every(a=>rowDone(a.k));
-const curCost=c=>Math.round(CONFIG.curCost[c]*(pageDone('p')?.8:1));
+const curCost=c=>Math.round(CONFIG.curCost[c]*(pageDone('p')?.8:1)*(1-.06*S.mup.mcheap));
+const essCost=()=>Math.round(CONFIG.essenceCost*(1-.06*S.mup.mcheap));
 const stabBonus=()=>codexRows()*2+S.up.stab*8;
-const sellBonus=()=>1+S.up.tongue*.04+(pageDone('s')?.1:0);
-const buyMul=()=>1-S.up.haggle*.04;
+const sellBonus=()=>1+S.up.tongue*.04+S.mup.msell*.04+(pageDone('s')?.1:0);
+const buyMul=()=>1-S.up.haggle*.04-S.mup.mbuy*.04;
 const needXp=l=>Math.round(CONFIG.repBase*Math.pow(l,1.6));
 function rollTier(il,boost){const m=maxTier(il),w={};for(let x=5;x>=m;x--)w[x]=CONFIG.rollW[x]*(boost&&x<=3?3:1);return+wpick(w)}
 function addAffix(it,boost,force){const cap=3+(it.lp||0);if(all(it).length>=6+(it.lp||0))return null;const sides=[];if(it.p.length<cap)sides.push('p');if(it.s.length<cap)sides.push('s');if(!sides.length)return null;const side=force&&sides.includes(force)?force:pick(sides);
  const used=new Set(all(it).map(a=>a.k));const a=pick(AFF.filter(x=>x.s===side&&!used.has(x.k)));const tr=rollTier(it.ilvl,boost),q=R();const af={k:a.k,t:tr,q,v:rollVal(a,tr,q),lock:false};it[side].push(af);return af}
-function makeItem(il,n,boost){const it={id:S.nid++,base:pick(unlockedBases()),ilvl:il,p:[],s:[],stab:0,frac:false,cost:0,name:pick(NA)+' '+pick(NB)};it.stab=it.stab0=ri(...CONFIG.baseStab)+stabBonus();for(let i=0;i<n;i++)addAffix(it,boost);return it}
+function makeItem(il,n,boost){const it={id:S.nid++,base:pick(unlockedBases()),ilvl:il,p:[],s:[],stab:0,frac:false,cost:0,name:pick(NA)+' '+pick(NB)};it.stab=it.stab0=Math.round((ri(...CONFIG.baseStab)+stabBonus())*(1+.06*S.mup.mstab));for(let i=0;i<n;i++)addAffix(it,boost);return it}
+const impVal=it=>CONFIG.implicitVal*(.7+.6*it.imp.q);
 const affVal=a=>CONFIG.tierW[a.t]*(S.demand[a.k]||1)*(.7+.6*a.q)*(S.hot===a.k?CONFIG.hotMul:1);
 const isJunk=it=>all(it).length<=1||it.frac;
-function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=affVal(a);if(A.length>=6)v*=1.3;else if(A.length>=4)v*=1.1;
- v*=1+CONFIG.pristine*Math.max(0,it.stab)/Math.max(1,it.stab0);if(it.lp)v*=1+.15*it.lp;if(it.frac)v*=CONFIG.fracMul;else if(A.length<=1)v*=CONFIG.junkMul;return Math.max(1,Math.round(v))}
+function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=affVal(a);if(it.imp)v+=impVal(it);if(A.length>=6)v*=1.3;else if(A.length>=4)v*=1.1;
+ v*=1+CONFIG.pristine*Math.max(0,it.stab)/Math.max(1,it.stab0);if(it.lp)v*=1+.15*it.lp;if(it.cmul)v*=it.cmul;if(it.frac)v*=CONFIG.fracMul;else if(A.length<=1)v*=CONFIG.junkMul;return Math.max(1,Math.round(v))}
 const sellPrice=it=>Math.round(itemValue(it)*CONFIG.sellMul*sellBonus());
 const buyPrice=it=>Math.max(1,Math.round(itemValue(it)*it.pf*buyMul()));
 const salvageN=it=>1+Math.floor(all(it).length/2)+(it.frac?2:0)+(!it.frac&&it.stab<=0?1:0);
@@ -367,6 +411,27 @@ function bMatch(b,it){if(!it||it.unid)return{m:0,hit:0};const ks=all(it).map(a=>
  if(hit===b.keys.length&&it.ilvl>=b.minIlvl&&it.stab>=b.minStab)return{m:2,hit,pay:Math.round(v*CONFIG.bountyExact+20+b.bonus)};if(hit>0)return{m:1,hit,pay:Math.round(v*CONFIG.bountyPartial)};return{m:0,hit}}
 function genQuest(){const ex=S.quests.filter(Boolean).map(q=>q.k);let k;do k=pick(QPOOL);while(ex.includes(k));const L=S.lvl;
  const n={sell:Math.round((50+L*50)/10)*10,t1:1,forge:2+L,bounty:1,salvage:2,rare:4,crafts:8+L*2,profit:80+L*60}[k];return{k,n,p:0,g:25+L*15,c:pick(['augment','reroll','swap','tannul','sroll']),cn:2,e:k==='forge'||k==='t1'?1:0}}
+// ---- v4: ORDERS ----
+const ELK=['ffire','fcold','flight','fchaos'];
+const fmtN=n=>n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e4?(n/1e3).toFixed(1)+'k':''+n;
+function genOrder(){const L=S.lvl,nk=L>=4?ri(2,3):L>=2?2:ri(1,2),keys=[];if(R()<.55)keys.push(pick(ELK));
+ while(keys.length<nk){const k=pick(AFF).k;if(!keys.includes(k))keys.push(k)}
+ const mt=maxTier(marketMax()),tier=Math.min(5,mt+ +wpick({0:2,1:4,2:3}));
+ const est=keys.length*CONFIG.tierW[tier]*1.3+20+marketMax()*.4,reward=Math.round((est*CONFIG.orderMul+40)*(1+.1*(keys.length-1))*(1+.12*S.mup.morder)/5)*5;
+ return{id:S.nid++,face:pick(FACES),name:pick(CUSTN),base:pick(unlockedBases()),keys,tier,reward,rep:Math.round(reward*.4)+10,vd:R()<CONFIG.orderVoidChance?1:0,until:S.day+ri(1,3)}}
+function fillOrders(){while(S.orders.length<CONFIG.orderBoard)S.orders.push(genOrder())}
+function oMatch(o,it){if(!o||!it||it.unid||it.frac)return null;const A=all(it),keys=o.keys.map(k=>{const a=A.find(x=>x.k===k);return!!a&&a.t<=o.tier}),base=it.base===o.base;return{base,keys,ok:base&&keys.every(Boolean)}}
+const ordFor=it=>S.orders.findIndex(o=>{const m=oMatch(o,it);return m&&m.ok});
+function ordItem(o){if(oMatch(o,cur())?.ok)return S.sel;return S.items.findIndex(x=>oMatch(o,x)?.ok)}
+const orderPay=(o,it)=>o.reward+Math.round(sellPrice(it)*CONFIG.orderSellShare);
+function newDay(){S.day++;S.dayAt+=CONFIG.daySec;const n=S.orders.length;S.orders=S.orders.filter(o=>o.until>=S.day);if(S.orders.length<n)toast(t('ordExp'));fillOrders();toast(t('ordNew'));SND.tierup()}
+function earn(g){S.gold+=g;S.life+=g}
+// ---- v4: PRESTIGE ----
+const presGoal=()=>Math.round(CONFIG.prestigeGoal*Math.pow(CONFIG.prestigeGrow,S.pres)/1000)*1000;
+const mpGain=()=>S.life>=presGoal()?Math.floor(CONFIG.mpBase*Math.sqrt(S.life/presGoal())):0;
+const presPct=()=>Math.min(1,S.life/presGoal());
+// ---- v4: VOID ----
+function corrOdds(){const m=S.mup.mvoid*.04,c=CONFIG.corrupt;return{g:c.good+m,n:c.neutral,b:Math.max(0,c.brick-m)}}
 function qp(k,v,max){S.quests.forEach(q=>{if(!q||q.k!==k||q.p>=q.n)return;if(max){if(k==='sell'){if(v>=q.n)q.p=q.n}else q.p=Math.max(q.p,Math.min(v,q.n))}else q.p+=v;if(q.p>=q.n){q.p=q.n;toast('🎯 '+t('qDone'));SND.tierup()}})}
 function discover(a){if(!a)return;const key=a.k+a.t;if(S.codex[key])return;const rb=rowDone(a.k),pp=pageDone('p'),ps=pageDone('s');S.codex[key]=1;toast('📖 '+t('newCx')+': <span class="t'+a.t+'">'+afShort(a.k)+' T'+a.t+'</span>');
  if(!rb&&rowDone(a.k))toast('✨ '+t('rowB'));if(!pp&&pageDone('p'))toast('✨ '+t('pageP'));if(!ps&&pageDone('s'))toast('✨ '+t('pageS'))}
@@ -380,7 +445,9 @@ function getSelAff(it){if(!S.selAff||!it)return null;return it[S.selAff[0]][+S.s
 const idOf=(it,a)=>{let i=it.p.indexOf(a);if(i>=0)return'p'+i;i=it.s.indexOf(a);return i>=0?'s'+i:null};
 function forgeOdds(it,a){const[l,h]=CONFIG.forgeCost(a.t),ps=Math.max(0,Math.min(1,(it.stab-l+1)/(h-l+1))),pf=(1-ps)*CONFIG.fractureShare;return{l,h,ps,pf,ph:(1-ps)-pf}}
 const ilvlTxt=(it,sa)=>t('ilvlShort').replace('{i}',it.ilvl).replace('{m}',maxTier(it.ilvl)).replace('{n}',sa.t-1).replace('{r}',CONFIG.tierIlvl[sa.t-1]);
-function why(a){if(a==='shop'||a==='omen')return'';const it=cur();if(!it)return t('noItem');if(it.unid)return t('needId');if(it.frac)return t('fracShort');
+function why(a){if(a==='shop'||a==='omen'||a==='order')return'';const it=cur();if(!it)return t('noItem');if(it.unid)return t('needId');if(it.frac)return t('fracShort');
+ if(it.corr)return a==='corrupt'?t('alreadyCorr'):t('corrShort');
+ if(a==='corrupt'){if(S.lvl<CONFIG.voidLvl)return t('unlockAt')+' '+CONFIG.voidLvl;if(S.cur.void<1)return'BUY';return''}
  const A=all(it),sa=getSelAff(it),d=ACTS[a];
  if(a==='ember'){if(S.cur.embers<1)return t('noEmbers');if(it.stab>=it.stab0)return t('stabFull');return''}
  if(it.stab<=0)return t('sealedShort');
@@ -395,7 +462,7 @@ function why(a){if(a==='shop'||a==='omen')return'';const it=cur();if(!it)return 
  if(a==='sroll'&&!it.s.some(free))return t('nothing');
  if((a==='tannul'||a==='swap'||a==='lock')&&sa.lock)return t('isLocked');
  if(a==='swap'&&!AFF.some(x=>x.s===AFM[sa.k].s&&!A.some(y=>y.k===x.k)))return t('nothing');
- if(a==='essence'&&S.gold<CONFIG.essenceCost)return t('needGold')+' '+(CONFIG.essenceCost-S.gold)+'🪙';
+ if(a==='essence'&&S.gold<essCost())return t('needGold')+' '+(essCost()-S.gold)+'🪙';
  if(a==='forge'){if(sa.t===1)return t('maxTier');if(maxTier(it.ilvl)>sa.t-1)return ilvlTxt(it,sa);if(sa.t===2&&S.cur.embers<CONFIG.t1ForgeEmbers)return t('needEmbers')+'×'+CONFIG.t1ForgeEmbers;if(S.gold<CONFIG.forgeGold)return t('noGold')}
  return''}
 let sheet=null;
@@ -490,14 +557,14 @@ let sellView=null;
 function sellBreak(it){const A=all(it),L=[];let v=5+it.ilvl*.4;L.push([t('bd_base'),v]);const byT={};
  A.forEach(a=>{const raw=affVal(a)/(S.hot===a.k?CONFIG.hotMul:1);byT[a.t]=byT[a.t]||{n:0,v:0};byT[a.t].n++;byT[a.t].v+=raw});
  [1,2,3,4,5].forEach(x=>{if(byT[x]){L.push([`<span class="t${x}">${pips(x)}</span> `+t('bd_aff').replace('{t}',x).replace('{n}',byT[x].n),byT[x].v]);v+=byT[x].v}});
- const hot=A.filter(a=>S.hot===a.k).reduce((s,a)=>s+affVal(a)*(1-1/CONFIG.hotMul),0);if(hot){L.push(['🔥 '+t('bd_hot'),hot]);v+=hot}
+ if(it.imp){const iv=impVal(it);L.push([t('bd_imp'),iv]);v+=iv}const hot=A.filter(a=>S.hot===a.k).reduce((s,a)=>s+affVal(a)*(1-1/CONFIG.hotMul),0);if(hot){L.push(['🔥 '+t('bd_hot'),hot]);v+=hot}
  const cm=A.length>=6?1.3:A.length>=4?1.1:1;if(cm>1){L.push([t('bd_count'),v*(cm-1)]);v*=cm}
  const pm=1+CONFIG.pristine*Math.max(0,it.stab)/Math.max(1,it.stab0);if(pm>1.001){L.push(['⚖ '+t('bd_pristine'),v*(pm-1)]);v*=pm}
- if(it.lp){L.push(['✦ '+t('bd_lp'),v*.15*it.lp]);v*=1+.15*it.lp}
+ if(it.lp){L.push(['✦ '+t('bd_lp'),v*.15*it.lp]);v*=1+.15*it.lp}if(it.cmul){L.push([t('bd_corr'),v*(it.cmul-1)]);v*=it.cmul}
  const pen=it.frac?CONFIG.fracMul:A.length<=1?CONFIG.junkMul:1;if(pen<1){L.push(['♻ '+t('bd_pen'),v*(pen-1)]);v*=pen}return L}
 function sellLines(it,final){const out=sellBreak(it).map(l=>[l[0],Math.round(l[1])]);const d=final-out.reduce((s,l)=>s+l[1],0);if(d)out.push([t('bd_fee'),d]);return out}
 function openSell(sv){sellView=sv;const it=sv.it,r=rarity(it),col=RAR[r][1],ec=elemColor(it)||col;
- $('#sellov').innerHTML=`<div class="sellbox" style="--rc:${col};--ec:${ec}"><div class="sbtitle">${sv.bounty?'📜 '+t('bd_bounty'):'🪙 '+t('sellT')}</div>
+ $('#sellov').innerHTML=`<div class="sellbox" style="--rc:${col};--ec:${ec}"><div class="sbtitle">${sv.order?t('ordT'):sv.bounty?'📜 '+t('bd_bounty'):'🪙 '+t('sellT')}</div>
  <div class="buyer"><canvas id="buyerCv" width="160" height="160"></canvas><div class="bubble" id="bubble">${t('considering')}</div></div>
  <div class="ped">${wcv('sell',150,1)}<div class="pedestal"></div></div><div class="nm" style="text-align:center;color:${col}">${nameOf(it)} <span class="muted">· ${t(RAR[r][0])} · ilvl ${it.ilvl}</span></div>
  <div class="bd">${sv.lines.map(l=>`<div class="bdl"><span>${l[0]}</span><b class="${l[1]>=0?'pos':'neg'}">${l[1]>=0?'+':''}${l[1]}</b></div>`).join('')}</div>
@@ -557,19 +624,19 @@ const ACT={
  selItem:i=>{S.sel=+i;S.selAff=null;sheet=null;S.tab='workshop';SND.click()},
  selAff:a=>{S.selAff=a;sheet='aff';SND.click()},
  identify:()=>{const it=cur();if(!it||!it.unid)return;it.unid=false;render();anim('#wcard','reveal');all(it).forEach(discover);SND.tierup();sparks($('#wcard'),'#ffff77',50);if(all(it).some(a=>a.t===1))setTimeout(jackpot,400);checkPerfect(it);save();return'noR'},
- buyCur:a=>{const[c,nn]=a.split(':'),n=+(nn||1);if(c==='lock'&&S.lvl<CONFIG.lockLvl)return toast(t('unlockAt')+' '+CONFIG.lockLvl);const p=curCost(c)*n,e=c==='lock'?CONFIG.lockEmbers*n:0;
+ buyCur:a=>{const[c,nn]=a.split(':'),n=+(nn||1);if(CURLV[c]&&S.lvl<CONFIG[CURLV[c]])return toast(t('unlockAt')+' '+CONFIG[CURLV[c]]);const p=curCost(c)*n,e=c==='lock'?CONFIG.lockEmbers*n:0;
   if(S.gold<p)return toast(t('needGold')+' '+(p-S.gold)+'🪙');if(S.cur.embers<e)return toast(t('noEmbers'));S.gold-=p;S.cur.embers-=e;S.cur[c]+=n;SND.coin();toast(CICO[c]+' +'+n+' · 🪙 −'+p)},
- act:a=>{if(a==='shop'){sheet='shop';return}if(a==='omen'){sheet='omen';return}const r=why(a),btn=$('#a-'+a);
+ act:a=>{if(a==='shop'){sheet='shop';return}if(a==='omen'){sheet='omen';return}if(a==='order'){const k=ordFor(cur());if(k<0){S.tab='orders';sheet=null;SND.click();return}return ACT.ordDel(k+':'+S.sel)}const r=why(a),btn=$('#a-'+a);
   if(r==='BUY'){toast(t('buyHint'));sheet='shop';return}if(r){toast(r);anim(btn,'no');if(r===t('pickAff'))anim('#wcard .affs','shake');return'noR'}
-  if(a==='essence'){sheet='essence';return}if(a==='forge')return ACT.forgeAsk();if(ACTS[a].sel)sheet=null;doCraft(a);return'noR'},
+  if(a==='essence'){sheet='essence';return}if(a==='forge')return ACT.forgeAsk();if(a==='corrupt')return ACT.corrAsk();if(ACTS[a].sel)sheet=null;doCraft(a);return'noR'},
  essence:k=>{const it=cur(),d=AFM[k];sheet=null;if(why('essence'))return;if(it[d.s].length>=sideCap(it)||all(it).some(a=>a.k===k))return;const from=it.stab;
-  S.gold-=CONFIG.essenceCost;if(S.guide===1)S.guide=2;const tr=rollTier(it.ilvl),q=R(),af={k,t:tr,q,v:rollVal(d,tr,q),lock:false};it[d.s].push(af);discover(af);it.stab=Math.max(0,it.stab-CONFIG.stabCost.essence);S.stats.crafts++;qp('crafts',1);qp('rare',all(it).length,1);
+  S.gold-=essCost();if(S.guide===1)S.guide=2;const tr=rollTier(it.ilvl),q=R(),af={k,t:tr,q,v:rollVal(d,tr,q),lock:false};it[d.s].push(af);discover(af);it.stab=Math.max(0,it.stab-CONFIG.stabCost.essence);S.stats.crafts++;qp('crafts',1);qp('rare',all(it).length,1);
   render();anim('#wcard','shake');sparks($('#wcard'),'#7fe3ff',35);SND.craft();slotAnim([idOf(it,af)]);fxStab(it,from);if(tr===1)setTimeout(jackpot,650);checkPerfect(it);save();return'noR'},
  salvage:i=>{const btn=i!=null?$('#sv-'+i):$('#salvageBtn');if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const n=salvageN(it),r=btn?btn.getBoundingClientRect():null;S.cur.embers+=n;qp('salvage',1);S.stats.salvaged=(S.stats.salvaged||0)+1;finishItem();SND.salvage();render();
   const ph={getBoundingClientRect:()=>r||{left:innerWidth/2,top:innerHeight/2,width:0,height:0}};sparks(ph,['#ffb84a','#ff6a00','#ffd76a'],45,true);floatAt(ph,t('salvaged').replace('{n}',n),'#ffb84a');save();return'noR'},
  charity:()=>{if(S.play<S.helpAt)return;const it=makeItem(ri(10,20),1);it.cost=0;all(it).forEach(discover);S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.helpAt=S.play+CONFIG.charityCooldown;S.tab='workshop';SND.coin()},
  skipB:i=>{if(S.gold<CONFIG.bountySkipCost)return toast(t('noGold'));S.gold-=CONFIG.bountySkipCost;S.bounties[+i]=genBounty();SND.click()},
- claim:i=>{const q=S.quests[+i];if(!q||q.p<q.n)return;S.gold+=q.g;S.cur[q.c]+=q.cn;S.cur.embers+=q.e;S.stats.quests=(S.stats.quests||0)+1;S.quests[+i]=null;S.quests[+i]=genQuest();SND.coins();sparks($('#gold'),'#ffd76a',40);toast(`🎯 +${q.g}🪙 +${q.cn}${CICO[q.c]}${q.e?' +'+q.e+'🔆':''}`)},
+ claim:i=>{const q=S.quests[+i];if(!q||q.p<q.n)return;earn(q.g);S.cur[q.c]+=q.cn;S.cur.embers+=q.e;S.stats.quests=(S.stats.quests||0)+1;S.quests[+i]=null;S.quests[+i]=genQuest();SND.coins();sparks($('#gold'),'#ffd76a',40);toast(`🎯 +${q.g}🪙 +${q.cn}${CICO[q.c]}${q.e?' +'+q.e+'🔆':''}`)},
  forgeAsk:()=>{const it=cur(),a=getSelAff(it),o=forgeOdds(it,a);if(o.ps>=1)return ACT.forge();
   modal(`<div class="big">⚠️ ${t('confirmT')}</div><p style="text-align:center">${afShort(a.k)} T${a.t} → T${a.t-1}<br>⚖ ${it.stab} · ${t('forgeCost')} ${o.l}–${o.h}<br><span class="good">✔ ${Math.round(o.ps*100)}%</span> · <span class="warn">💔 ${Math.round(o.pf*100)}%</span> · <span class="bad">💥 ${Math.round(o.ph*100)}%</span></p><div class="flex"><button class="red grow" id="forgeYes" data-act="forgeYes">🔥 ${t('confirmYes')}</button><button class="grow" data-act="closeModal">${t('cancel')}</button></div>`);return'noR'},
  forgeYes:()=>{closeM();return ACT.forge()},
@@ -581,12 +648,35 @@ const ACT={
   else{finishItem();render();sparks(null,['#aaa','#ff3b2a','#555'],120);SND.shatter();toast('<span class="bad">💥 '+t('shatteredT')+'</span>')}
   save();return'noR'},
  sell:i=>{if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const p=sellPrice(it),pr=p-it.cost,snap=JSON.parse(JSON.stringify(it)),lines=sellLines(it,p);
-  S.gold+=p;S.stats.sold++;S.stats.profit+=pr;qp('sell',p,1);if(pr>0)qp('profit',pr);finishItem();sheet=null;const g=S.guide===2;if(S.guide<3)S.guide=3;
+  earn(p);S.stats.sold++;S.stats.profit+=pr;qp('sell',p,1);if(pr>0)qp('profit',pr);finishItem();sheet=null;const g=S.guide===2;if(S.guide<3)S.guide=3;
   render();save();openSell({it:snap,price:p,cost:snap.cost,lines,seed:R()*1000,xp:Math.max(2,Math.round(pr)),guideDone:g});return'noR'},
  deliver:i=>{const b=S.bounties[+i],it=cur(),m=bMatch(b,it);if(!m.m)return;const v=itemValue(it),snap=JSON.parse(JSON.stringify(it)),lines=sellLines(it,v);lines.push(['📜 '+t('bd_bounty')+(m.m===2?' ✔':' ≈'),m.pay-v]);
-  S.gold+=m.pay;const pr=m.pay-it.cost;S.stats.sold++;S.stats.profit+=pr;if(pr>0)qp('profit',pr);qp('bounty',1);finishItem();S.bounties[+i]=genBounty();
+  earn(m.pay);const pr=m.pay-it.cost;S.stats.sold++;S.stats.profit+=pr;if(pr>0)qp('profit',pr);qp('bounty',1);finishItem();S.bounties[+i]=genBounty();
   render();save();openSell({it:snap,price:m.pay,cost:snap.cost,lines,seed:b.id,bounty:1,xp:Math.max(5,Math.round(pr*(m.m===2?1.5:1)))});return'noR'},
  closeSell:()=>{const sv=sellView;sellView=null;$('#sellov').innerHTML='';$('#sellov').classList.add('hidden');if(sv){addXp(sv.xp);if(sv.guideDone)modal(t('gDone'))}},
+ ordDel:a=>{const[oi,ii]=String(a).split(':').map(Number),o=S.orders[oi];if(!o)return;const idx=ii>=0&&!isNaN(ii)?ii:ordItem(o),it=S.items[idx];if(!oMatch(o,it)?.ok)return toast(t('ordNone'));S.sel=idx;
+  const pay=orderPay(o,it),v=itemValue(it),snap=JSON.parse(JSON.stringify(it)),lines=sellLines(it,v);lines.push(['📋 '+t('bd_order')+' ✔',pay-v]);const pr=pay-it.cost;
+  earn(pay);S.stats.sold++;S.stats.profit+=pr;S.stats.orders=(S.stats.orders||0)+1;if(pr>0)qp('profit',pr);qp('bounty',1);if(o.vd){S.cur.void+=o.vd;setTimeout(()=>toast('🌑 +'+o.vd+' '+t('void')),2500)}
+  finishItem();S.orders.splice(oi,1);sheet=null;render();save();openSell({it:snap,price:pay,cost:snap.cost,lines,seed:o.id,order:1,xp:o.rep});return'noR'},
+ skipO:i=>{if(S.gold<CONFIG.orderSkipCost)return toast(t('noGold'));S.gold-=CONFIG.orderSkipCost;const o=genOrder();o.until=S.orders[+i].until;S.orders[+i]=o;SND.click()},
+ corrAsk:()=>{const it=cur();if(why('corrupt'))return;const o=corrOdds();
+  modal(`<div style="text-align:center;font-size:54px;filter:drop-shadow(0 0 14px #b040ff)">🌑</div><div class="big" style="color:#d898ff;text-shadow:0 0 12px #8a2cff">⚠️ ${t('corrT')}</div><p style="text-align:center">${nameOf(it)}<br>${t('corrQ')}</p><p style="text-align:center;line-height:1.7"><span class="good">✨ ${pct(o.g)} · ${t('cGood')}</span><br><span class="warn">🔀 ${pct(o.n)} · ${t('cNeu')}</span><br><span class="bad">💀 ${pct(o.b)} · ${t('cBad')}</span></p><p class="muted" style="text-align:center">🌑 ${t('void')}: ${S.cur.void} → ${S.cur.void-1}</p><div class="flex"><button class="void grow" id="corrYes" data-act="corrYes">${t('corrYes')}</button><button class="grow" data-act="closeModal">${t('cancel')}</button></div>`);return'noR'},
+ corrYes:()=>{closeM();const it=cur();if(!it||why('corrupt'))return'noR';S.cur.void--;it.corr=true;S.stats.corr=(S.stats.corr||0)+1;S.stats.crafts++;S.selAff=null;sheet=null;const o=corrOdds(),r=R(),id=it.id;
+  render();anim('#vflash','go');anim('#wcard','vsw');SND.void();sparks($('#wcard'),['#b040ff','#7a1aff','#e0a0ff','#2a0040'],70);
+  setTimeout(()=>{const k=S.items.findIndex(x=>x.id===id);if(k<0)return;const x=S.items[k];let msg,cls,ic;
+   if(r<o.b){S.sel=k;finishItem();msg=t('c_bad');cls='bad';ic='💀';SND.shatter();sparks(null,['#b040ff','#2a0040','#555','#e0a0ff'],160)}
+   else if(r<o.b+o.n){all(x).forEach(a=>{a.q=R();a.v=rollVal(AFM[a.k],a.t,a.q);a.lock=false});msg=t('c_neu');cls='warn';ic='🔀';SND.craft()}
+   else{const A=all(x),up=A.filter(a=>a.t>1),used=new Set(A.map(a=>a.k)),free=AFF.filter(a=>!used.has(a.k)),opts=['price'];if(up.length)opts.push('tier');if(free.length)opts.push('affix');if(!x.imp)opts.push('imp');const c=pick(opts);
+    if(c==='tier'){const a=pick(up);a.t--;a.v=rollVal(AFM[a.k],a.t,a.q);discover(a);if(a.t===1)setTimeout(jackpot,500)}
+    else if(c==='affix'){const d=pick(free),tr=rollTier(x.ilvl,true),q=R(),af={k:d.k,t:tr,q,v:rollVal(d,tr,q),lock:false};x[d.s].push(af);discover(af)}
+    else if(c==='imp'){const d=pick(AFF),q=R();x.imp={k:d.k,t:1,q,v:rollVal(d,1,q)}}else x.cmul=2;
+    msg=t('c_'+c);cls='good';ic='✨';SND.jackpot();checkPerfect(x)}
+   render();if(cls!=='bad'){anim('#wcard','reveal');sparks($('#wcard'),cls==='good'?['#e0a0ff','#ffd76a','#fff','#b040ff']:['#b040ff','#7a1aff'],cls==='good'?90:40,true)}
+   modal(`<div class="lvl" style="filter:drop-shadow(0 0 16px #b040ff)">${ic}</div><div class="big ${cls}" style="text-shadow:0 0 12px #8a2cff">${msg}</div>${cls!=='bad'?`<p style="text-align:center">${nameOf(x)} · ${sellPrice(x)}🪙</p>`:''}`);save()},900);save();return'noR'},
+ presAsk:()=>{const g=mpGain();if(!g)return;modal(`<div class="lvl">👑</div><div class="big">${t('presQ')}</div><p style="text-align:center;font-size:18px">+${g} ${t('mpS')}</p><p>${t('presKeep')}<br>${t('presLose')}</p><div class="flex"><button class="gold grow" id="presYes" data-act="presYes">${t('presYes')}</button><button class="grow" data-act="closeModal">${t('cancel')}</button></div>`);return'noR'},
+ presYes:()=>{closeM();const g=mpGain();if(!g)return;const st=Object.assign({},S.stats,{prestiges:(S.stats.prestiges||0)+1}),keep={lang:S.lang,tut:true,guide:3,codex:S.codex,hof:S.hof,skins:S.skins,skin:S.skin,stats:st,login:S.login,nid:S.nid,mp:S.mp+g,mup:S.mup,pres:S.pres+1,best:Math.max(S.best||0,S.life)};
+  S=Object.assign(fresh(),keep);S.gold=CONFIG.startGold+200*S.mup.mgold;S.tab='upgrades';sheet='master';ensure();SND.lvl();anim('#flash','go');setTimeout(()=>sparks(null,['#ffd76a','#b040ff','#fff'],160,true),100);modal(`<div class="lvl">👑</div><div class="big">${t('presDone')}</div><p style="text-align:center">${t('presGot').replace('{n}',g)}</p>`)},
+ mup:k=>{const u=MUPS.find(x=>x.k===k),l=S.mup[k];if(!u||l>=u.max||S.mp<l+1)return;S.mp-=l+1;S.mup[k]++;SND.lvl();sparks($('#mu-'+k),['#ffd76a','#b040ff'],30)},
  equip:k=>{if(!S.skins[k])return;S.skin=k;SND.tierup();toast('🎨 '+t('sk_'+k))},
  useOmen:o=>{if(!S.cur[o])return;if(S.omen)S.cur[S.omen]++;S.cur[o]--;S.omen=o;sheet=null;SND.tierup();toast('🔮 '+t(o))},
  upgrade:k=>{const u=UPS.find(x=>x.k===k),l=S.up[k];if(l>=u.max||S.lvl<u.req(l))return;const c=u.cost(l);if(S.gold<c)return toast(t('noGold'));S.gold-=c;S.up[k]++;SND.lvl()},
@@ -596,18 +686,19 @@ const ACT={
 document.addEventListener('click',e=>{if(lpFired){lpFired=false;return}const b=e.target.closest('[data-act]');if(!b||b.disabled)return;ac();const r=ACT[b.dataset.act]&&ACT[b.dataset.act](b.dataset.arg);if(r!=='noR'){render();save()}});
 $('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet'){if(sheet==='aff')S.selAff=null;sheet=null;render()}});
 function itemCard(it,inter,extra={},src){const r=rarity(it),col=RAR[r][1],ec=elemColor(it);
+ const imp=it.imp&&!it.unid?`<div class="af imp"><span class="pips">🌑 ${t('implicit')}</span><span class="grow">${afText(it.imp)}</span></div>`:'';
  const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" data-arg="${id}" ${inter?'data-act="selAff"':''}><span class="pips">${pips(a.t)}</span><span class="grow">${afText(a)}</span>${S.hot===a.k?'🔥':''}${a.lock?'🔒':''}<span class="tt">T${a.t}</span></div>`};
- const body=it.unid?`<div class="af t5" style="justify-content:center">❓ ${t('unid')} ❓</div>`:(it.p.length?`<div class="sl">${t('prefixes')}</div>`:'')+it.p.map((a,i)=>line(a,i,'p')).join('')+(it.s.length?`<div class="sl">${t('suffixes')}</div>`:'')+it.s.map((a,i)=>line(a,i,'s')).join('');
- const tag=it.frac?`<span class="tagx">${t('fractured')}</span>`:it.stab<=0&&!it.unid?`<span class="tagx">${t('sealed')}</span>`:'';
- return `<div class="card r${r} ${inter?'':'mini'} ${ec?'el':''}" ${inter?'id="wcard"':''} style="--rc:${col};--ec:${ec||col}"><div class="ch"><div class="ic">${wcv(src,inter?60:40,inter)}</div><div class="grow"><div class="nm">${nameOf(it)}</div><div class="sub">${t(RAR[r][0])} · ilvl ${it.ilvl} · ${t('maxT')} T${maxTier(it.ilvl)} ${tag}</div>${it.lp?`<span class="lpb" data-help="lp">✦ ${t('lp')}</span>`:''}</div>${extra.head||''}</div>
+ const body=it.unid?`<div class="af t5" style="justify-content:center">❓ ${t('unid')} ❓</div>`:imp+(it.p.length?`<div class="sl">${t('prefixes')}</div>`:'')+it.p.map((a,i)=>line(a,i,'p')).join('')+(it.s.length?`<div class="sl">${t('suffixes')}</div>`:'')+it.s.map((a,i)=>line(a,i,'s')).join('');
+ const tag=(it.corr?`<span class="tagv">🌑 ${t('corrupted')}</span> `:'')+(it.frac?`<span class="tagx">${t('fractured')}</span>`:it.stab<=0&&!it.unid?`<span class="tagx">${t('sealed')}</span>`:'');
+ return `<div class="card r${r} ${inter?'':'mini'} ${ec?'el':''} ${it.corr?'corr':''}" ${inter?'id="wcard"':''} style="--rc:${col};--ec:${ec||col}"><div class="ch"><div class="ic">${wcv(src,inter?60:40,inter)}</div><div class="grow"><div class="nm">${nameOf(it)}</div><div class="sub">${t(RAR[r][0])} · ilvl ${it.ilvl} · ${t('maxT')} T${maxTier(it.ilvl)} ${tag}</div>${it.lp?`<span class="lpb" data-help="lp">✦ ${t('lp')}</span>`:''}</div>${extra.head||''}</div>
  ${it.unid?'':`<div class="sb ${it.stab<12?'low':''}"><i style="width:${Math.min(100,it.stab/it.stab0*100)}%"></i><span>⚖ ${t('stability')} ${it.stab}/${it.stab0}</span></div>`}<div class="affs">${body}</div>${extra.foot||''}</div>`}
-function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl} · 🔆${S.cur.embers} · 📦${S.items.length}/${stallSize()}<div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;$('#langBtn').textContent=t('lang');
- $('#ticker').innerHTML=`<span class="hot">🔥 ${t('hot')}: ${afShort(S.hot)} ×${CONFIG.hotMul}</span> · ${t('changes')} <span class="cd" data-u="trendAt"></span>`;document.documentElement.lang=S.lang}
-function renderTabs(){const qd=S.quests.filter(q=>q&&q.p>=q.n).length;$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['collection','🎨'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}${k==='bounties'&&qd?`<span class="badge">${qd}</span>`:''}</button>`).join('')}
-const BAR=['augment','reroll','preroll','sroll','annul','essence','ember','omen'];
-function abtn(a){const r=why(a),d=ACTS[a],sc=CONFIG.stabCost[a];const cnt=d.cur?'×'+S.cur[d.cur]:a==='essence'?CONFIG.essenceCost+'🪙':a==='omen'?'×'+(S.cur.omenP+S.cur.omenS+S.cur.omenF):'';const st=sc?'⚖'+sc:a==='ember'?'+'+CONFIG.emberRestore:'';
- return `<button class="ab ${r&&r!=='BUY'?'dim':''} ${a==='omen'&&S.omen?'act':''}" id="a-${a}" data-act="act" data-arg="${a}" data-help="${a}">${cnt?`<span class="ac">${cnt}</span>`:''}${st?`<span class="as">${st}</span>`:''}<span class="ai">${CICO[a]}</span><span class="an">${t('b_'+a)}</span></button>`}
-function hintHtml(it){const g=S.guide<3?`<b class="warn">${t('g'+(S.guide+1))}</b>&nbsp;`:'';if(it.frac)return g+'<span class="bad">'+t('fracShort')+'</span>';if(it.stab<=0)return g+'<span class="warn">'+t('sealedShort')+'</span>';
+function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl} · 🔆${S.cur.embers} · <span style="color:#d898ff" title="${t('prestige')}">👑${Math.floor(presPct()*100)}%</span><div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;$('#langBtn').textContent=t('lang');
+ $('#ticker').innerHTML=`<span class="hot">🔥 ${t('hot')}: ${afShort(S.hot)} ×${CONFIG.hotMul}</span> · ${t('changes')} <span class="cd" data-u="trendAt"></span> · 📅 ${t('day')} ${S.day} <span class="cd" data-u="dayAt"></span>`;document.documentElement.lang=S.lang}
+function renderTabs(){const qd=S.quests.filter(q=>q&&q.p>=q.n).length,od=S.orders.filter(o=>ordItem(o)>=0).length;$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['orders','📋'],['bounties','📜'],['codex','📖'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}${k==='bounties'&&qd?`<span class="badge">${qd}</span>`:''}${k==='orders'&&od?`<span class="badge" style="background:#2a8a2a">${od}</span>`:''}${k==='upgrades'&&(mpGain()||S.mp)?`<span class="badge" style="background:#8a2cff">👑</span>`:''}</button>`).join('')}
+const BAR=['augment','reroll','preroll','sroll','annul','essence','ember','omen','corrupt','order'];
+function abtn(a){const r=why(a),d=ACTS[a],sc=CONFIG.stabCost[a];const om=a==='order'?ordFor(cur())>=0:true;const cnt=d.cur?'×'+S.cur[d.cur]:a==='essence'?essCost()+'🪙':a==='order'?(om?'✔':S.orders.length):a==='omen'?'×'+(S.cur.omenP+S.cur.omenS+S.cur.omenF):'';const st=sc?'⚖'+sc:a==='ember'?'+'+CONFIG.emberRestore:'';
+ return `<button class="ab ${(r&&r!=='BUY')||!om?'dim':''} ${a==='omen'&&S.omen?'act':''} ${a==='corrupt'?'vd':''} ${a==='order'&&om?'act':''}" id="a-${a}" data-act="act" data-arg="${a}" data-help="${a}">${cnt?`<span class="ac">${cnt}</span>`:''}${st?`<span class="as">${st}</span>`:''}<span class="ai">${CICO[a]}</span><span class="an">${t('b_'+a)}</span></button>`}
+function hintHtml(it){const g=S.guide<3?`<b class="warn">${t('g'+(S.guide+1))}</b>&nbsp;`:'';if(it.frac)return g+'<span class="bad">'+t('fracShort')+'</span>';if(it.corr)return g+'<span class="tagv">'+t('corrShort')+'</span>';if(it.stab<=0)return g+'<span class="warn">'+t('sealedShort')+'</span>';
  return g+(S.omen?`<span style="color:#c86bff">🔮 ${t(S.omen)}</span>&nbsp;· `:'')+(S.guide<3?'':t('tapAff'))}
 const V={
  market:()=>{const sel=cur(),cheap=Math.min(...S.market.map(buyPrice),999),broke=S.gold<cheap&&!S.items.length;
@@ -619,10 +710,15 @@ const V={
  workshop:()=>{const it=cur();const strip=`<div class="strip"><button data-act="sheet" data-arg="stash" id="stashBtn2" data-help="stash">📦<small>${S.items.length}/${stallSize()}</small></button>${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${wcv('i'+i,32)}</button>`).join('')}</div>`;
   if(!it)return `<div class="ws">${strip}<div class="panel">${t('noItem')}</div><div class="flex"><button class="gold grow" data-act="tab" data-arg="market">🏪 ${t('market')}</button><button class="gold grow" data-act="sheet" data-arg="shop">🛒 ${t('s_shop')}</button></div></div>`;
   if(it.unid)return `<div class="ws">${strip}${itemCard(it,true,{},'i'+S.sel)}<button class="gold" style="min-height:56px" id="identifyBtn" data-act="identify">🔍 ${t('identify')}</button></div>`;
-  const sp=sellPrice(it),pr=sp-it.cost;
+  const sp=sellPrice(it),pr=sp-it.cost,ok=ordFor(it);
   return `<div class="ws">${strip}${itemCard(it,true,{},'i'+S.sel)}<div id="hint">${hintHtml(it)}</div><div class="agrid">${BAR.map(abtn).join('')}</div>
   <div class="sellrow"><button class="${isJunk(it)?'':'gold'}" id="sellBtn" data-act="sell">🪙 ${t('sell')} ${sp} <span style="font-size:12px" class="${pr>=0?'pos':'neg'}">${pr>=0?'+'+pr:pr}</span><br><span class="muted" style="font-size:11px">${pr>=0?t('profitW'):t('loss')} · ${t('paid')} ${it.cost}</span></button>
-  <button id="salvageBtn" data-act="salvage" ${isJunk(it)?'class="gold"':''}>♻ ${t('salvage')}<br><span style="font-size:12px">+${salvageN(it)} 🔆</span></button></div></div>`},
+  ${ok>=0?`<button class="gold" id="ordBtn" data-act="ordDel" data-arg="${ok}:${S.sel}" style="border-color:#6be36b">📋 ${t('b_order')}<br><span style="font-size:12px">${orderPay(S.orders[ok],it)}🪙</span></button>`:`<button id="salvageBtn" data-act="salvage" ${isJunk(it)?'class="gold"':''}>♻ ${t('salvage')}<br><span style="font-size:12px">+${salvageN(it)} 🔆</span></button>`}</div></div>`},
+ orders:()=>{const it=cur();return `<div class="panel" style="padding:6px 8px"><div class="muted" style="font-size:12px">${t('ordInfo')}</div><div class="muted" style="font-size:11.5px;margin-top:2px">📅 ${t('day')} <b>${S.day}</b> · ⏳ <span class="cd" data-u="dayAt"></span> · 🌑 ${S.cur.void}</div></div>`+
+  S.orders.map((o,i)=>{const ii=ordItem(o),ref=ii>=0?S.items[ii]:it,m=oMatch(o,ref),dl=o.until-S.day,chip=(ok,txt,st)=>`<span class="req ${m?(ok?'ok':'no'):''}" ${st||''}>${m&&ok?'✔ ':''}${txt}</span>`;
+   return `<div class="panel ordc" id="ord-${i}"><div class="flex"><div style="font-size:28px">${o.face}</div><div class="grow"><b>${o.name}</b> <span class="${dl<1?'bad':'muted'}" style="font-size:12px">· ⏳ ${dl<1?t('dToday'):t('dLeft').replace('{n}',dl+1)}</span><div>${chip(m&&m.base,t(o.base))}${o.keys.map((k,j)=>chip(m&&m.keys[j],afShort(k)+' '+t('tierReq').replace('{t}',o.tier),ELK.includes(k)?`style="color:${ECOL[EL[k]]}"`:'')).join('')}</div></div></div>
+   <div class="flex" style="margin-top:3px"><div class="grow" style="font-size:12.5px">${t('ordReward')}: <b style="color:#ffd76a">${o.reward}🪙</b> +⭐${o.rep}${o.vd?' +🌑':''}<br><span class="muted" style="font-size:11px">${ii>=0?'✔ '+nameOf(S.items[ii]):t('ordBonus')}</span></div><button class="sm" data-act="skipO" data-arg="${i}">↻ ${CONFIG.orderSkipCost}🪙</button><button class="gold" id="od-${i}" data-act="ordDel" data-arg="${i}:${ii}" ${ii>=0?'':'disabled'}>${t('deliver')}${ii>=0?'<br>'+orderPay(o,S.items[ii])+'🪙':''}</button></div></div>`}).join('')+
+  (S.orders.length<CONFIG.orderBoard?`<div class="muted" style="text-align:center">${t('ordNext')}</div>`:'')+`<div class="muted" style="font-size:11px;text-align:center">${t('ordHint')}</div>`},
  collection:()=>`<div class="panel"><h2>🎨 ${t('skins')}</h2><div class="muted">${t('skinInfo')}</div></div><div class="skg">${Object.keys(SKINS).map(k=>{const un=S.skins[k],cond=SKIN_UNLOCK[k],prog=cond?Math.min(cond[1],skinProg(cond[0])):0;
   return `<div class="panel skc ${S.skin===k?'on':''}"><canvas class="wpn" width="144" height="144" style="width:72px;height:72px" data-src="skin:${k}" data-skin="${k==='default'?'':k}"></canvas><b>${t('sk_'+k)}</b><div class="muted">${cond?t('un_'+cond[0]).replace('{n}',cond[1])+` (${prog}/${cond[1]})`:'—'}</div><button class="${un?'gold':''}" id="eq-${k}" data-act="equip" data-arg="${k}" ${un&&S.skin!==k?'':'disabled'}>${S.skin===k?t('equipped'):un?t('equip'):'🔒'}</button></div>`}).join('')}</div>`,
  bounties:()=>{const it=cur();return `<div class="panel"><h2>🎯 ${t('quests')}</h2>${S.quests.map((q,i)=>`<div class="q"><div class="grow">${t('q'+q.k).replace('{n}',q.n)}<div class="bar"><i style="width:${q.p/q.n*100}%"></i></div></div><span class="muted">+${q.g}🪙 ${q.cn}${CICO[q.c]}${q.e?' 🔆':''}</span><button class="sm ${q.p>=q.n?'gold':''}" id="cl-${i}" data-act="claim" data-arg="${i}" ${q.p>=q.n?'':'disabled'}>${q.p>=q.n?t('claim'):q.p+'/'+q.n}</button></div>`).join('')}</div>
@@ -632,23 +728,28 @@ const V={
   <div class="flex" style="margin-top:4px"><div class="grow ${m.m===2?'good':m.m===1?'warn':'muted'}" style="font-size:12px">${m.m===2?'✔ '+t('exact'):m.m===1?'≈ '+t('partial')+` (${m.hit}/${b.keys.length})`:t('nomatch')}${miss.length?`<br><span class="muted">${t('missing')}: ${miss.join(', ')}</span>`:''}</div><button class="sm" data-act="skipB" data-arg="${i}">↻ ${CONFIG.bountySkipCost}🪙</button><button class="gold deliver" id="dl-${i}" data-act="deliver" data-arg="${i}" ${m.m?'':'disabled'}>${t('deliver')}${m.m?' '+m.pay+'🪙':''}</button></div></div>`}).join('')},
  codex:()=>{const n=Object.keys(S.codex).length;return `<div class="panel"><h2>📖 ${t('codexT')} ${n}/${AFF.length*5}</h2><div class="cx"><div></div>${[5,4,3,2,1].map(x=>`<div class="t${x}" style="text-align:center">T${x}</div>`).join('')}
   ${AFF.map(a=>`<div>${a.s.toUpperCase()} ${afShort(a.k)}${rowDone(a.k)?' ✨':''}</div>`+[5,4,3,2,1].map(x=>`<div class="c t${x} ${S.codex[a.k+x]?'on':''}"><span>${S.codex[a.k+x]?'✓':''}</span></div>`).join('')).join('')}</div></div>
-  <div class="panel"><h2>${t('bonuses')}</h2><div>${codexRows()?'✅':'⬜'} ${t('rowB')} (${codexRows()})</div><div>${pageDone('p')?'✅':'⬜'} ${t('pageP')}</div><div>${pageDone('s')?'✅':'⬜'} ${t('pageS')}</div></div>
-  <div class="panel"><h2>👑 ${t('hof')}</h2>${S.hof.length?S.hof.map(h=>`<div class="t1">${h.name} · ${t(h.base)} · ilvl ${h.ilvl} · ${h.at}</div>`).join(''):`<div class="muted">${t('hofE')}</div>`}</div>
-  <div class="panel"><h2>${t('stats')}</h2>${t('sold')}: ${S.stats.sold} · ${t('profit')}: ${S.stats.profit}🪙 · ${t('crafts')}: ${S.stats.crafts} · ${t('t1s')}: ${S.stats.t1} · ${t('streak')}: ${S.login.streak}</div>`},
- upgrades:()=>`<div class="panel"><h2>⭐ ${t('rep')} – ${t('level')} ${S.lvl}</h2><div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div><div class="muted">${S.xp}/${needXp(S.lvl)} XP</div>
-  ${[1,2,3,4].map(l=>`<div>${S.lvl>=l?'✅':'🔒'} ${t('level')} ${l}: ${t('u'+l)}</div>`).join('')}<div class="muted">${t('uI')} (${marketMax()})</div></div>
-  ${UPS.map(u=>{const l=S.up[u.k],mx=l>=u.max,rq=u.req(l);return `<div class="panel flex"><div class="grow"><b>${t('up_'+u.k)}</b> (${l}/${u.max})<div class="muted">${t('up_'+u.k+'D')}${!mx&&S.lvl<rq?' · '+t('needLvl')+' '+rq:''}</div></div><button class="gold" data-act="upgrade" data-arg="${u.k}" ${mx||S.lvl<rq?'disabled':''}>${mx?t('maxed'):u.cost(l)+'🪙'}</button></div>`}).join('')}
-  <button class="red sm" data-act="reset">🗑 ${t('reset')}</button>`
+  <div class="panel" style="font-size:12.5px"><div>${codexRows()?'✅':'⬜'} ${t('rowB')} (${codexRows()})</div><div>${pageDone('p')?'✅':'⬜'} ${t('pageP')}</div><div>${pageDone('s')?'✅':'⬜'} ${t('pageS')}</div></div>
+  <div class="flex"><button class="grow" id="skinsBtn" data-act="sheet" data-arg="skins">${t('skinsBtn')}</button><button class="grow" id="hofBtn" data-act="sheet" data-arg="hof">${t('hofBtn')}</button></div>`},
+ upgrades:()=>{const g=mpGain(),goal=presGoal();return `<div class="panel" id="presPanel" style="border-color:#8a2cff"><div class="flex"><h2 class="grow" style="margin:0">👑 ${t('prestige')} ${S.pres?'· '+S.pres+'×':''}</h2><span style="color:#d898ff">${S.mp} ${t('mpS')}</span></div><div class="muted" style="font-size:11.5px">${t('presD')}</div>
+  <div class="sb pbar" style="height:18px;margin:4px 0"><i style="width:${presPct()*100}%;background:linear-gradient(90deg,#7a1aff,#ffd76a)"></i><span style="font-size:11.5px;line-height:16px">${t('life')}: ${fmtN(S.life)} / ${fmtN(goal)} 🪙</span></div>
+  <div class="flex"><button class="${g?'gold':''} grow" id="presBtn" data-act="presAsk" ${g?'':'disabled'}>${t('presBtn')}${g?' (+'+g+' '+t('mpS')+')':'<br><span style="font-size:11px">'+t('presLock').replace('{g}',fmtN(goal-S.life))+'</span>'}</button><button class="void grow" id="masterBtn" data-act="sheet" data-arg="master">${t('master')}</button></div></div>
+  <div class="panel"><div class="flex"><b class="grow">⭐ ${t('rep')} – ${t('level')} ${S.lvl}</b><span class="muted">${S.xp}/${needXp(S.lvl)} XP</span></div><div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>
+  <div class="lvg">${[1,2,3,4].map(l=>`<div>${S.lvl>=l?'✅':'🔒'} ${l}: ${t('u'+l)}</div>`).join('')}</div><div class="muted">${t('uI')} (${marketMax()})</div></div>
+  ${UPS.map(u=>{const l=S.up[u.k],mx=l>=u.max,rq=u.req(l);return `<div class="mrow"><div class="grow"><b>${t('up_'+u.k)}</b> (${l}/${u.max})<div class="muted">${t('up_'+u.k+'D')}${!mx&&S.lvl<rq?' · '+t('needLvl')+' '+rq:''}</div></div><button class="gold" data-act="upgrade" data-arg="${u.k}" ${mx||S.lvl<rq?'disabled':''}>${mx?t('maxed'):u.cost(l)+'🪙'}</button></div>`}).join('')}
+  <button class="red sm" data-act="reset">🗑 ${t('reset')}</button>`}
 };
 const SH={
- shop:()=>`<div class="flex"><h2 class="grow">🛒 ${t('shopT')}</h2><span>🪙 ${S.gold} · 🔆 ${S.cur.embers}</span></div>`+CURS.map(c=>{const lk=c==='lock'&&S.lvl<CONFIG.lockLvl,p=curCost(c),e=c==='lock'?CONFIG.lockEmbers:0;
-  const w=lk?`🔒 ${t('unlockAt')} ${CONFIG.lockLvl}`:S.gold<p?`${t('needGold')} ${p-S.gold}🪙`:S.cur.embers<e?t('noEmbers'):'';
+ shop:()=>`<div class="flex"><h2 class="grow">🛒 ${t('shopT')}</h2><span>🪙 ${S.gold} · 🔆 ${S.cur.embers}</span></div>`+CURS.map(c=>{const lk=CURLV[c]&&S.lvl<CONFIG[CURLV[c]],p=curCost(c),e=c==='lock'?CONFIG.lockEmbers:0;
+  const w=lk?`🔒 ${t('unlockAt')} ${CONFIG[CURLV[c]]}`:S.gold<p?`${t('needGold')} ${p-S.gold}🪙`:S.cur.embers<e?t('noEmbers'):'';
   return `<div class="shopi"><div class="flex"><div style="font-size:24px">${CICO[c]}${CTAG[c]?`<sub style="font-size:11px">${CTAG[c]}</sub>`:''}</div><div class="grow"><b>${t(c)}</b> · ${t('owned')}: <b id="own-${c}">${S.cur[c]}</b>${CONFIG.stabCost[c]?` · <span style="color:#7fd0ff">⚖${CONFIG.stabCost[c]}</span>`:''}<div class="muted">${t(c+'D')}</div></div>
   <button class="gold" id="shop-${c}-1" data-act="buyCur" data-arg="${c}:1" ${w?'disabled':''}>×1<br>${p}🪙${e?'+'+e+'🔆':''}</button><button class="gold" id="shop-${c}-5" data-act="buyCur" data-arg="${c}:5" ${w||S.gold<p*5||S.cur.embers<e*5?'disabled':''}>×5<br>${p*5}🪙</button></div>${w?`<div class="warn" style="font-size:12px">${w}</div>`:''}</div>`}).join('')+
   `<div class="shopi"><div class="flex"><div style="font-size:24px">🔆</div><div class="grow"><b>${t('embers')}</b> · ${t('owned')}: <b>${S.cur.embers}</b><div class="muted">${t('embersD')}</div><div class="warn" style="font-size:12px">${t('srcE')}</div></div></div></div><div class="muted" style="margin:4px 0 8px">${t('src')}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
+ master:()=>`<div class="flex"><h2 class="grow">${t('master')}</h2><b style="color:#d898ff">${S.mp} ${t('mpS')}</b></div>`+MUPS.map(u=>{const l=S.mup[u.k],mx=l>=u.max,c=l+1;return `<div class="mrow"><div class="grow"><b>${t('m_'+u.k)}</b> <span class="muted">(${l}/${u.max})</span><div class="muted">${t('m_'+u.k+'D')}</div></div><button class="${mx||S.mp<c?'':'gold'}" id="mu-${u.k}" data-act="mup" data-arg="${u.k}" ${mx||S.mp<c?'disabled':''}>${mx?t('maxed'):t('mpCost').replace('{n}',c)}</button></div>`}).join('')+`<button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
+ skins:()=>V.collection()+`<button style="width:100%;margin-top:6px" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
+ hof:()=>`<div class="panel"><h2>👑 ${t('hof')}</h2>${S.hof.length?S.hof.map(h=>`<div class="t1">${h.name} · ${t(h.base)} · ilvl ${h.ilvl} · ${h.at}</div>`).join(''):`<div class="muted">${t('hofE')}</div>`}</div><div class="panel"><h2>${t('stats')}</h2>${t('sold')}: ${S.stats.sold} · ${t('profit')}: ${S.stats.profit}🪙 · ${t('crafts')}: ${S.stats.crafts} · ${t('t1s')}: ${S.stats.t1} · ${t('streak')}: ${S.login.streak} · 📋 ${S.stats.orders||0} · 🌑 ${S.stats.corr||0} · 👑 ${S.stats.prestiges||0} · ${t('life')}: ${fmtN(S.life)}🪙</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
  stash:()=>`<h2>📦 ${t('stash')} ${S.items.length}/${stallSize()}</h2>${S.items.length?S.items.map((x,i)=>`<div class="si" style="--rc:${RAR[rarity(x)][1]}"><div class="ic">${wcv('i'+i,40)}</div><div class="grow" data-act="selItem" data-arg="${i}"><b style="color:var(--rc)">${nameOf(x)}</b>${x.frac?' <span class="tagx">💔</span>':''}${x.lp?' <span class="lpb">✦</span>':''}<div class="muted">ilvl ${x.ilvl} · ${x.unid?'?':all(x).length+'× afix · ⚖'+x.stab+'/'+x.stab0}</div></div>
   <button class="sm" data-act="selItem" data-arg="${i}">⚒️</button>${x.unid?'':`<button class="sm ${isJunk(x)?'':'gold'}" id="sl-${i}" data-act="sell" data-arg="${i}">${sellPrice(x)}🪙</button><button class="sm ${isJunk(x)?'gold':''}" id="sv-${i}" data-act="salvage" data-arg="${i}">♻${salvageN(x)}🔆</button>`}</div>`).join(''):`<div class="muted">${t('noItem')}</div>`}<button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
- essence:()=>{const it=cur();return `<h2>${t('essenceT')}</h2><div class="muted">${t('essenceD2')} · ${CONFIG.essenceCost}🪙 · ⚖${CONFIG.stabCost.essence}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0">${it?AFF.filter(a=>it[a.s].length<sideCap(it)&&!all(it).some(x=>x.k===a.k)).map(a=>`<button class="ess" data-act="essence" data-arg="${a.k}">${t(a.s==='p'?'prefixes':'suffixes').slice(0,4)}. · ${afShort(a.k)}${S.hot===a.k?' 🔥':''}</button>`).join(''):''}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`},
+ essence:()=>{const it=cur();return `<h2>${t('essenceT')}</h2><div class="muted">${t('essenceD2')} · ${essCost()}🪙 · ⚖${CONFIG.stabCost.essence}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0">${it?AFF.filter(a=>it[a.s].length<sideCap(it)&&!all(it).some(x=>x.k===a.k)).map(a=>`<button class="ess" data-act="essence" data-arg="${a.k}">${t(a.s==='p'?'prefixes':'suffixes').slice(0,4)}. · ${afShort(a.k)}${S.hot===a.k?' 🔥':''}</button>`).join(''):''}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`},
  aff:()=>{const it=cur(),a=getSelAff(it);if(!a)return `<button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`;const d=AFM[a.k],rg=range(d,a.t),nx=a.t>1?range(d,a.t-1):null;
   const row=k=>{const r=why(k),cnt=k==='forge'?CONFIG.forgeGold+'🪙'+(a.t===2?' + 🔆×'+CONFIG.t1ForgeEmbers:''):'×'+S.cur[ACTS[k].cur];let info='';
    if(k==='forge'&&!r){const o=forgeOdds(it,a);info=`→ <span class="t${a.t-1}">T${a.t-1}</span> · ⚖${o.l}–${o.h} · <span class="good">✔${pct(o.ps)}</span> <span class="warn">💔${pct(o.pf)}</span> <span class="bad">💥${pct(o.ph)}</span>${S.omen==='omenF'?' · 🔮':''}`}else if(k!=='forge')info=CONFIG.stabCost[k]?'⚖ −'+CONFIG.stabCost[k]:'⚖ 0';
@@ -660,17 +761,19 @@ function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();if(sh
 
 function updCd(){document.querySelectorAll('.cd').forEach(e=>{const u=e.dataset.u,until=u[0]==='b'?(S.bounties[+u.slice(1)]||{}).until:S[u];e.textContent=fmt((until||0)-S.play)})}
 function tick(){if(document.hidden)return;S.play++;checkSkins();let rr=false;
+ if(S.play>=S.dayAt){newDay();rr=true}
  if(S.play>=S.marketAt){genMarket();rr=S.tab==='market'}
  if(S.play>=S.trendAt){rotateTrend();toast('🔥 '+t('hot')+': '+afShort(S.hot));rr=true}
  S.bounties.forEach((b,i)=>{if(S.play>=b.until){S.bounties[i]=genBounty();if(S.tab==='bounties')rr=true}});
  if(rr&&!document.querySelector('.slot')&&!sheet)render();else{renderTop();updCd()}if(S.play%5===0)save()}
-function init(){load();if(!S.hot)rotateTrend();if(!S.market.length)genMarket();while(S.bounties.length<3)S.bounties.push(genBounty());S.quests=S.quests.filter(Boolean);while(S.quests.length<3)S.quests.push(genQuest());
+function ensure(){if(!S.hot)rotateTrend();if(!S.market.length)genMarket();while(S.bounties.length<3)S.bounties.push(genBounty());S.quests=S.quests.filter(Boolean);while(S.quests.length<3)S.quests.push(genQuest());if(!S.dayAt||S.dayAt<=S.play)S.dayAt=S.play+CONFIG.daySec;if(!S.orders.length)fillOrders()}
+function init(){load();ensure();
  if(!S.tut){S.tut=true;modal(t('tutorial'))}
  const today=new Date().toDateString(),y=new Date(Date.now()-864e5).toDateString();
  if(S.login.last!==today){S.login.streak=S.login.last===y?S.login.streak+1:1;S.login.last=today;const g=CONFIG.daily.gold*Math.min(S.login.streak,7);S.gold+=g;S.cur.augment+=CONFIG.daily.aug;S.cur.reroll+=1;S.cur.embers+=CONFIG.daily.embers;
   modal(`<div class="lvl">🎁</div><div class="big">${t('daily')}</div><p style="text-align:center">${t('streak')}: <b>${S.login.streak}</b> 🔥<br>+${g}🪙 · +${CONFIG.daily.aug}💠 · +1🎲 · +${CONFIG.daily.embers}🔆</p>`)}
  render();save();setInterval(tick,1000)}
-window.G={get S(){return S},FR,ACT,render,itemValue,makeItem,save,why};
+window.G={get S(){return S},set S(v){S=v},newDay,genOrder,oMatch,ordFor,mpGain,presGoal,FR,ACT,render,itemValue,makeItem,save,why};
 init();
 </script>
 </body></html>
