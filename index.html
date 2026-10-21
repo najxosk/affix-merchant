@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="sk"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<meta name="theme-color" content="#15110d">
+<meta name="theme-color" content="#0d0b24">
 <title>Affix Merchant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Lilita+One&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{margin:0;height:100%;background:#0e0c0a;color:#e2d2a8;font-family:Georgia,'Times New Roman',serif;overscroll-behavior:none}
@@ -200,11 +201,122 @@ button.void{background:linear-gradient(#6a2a9a,#2a0838);border-color:#c070ff;col
 
 .cxleg{font-size:10px;margin:0 0 2px;opacity:.8;line-height:1.2}.cxleg b{color:#e8c77a}
 .mphint{font-size:11px;color:#d898ff;margin-top:2px}
+/* ===== v9 CCG skin ===== */
+:root{--gold:#ffd25a;--navy:#0d0b24;--pan:#16163a;--line:#2e2c66}
+html,body{background:#0b0a1f;color:#e9e6ff;font-family:'Lilita One','Trebuchet MS',system-ui,sans-serif;letter-spacing:.2px}
+body{background:radial-gradient(ellipse at 50% 0%,#2b1f5e 0%,#14123a 45%,#090818 100%)}
+header{background:linear-gradient(#1a1846ee,#110f30ee);border-bottom:1px solid #3b3680;box-shadow:0 4px 14px #0008}
+.pill{display:flex;align-items:center;gap:6px;background:linear-gradient(#24205a,#151335);border:2px solid #5a4a1e;border-radius:22px;padding:2px 10px 2px 3px;box-shadow:inset 0 1px 0 #fff2,0 2px 6px #0008}
+#gold{font-size:19px;color:#fff3c4;min-width:0;text-shadow:0 1px 0 #000}
+.coin{width:24px;height:24px;flex:none;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6b0,#ffc531 45%,#a8640e);box-shadow:0 0 0 2px #7a4a08,0 0 8px #ffb83a88;position:relative}
+.coin:after{content:'♛';position:absolute;inset:0;text-align:center;font-size:13px;line-height:24px;color:#8a5208}
+#rep{flex:1;min-width:0;font-size:11px;border-color:#4a3fa0;padding-right:8px}
+.lvb{flex:none;width:28px;height:28px;border-radius:9px;transform:rotate(45deg);display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#ffe48a,#d08a14);color:#3a2000;font-size:13px;box-shadow:0 0 8px #ffbf4088;margin:0 3px}
+.lvb{writing-mode:horizontal-tb}.lvb{font-weight:900}
+#rep .lvb{transform:none;border-radius:50%}
+.lvt{display:flex;justify-content:space-between;color:#ffe6a0;font-size:11.5px;line-height:1.1;white-space:nowrap}
+.xpt{font-size:8.5px;opacity:.7;text-align:right;line-height:1}
+.bar{height:6px;background:#0b0a22;border:1px solid #3d3880;border-radius:6px}
+.bar i{background:linear-gradient(90deg,#ff9a1e,#ffe066);box-shadow:0 0 6px #ffc040}
+button{font-family:inherit;color:#fff;background:linear-gradient(#3a3680,#232058);border:none;border-radius:12px;box-shadow:inset 0 2px 0 #ffffff30,inset 0 -3px 0 #0006,0 3px 0 #08071a,0 4px 8px #0006;text-shadow:0 1px 1px #0009;transition:transform .08s}
+button:active{transform:translateY(3px) scale(.97);box-shadow:inset 0 2px 0 #ffffff30,inset 0 -1px 0 #0006,0 0 0 #08071a;filter:brightness(1.15)}
+button.gold{background:linear-gradient(#ffcf4a,#d98a0e);color:#3a1d00;text-shadow:0 1px 0 #ffe9a088;border:none}
+button.red{background:linear-gradient(#ff5a4e,#b3201a);border:none}
+button.sm.rb{width:36px;height:36px;min-height:36px;padding:0;border-radius:50%;font-size:16px;flex:none}
+#ticker{background:#0a0920aa;border:1px solid #4a2a7a;color:#ffb36b;border-radius:10px}
+nav{background:linear-gradient(#17153c,#0c0b22);border-top:1px solid #3b3680;padding:4px 4px calc(4px + env(safe-area-inset-bottom));gap:3px}
+nav button{border:none;border-radius:12px;background:none;box-shadow:none;min-height:50px;font-size:10px;color:#9a97c8;text-transform:uppercase;letter-spacing:.4px}
+nav button b{height:24px;display:flex;justify-content:center}
+nav svg{width:24px;height:24px;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}nav svg .f{fill:currentColor;fill-opacity:.25}
+nav button.on{background:linear-gradient(#3a2f86,#221d5a);color:#ffd25a;box-shadow:inset 0 0 0 1px #6a5ad0,0 0 12px #6a5ad066}
+nav button.on svg{filter:drop-shadow(0 0 4px #ffb830)}
+h2{font-family:Cinzel,Georgia,serif;font-weight:900;color:var(--gold);letter-spacing:.5px}
+.panel{background:linear-gradient(#1c1a48,#121034);border:1px solid #34307a;border-radius:14px;box-shadow:inset 0 1px 0 #ffffff14}
+/* cards */
+.card{background:linear-gradient(170deg,#1d1a4a,#0f0d2a 70%);border:3px solid var(--rc);border-radius:16px;box-shadow:0 0 16px -4px var(--rc),inset 0 0 0 2px #0008,inset 0 0 20px #0009}
+.card:before{display:none}.card:after{display:none}
+.ic{border:2px solid var(--rc);border-radius:10px;background:radial-gradient(circle at 50% 40%,#3a2f86,#0d0b24)}
+.card.big{padding:12px 7px 14px;margin-top:9px;margin-bottom:10px;border-width:4px;border-radius:20px;overflow:visible;
+ background:linear-gradient(170deg,#1f1b52,#0e0c28 60%,#14113a);box-shadow:0 0 22px -4px var(--rc),0 0 0 2px #000a,inset 0 0 0 2px color-mix(in srgb,var(--rc) 40%,#000),inset 0 0 24px #000a;transform-style:preserve-3d}
+.card.big.r3{animation:glow 2s infinite alternate}
+.rib{position:absolute;top:-12px;left:50%;transform:translateX(-50%);z-index:3;padding:2px 16px;font-family:Cinzel,Georgia,serif;font-weight:900;font-size:10.5px;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;color:#1a0f00;background:linear-gradient(#fff,var(--rc) 45%,color-mix(in srgb,var(--rc) 60%,#000));clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%)}
+.art{position:relative;height:clamp(64px,14dvh,128px);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;
+ background:radial-gradient(ellipse at 50% 120%,color-mix(in srgb,var(--ec) 55%,transparent),transparent 60%),linear-gradient(#141040,#070618);border:1px solid #ffffff1a}
+.aur{position:absolute;inset:-30%;background:conic-gradient(from 0deg at 50% 60%,transparent,#22ffb855,transparent 20%,#7a4dff66,transparent 45%,color-mix(in srgb,var(--ec) 60%,transparent),transparent 75%);filter:blur(14px);animation:aur 9s linear infinite;opacity:.9}
+.art:after{content:'';position:absolute;inset:0;background:radial-gradient(1px 1px at 20% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 85% 65%,#fff,transparent),radial-gradient(1px 1px at 35% 75%,#fff,transparent),radial-gradient(1px 1px at 55% 45%,#fffb,transparent);pointer-events:none}
+@keyframes aur{to{transform:rotate(360deg)}}
+.art canvas{position:relative;z-index:1;height:100%!important;width:auto!important;filter:drop-shadow(0 0 8px var(--ec))}
+.arth{position:absolute;right:4px;top:4px;z-index:2}
+.card.big>.nm{font-family:Cinzel,Georgia,serif;font-weight:900;text-align:center;font-size:21px;line-height:1.05;margin-top:4px;color:#ffd25a;background:linear-gradient(#fff4c0,#ffc531 55%,#c77a10);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 2px 0 #000)}
+.card.big>.sub{text-align:center;font-size:11px;color:color-mix(in srgb,var(--rc) 70%,#fff);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.card.big .sb{height:16px;margin:3px 2px}.card.big .sb span{font-size:10.5px;line-height:14px}
+.sb{background:#0a0920;border:1px solid #3d3880}.sb i{background:linear-gradient(90deg,#2a6cff,#6fe0ff)}
+.ilr{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);white-space:nowrap;z-index:3;font-size:10.5px;padding:2px 14px;color:#ffe6a0;background:linear-gradient(#2a2160,#120f30);border:2px solid var(--rc);border-radius:10px;text-transform:uppercase;letter-spacing:.5px}
+.sl{opacity:1;font-family:Cinzel,Georgia,serif;font-weight:900;font-size:10.5px;padding:1px 8px;border-radius:6px;margin:3px 0 1px}
+.slp{color:#7fb6ff;background:linear-gradient(90deg,#1f3f8a,transparent)}
+.sls{color:#8ff08f;background:linear-gradient(90deg,#1d5a2a,transparent)}
+.af{background:#0c0b26cc;border:1px solid #2a2860;border-radius:7px;margin:2px 0;font-family:system-ui,'Segoe UI',sans-serif;font-weight:600;font-size:12.5px;color:#e9e6ff}
+.af .dia{flex:none;font-size:9px;color:#5fa8ff}
+.af .tt{font-size:10px;opacity:.85}
+.af.sel{border-color:var(--gold);background:#2a2560;box-shadow:0 0 8px #ffd25a66}
+.af .pips{min-width:0;display:flex;gap:2px;letter-spacing:0}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#0006;border:1px solid #fff3;vertical-align:middle}
+.dot.on{background:radial-gradient(circle at 35% 30%,#fff,currentColor 55%);border-color:currentColor;box-shadow:0 0 4px currentColor}
+.t1{color:#ff9a1e}.t2{color:#c46bff}.t3{color:#4aa3ff}.t4{color:#4fd86a}.t5{color:#aeb4c2}
+.af.t1,.af.t2,.af.t3,.af.t4,.af.t5{color:#e9e6ff}.af .tt{color:inherit}
+.af.t1 .pips,.af.t1 .tt{color:#ff9a1e}.af.t2 .pips,.af.t2 .tt{color:#c46bff}.af.t3 .pips,.af.t3 .tt{color:#4aa3ff}.af.t4 .pips,.af.t4 .tt{color:#4fd86a}.af.t5 .pips,.af.t5 .tt{color:#aeb4c2}
+.af.t1 .v{color:#ffb84a}
+/* foil */
+.card.r2:not(.mini)>.art:before,.card.r3:not(.mini)>.art:before,.card.big.r2:after,.card.big.r3:after{content:''}
+.card.big.r2:after,.card.big.r3:after,.card.big.corr:after{display:block;position:absolute;inset:0;border-radius:16px;pointer-events:none;z-index:4;width:auto;height:auto;border:none;opacity:1;
+ background:linear-gradient(110deg,transparent 35%,#ffffff10 42%,#ff7ae055 46%,#7affea55 50%,#fff6a055 54%,#ffffff10 58%,transparent 65%);background-size:300% 100%;mix-blend-mode:screen;animation:foil 3.8s ease-in-out infinite}
+@keyframes foil{0%{background-position:120% 0}60%,100%{background-position:-120% 0}}
+.card.flip{animation:flip .7s cubic-bezier(.3,.7,.3,1)}
+@keyframes flip{0%{transform:perspective(700px) rotateY(0)}50%{transform:perspective(700px) rotateY(180deg) scale(.95)}100%{transform:perspective(700px) rotateY(360deg)}}
+.card.big:active{transform:perspective(700px) rotateX(4deg) rotateY(-5deg)}
+.card.corr{border-color:#a855f7;--rc:#a855f7}
+/* action buttons */
+.ab{border-radius:14px;--b1:#4a6cff;--b2:#1d3aa8;background:linear-gradient(var(--b1),var(--b2));border:2px solid #ffffff30;color:#fff}
+.ab .an{font-size:10.5px;text-transform:uppercase;letter-spacing:.3px}
+.ab .ai{font-size:21px;filter:drop-shadow(0 2px 1px #0008)}
+.ab .ac{color:#fff3c4;background:#0007;border-radius:6px;padding:0 3px}.ab .as{color:#cfe8ff;background:#0007;border-radius:6px;padding:0 3px}
+.c-augment,.c-reroll,.c-preroll,.c-sroll{--b1:#3d8bff;--b2:#1546b8}
+.c-annul,.c-tannul{--b1:#2fc6c0;--b2:#0e6b78}
+.c-swap,.c-omen{--b1:#9a5cff;--b2:#5a1fb8}
+.c-lock,.c-essence{--b1:#ffc53a;--b2:#c07408}
+.c-lock .an,.c-essence .an{color:#3a1d00;text-shadow:none}
+.c-ember,.c-forge{--b1:#ff8a3a;--b2:#b8420e}
+.c-corrupt{--b1:#b44dff;--b2:#4a0f8a;box-shadow:inset 0 2px 0 #ffffff30,inset 0 -3px 0 #0006,0 3px 0 #08071a,0 0 12px #a855f788}
+.ab.dim{opacity:.5;filter:saturate(.5)}
+#sellBtn{background:linear-gradient(#ff5a4e,#b3201a);color:#fff;text-shadow:0 1px 1px #0009}
+#sellBtn.gold{background:linear-gradient(#ff6a50,#c41e14)}
+#salvageBtn{background:linear-gradient(#5fd06a,#1d7a2e)}
+#hint{background:#0a0920aa;border:1px solid #34307a;border-radius:10px}
+.strip button{border-radius:10px;border:2px solid var(--rc,#5a54b0);background:linear-gradient(#24205a,#120f30)}
+.strip button.on{background:linear-gradient(#3a2f86,#1a1550)}
+/* mini cards */
+.mkrow,.si,.shc,.shopi,.mrow{background:linear-gradient(100deg,color-mix(in srgb,var(--rc,#5a54b0) 22%,#15133a),#100e2c 55%);border:2px solid var(--rc,#3d3880);border-radius:12px;box-shadow:inset 0 1px 0 #ffffff14,0 2px 6px #0006}
+.mkrow .nm{font-family:Cinzel,Georgia,serif;font-weight:900;font-size:13px}
+.mkrow .sub,.si .sub{font-family:system-ui,sans-serif;font-weight:600}
+.shc{--rc:#4a3fa0}
+.cx div.c{background:#0a0920;border:1px solid #2e2c66}
+.mini .af{font-size:11.5px}
+#modal .box,#sheet .box{background:linear-gradient(#1f1b52,#100e2c);border:2px solid #5a4ad0;box-shadow:0 0 30px #5a4ad055}
+#sellov{background:radial-gradient(circle at 50% 40%,#2b1f5ef0,#05040f 75%)}
+.sbtitle{font-family:Cinzel,Georgia,serif;font-weight:900;color:#ffd25a}
+.bframe{background:conic-gradient(from 200deg,#ffd25a,var(--bc),#5a4ad0,#ffd25a,var(--bc),#ffd25a)}
+.bname{color:#ffd25a;font-family:Cinzel,Georgia,serif;font-weight:900}
+#title{background:radial-gradient(ellipse at 50% 35%,#3a2a86,#110f30 60%,#05040f)}
+.ttl{font-family:Cinzel,Georgia,serif;font-weight:900}
+.muted{font-family:system-ui,sans-serif}
+#rep .lvt{overflow:hidden}.af .grow{text-align:left}button.sm.rb{width:32px;height:32px;min-height:32px;font-size:14px}header .row{gap:4px}
+.mkrow{padding:5px 7px;margin-bottom:6px}.mkrow .ic{width:42px;height:42px}.mkrow .ic canvas{width:38px!important;height:38px!important}
+@media (max-height:700px){.panel{margin-bottom:5px}.skc{padding:4px!important;margin-bottom:4px}.skc canvas{width:56px!important;height:56px!important}.skc .muted{font-size:10px;line-height:1.1}.skc button{min-height:34px}.mkrow{padding:3px 6px;margin-bottom:4px}.mkrow .ic{width:34px;height:34px}.mkrow .ic canvas{width:30px!important;height:30px!important}.card.big>.nm{font-size:17px}.art{height:56px}.card.big{padding-top:10px}.af{font-size:11.5px}}
 </style></head>
 <body>
 <div id="app">
 <header>
- <div class="row"><div id="gold"></div><div id="rep"></div><button class="sm" data-act="sheet" data-arg="shop" id="shopBtn">🛒</button><button class="sm" data-act="help" id="helpBtn">?</button><button class="sm" id="setBtn" data-act="sheet" data-arg="settings">⚙</button></div>
+ <div class="row"><div id="gold" class="pill"></div><div id="rep" class="pill"></div><button class="sm rb" data-act="sheet" data-arg="shop" id="shopBtn">🛒</button><button class="sm rb" data-act="help" id="helpBtn">?</button><button class="sm rb" id="setBtn" data-act="sheet" data-arg="settings">⚙</button></div>
  <div id="ticker"></div>
 </header>
 <main id="view"></main>
@@ -243,7 +355,7 @@ const AFF=[
  {k:'aspd',s:'s',b:2},{k:'crit',s:'s',b:2},{k:'cmult',s:'s',b:6},{k:'rfire',s:'s',b:4},{k:'rcold',s:'s',b:4},{k:'rlight',s:'s',b:4},{k:'cspd',s:'s',b:3}];
 const AFM={};AFF.forEach(a=>AFM[a.k]=a);
 const BASES=[['sword',1],['axe',1],['dagger',1],['bow',2],['staff',3],['wand',4]];
-const RAR=[['normal','#c8c8c8'],['magic','#8c8cff'],['rare','#ffff77'],['exalted','#ff9a3c']];
+const RAR=[['normal','#aeb4c2'],['magic','#3d8bff'],['rare','#ffd23a'],['exalted','#ff8a1e']];
 const NAe=['Doom','Storm','Grim','Blood','Dusk','Rune','Ash','Frost','Bane','Dread','Gale','Soul'],NBe=['Bite','Song','Edge','Fang','Thirst','Call','Spire','Wail','Mark','Gnash','Reaver','Kiss'];
 const NAs=['Skaza','Búrka','Temný','Krv','Súmrak','Runa','Popol','Mráz','Skaza','Hrôza','Víchor','Duša'],NBs=['Hryz','Pieseň','Ostie','Tesák','Smäd','Volanie','Ihla','Nárek','Znak','Škrípanie','Dravec','Bozk'];
 const NAl=()=>S.lang==='sk'?NAs:NAe,NBl=()=>S.lang==='sk'?NBs:NBe;
@@ -257,7 +369,7 @@ const AORDER=['augment','reroll','preroll','sroll','annul','tannul','swap','esse
 const UPS=[{k:'stall',max:4,cost:l=>60*2**l,req:l=>l+1},{k:'stab',max:5,cost:l=>50*2**l,req:l=>l+1},{k:'haggle',max:5,cost:l=>40*2**l,req:l=>l+2},{k:'tongue',max:5,cost:l=>70*2**l,req:l=>l+2}];
 const QPOOL=['sell','t1','forge','bounty','salvage','rare','crafts','profit'];
 const I18N={
-sk:{void:'Esencia prázdnoty',voidD:'Kúp v obchode, alebo vzácne nájdi pri predaji/rozobratí. Korupcia: veľké zlepšenie, zmena hodnôt alebo ZNIČENIE predmetu. Potom sa už nedá upravovať.',b_corrupt:'Korupcia',h_corrupt:'Jednorazová, nevratná akcia s Esenciou prázdnoty (🌑, obchod / vzácny nález). Výsledok: veľké zlepšenie, zmena alebo zničenie predmetu.',
+sk:{ilvlL:'Úroveň predmetu',void:'Esencia prázdnoty',voidD:'Kúp v obchode, alebo vzácne nájdi pri predaji/rozobratí. Korupcia: veľké zlepšenie, zmena hodnôt alebo ZNIČENIE predmetu. Potom sa už nedá upravovať.',b_corrupt:'Korupcia',h_corrupt:'Jednorazová, nevratná akcia s Esenciou prázdnoty (🌑, obchod / vzácny nález). Výsledok: veľké zlepšenie, zmena alebo zničenie predmetu.',
 corrupted:'KORUMPOVANÝ',corrShort:'🌑 Korumpovaný – už sa nedá upravovať. Predaj ho alebo odovzdaj na zákazku.',alreadyCorr:'Už je korumpovaný.',corrT:'VOID KORUPCIA',corrQ:'Jednorazová a <b>NEVRATNÁ</b> akcia. Potom sa predmet už <b>nedá upravovať</b>.',cGood:'Veľké zlepšenie (tier / afix navyše / implicit / cena ×2)',cNeu:'Zmena hodnôt afixov',cBad:'Predmet sa ZNIČÍ',corrYes:'🌑 Korumpovať',
 c_tier:'Afix prekročil hranice: +1 tier!',c_affix:'Prázdnota pridala afix navyše!',c_imp:'Získal implicitný afix!',c_price:'Prekliata krása: cena ×2!',c_neu:'Prázdnota prehodila hodnoty afixov.',c_bad:'Prázdnota pohltila predmet…',implicit:'Implicit',bd_imp:'🌑 Implicitný afix',bd_corr:'🌑 Korupcia ×2',
 prestige:'Prestíž',presD:'Zarob cieľové zlato, predaj obchod a začni odznova s Majstrovskými bodmi (MB) na trvalé vylepšenia.',mpBuy:'MB kupujú trvalé bonusy: stabilita, lacnejšie kamene, lepšie ceny, Legendárny potenciál…',mpEst:'Pri cieli: +{n} MB',mpNow:'Teraz by si dostal +{n} MB',page:'{a}/{b}',life:'Zarobené zlato',presBtn:'👑 Predať obchod',presLock:'Ešte {g}🪙',mp:'Majstrovské body',mpS:'MB',master:'⭐ Majstrovské vylepšenia',presQ:'Predať obchod a začať odznova?',presKeep:'✅ Ostáva: Majstrovské body a vylepšenia, kódex, vzhľady, Sieň slávy, štatistiky.',presLose:'❌ Stratíš: zlato, predmety, meny, úroveň a Rozvoj.',presYes:'👑 Áno, predať',presDone:'NOVÝ ZAČIATOK!',presGot:'Získal si {n} MB. Míňaj ich v Rozvoji → Majstrovské vylepšenia.',mpCost:'{n} MB',
@@ -303,7 +415,7 @@ affN:'afixy',settings:'Nastavenia',language:'Jazyk',sound:'Zvuk',on:'Zap.',off:'
 tut:[`<h2>⚒️ Ako hrať (1/3)</h2><p><b>Tvoje remeslo:</b> kupuj zbrane na <b>Trhu</b>, vylepšuj ich v <b>Dielni</b> a predávaj so ziskom alebo ich odovzdaj zákazníkom v <b>Zákazkách</b>.</p><p><b>Afixy:</b> max. <b>3 prefixy</b> (poškodenie) a <b>3 sufixy</b> (rýchlosť, kritické zásahy, odolnosti). Tiery <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1</span> (najlepší). <b>Úroveň predmetu (ilvl)</b> určuje najlepší možný tier.</p>`,
  `<h2>⚖ Stabilita a úpravy (2/3)</h2><p><b>Stabilita je rozpočet predmetu.</b> Každá úprava ju míňa (modré číslo na tlačidle). Na 0 je predmet <b>zapečatený</b>. Zvyšná stabilita zvyšuje predajnú cenu a niektorí zákazníci ju vyžadujú.</p><p>💠 pridá afix · 🎲 prehodí hodnoty · 🌀 zruší náhodný · 🧪 pridá zvolený afix · 🔆 obnoví stabilitu · 🔮 znamenia. Ťukni na afix na karte: 🔥 <b>Vyhňa</b> zvýši tier (riziko prasknutia), 🔁 výmena, ✂️ vystrihnutie, 🔒 zámok.</p><p><b>♻ Rozober</b> nepotrebné predmety na <b>🔆 uhlíky</b> – nedajú sa kúpiť.</p>`,
  `<h2>👑 Rast obchodu (3/3)</h2><p><b>⭐ Reputácia</b> odomyká nové zbrane a vyššie úrovne predmetov. <b>⬆️ Rozvoj</b> vylepšuje obchod.</p><p><b>📖 Kódex:</b> objav všetkých 5 tierov afixu a získaj trvalý bonus.</p><p><b>🌑 Korupcia:</b> riskantná jednorazová stávka – veľké zlepšenie alebo zničenie.</p><p><b>👑 Prestíž:</b> dosiahni cieľ, predaj obchod a získaj Majstrovské body na trvalé vylepšenia.</p><p class="muted">Podrž ľubovoľné tlačidlo = vysvetlenie.</p>`]},
-en:{void:'Void Essence',voidD:'Corrupts an item: a big boost, a value shift – or the item is destroyed. A corrupted item can no longer be crafted. Sold in the shop; occasionally found when selling or salvaging.',b_corrupt:'Corrupt',h_corrupt:'A one-time, irreversible gamble using a Void Essence 🌑. Outcome: a big boost, rerolled values, or the item is destroyed. Corrupted items cannot be crafted.',
+en:{ilvlL:'Item level',void:'Void Essence',voidD:'Corrupts an item: a big boost, a value shift – or the item is destroyed. A corrupted item can no longer be crafted. Sold in the shop; occasionally found when selling or salvaging.',b_corrupt:'Corrupt',h_corrupt:'A one-time, irreversible gamble using a Void Essence 🌑. Outcome: a big boost, rerolled values, or the item is destroyed. Corrupted items cannot be crafted.',
 corrupted:'CORRUPTED',corrShort:'🌑 Corrupted – no further crafting. Sell it or deliver it to a bounty.',alreadyCorr:'Already corrupted.',corrT:'VOID CORRUPTION',corrQ:'A one-time, <b>IRREVERSIBLE</b> gamble. Afterwards the item <b>can never be crafted again</b>.',cGood:'Big boost (tier, extra affix, implicit or ×2 value)',cNeu:'Affix values are rerolled',cBad:'The item is DESTROYED',corrYes:'🌑 Corrupt',
 c_tier:'An affix broke its limits: +1 tier!',c_affix:'The Void granted an extra affix!',c_imp:'An implicit modifier awakened!',c_price:'Cursed beauty: value ×2!',c_neu:'The Void rerolled the affix values.',c_bad:'The Void devoured the item…',implicit:'Implicit',bd_imp:'🌑 Implicit modifier',bd_corr:'🌑 Corruption ×2',
 prestige:'Prestige',presD:'Reach the gold goal, sell your shop and start over with Master Points (MP) for permanent upgrades.',mpBuy:'MP buy permanent bonuses: stability, cheaper stones, better prices, Legendary Potential…',mpEst:'At the goal: +{n} MP',mpNow:'You would earn +{n} MP now',page:'{a}/{b}',life:'Gold earned',presBtn:'👑 Sell the shop',presLock:'{g}🪙 to go',mp:'Master Points',mpS:'MP',master:'⭐ Master upgrades',presQ:'Sell the shop and start over?',presKeep:'✅ You keep: Master Points & upgrades, Codex and its bonuses, skins, Hall of Fame, stats.',presLose:'❌ You lose: gold, items, currencies, reputation level and shop upgrades.',presYes:'👑 Yes, sell it',presDone:'A NEW BEGINNING!',presGot:'You earned {n} MP. Spend them under Upgrades → Master upgrades.',mpCost:'{n} MP',
@@ -694,7 +806,7 @@ document.addEventListener('pointerdown',e=>{lpFired=false;const b=e.target.close
 document.addEventListener('pointermove',e=>{if(lpXY&&Math.hypot(e.clientX-lpXY[0],e.clientY-lpXY[1])>12)clearTimeout(lpT)});
 document.addEventListener('contextmenu',e=>{if(e.target.closest('[data-help]'))e.preventDefault()});
 function applyGuide(){if(S.guide>=3)return;let sel=null;if(S.guide===0&&S.tab==='market')sel='.buy';else if(S.guide>=1&&S.tab==='workshop'&&cur())sel=S.guide===1?'#a-augment':'#sellBtn';const e=sel&&$(sel);if(e)e.classList.add('guide')}
-const pips=tr=>'●'.repeat(6-tr)+'○'.repeat(tr-1);
+const pips=tr=>'<i class="dot on"></i>'.repeat(6-tr)+'<i class="dot"></i>'.repeat(tr-1);
 const nameOf=it=>{if(it.unid)return t('crate');if(rarity(it)<2)return t(it.base);if(it.na!=null)return NAl()[it.na]+' '+NBl()[it.nb];return it.name||t(it.base)};
 const sideCap=it=>3+(it.lp||0),totCap=it=>6+(it.lp||0);
 const pct=x=>Math.round(x*100)+'%';
@@ -723,6 +835,7 @@ const ACT={
  setLang:l=>{S.lang=l;S.langSet=true;renderTitle();if(window._daily&&mq.length&&String(mq[0]).includes('🎁'))showDaily();render()},snd:()=>{S.snd=!S.snd;renderTitle();if(S.snd)SND.coin()},
  toTitle:()=>{sheet=null;renderTitle();$('#title').classList.remove('out','hidden')},
  play:()=>{ac();SND.coin();$('#title').classList.add('out');setTimeout(()=>{if($('#title').classList.contains('out'))$('#title').classList.add('hidden');if(window._daily)showDaily()},500)},
+ tilt:()=>{const c=$('#wcard');if(c){c.classList.remove('flip');void c.offsetWidth;c.classList.add('flip');SND.click&&SND.click()}return'noR'},
  mkInfo:i=>{const it=S.market[+i];if(!it)return;modal(itemCard(it,false,{foot:`<div class="muted" style="margin-top:3px">${t('value')} ~${itemValue(it)}🪙</div>`},'m'+i)+`<div class="flex" style="margin-top:8px"><button class="gold grow" id="mkBuy" data-act="mkBuy" data-arg="${i}">${t('buy')} ${buyPrice(it)}🪙</button><button class="grow" data-act="closeModal">${t('close')}</button></div>`);setTimeout(paintAll,0);return'noR'},
  mkBuy:i=>{closeM();return ACT.buy(i)},
  closeModal:()=>{closeM();return'noR'},sheet:m=>{sheet=m;SND.click()},closeSheet:()=>{if(sheet==='aff')S.selAff=null;sheet=null},
@@ -792,18 +905,25 @@ const ACT={
 document.addEventListener('click',e=>{if(lpFired){lpFired=false;return}const b=e.target.closest('[data-act]');if(!b||b.disabled)return;ac();const r=ACT[b.dataset.act]&&ACT[b.dataset.act](b.dataset.arg);if(r!=='noR'){render();save()}});
 $('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet'){if(sheet==='aff')S.selAff=null;sheet=null;render()}});
 function itemCard(it,inter,extra={},src){const r=rarity(it),col=RAR[r][1],ec=elemColor(it);
- const imp=it.imp&&!it.unid?`<div class="af imp"><span class="pips">🌑 ${t('implicit')}</span><span class="grow">${afText(it.imp)}</span></div>`:'';
- const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" data-arg="${id}" ${inter?'data-act="selAff"':''}><span class="pips">${pips(a.t)}</span><span class="grow">${afText(a)}</span>${S.hot===a.k?'🔥':''}${a.lock?'🔒':''}<span class="tt">T${a.t}</span></div>`};
- const body=it.unid?`<div class="af t5" style="justify-content:center">❓ ${t('unid')} ❓</div>`:imp+(it.p.length?`<div class="sl">${t('prefixes')}</div>`:'')+it.p.map((a,i)=>line(a,i,'p')).join('')+(it.s.length?`<div class="sl">${t('suffixes')}</div>`:'')+it.s.map((a,i)=>line(a,i,'s')).join('');
+ const imp=it.imp&&!it.unid?`<div class="af imp"><span class="dia">🌑</span><span class="tt">${t('implicit')}</span><span class="grow">${afText(it.imp)}</span></div>`:'';
+ const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" data-arg="${id}" ${inter?'data-act="selAff"':''}><span class="dia">◆</span><span class="grow">${afText(a)}</span>${S.hot===a.k?'🔥':''}${a.lock?'🔒':''}<span class="tt">T${a.t}</span><span class="pips">${pips(a.t)}</span></div>`};
+ const body=it.unid?`<div class="af t5" style="justify-content:center">❓ ${t('unid')} ❓</div>`:imp+(it.p.length?`<div class="sl slp">${t('prefixes')}</div>`:'')+it.p.map((a,i)=>line(a,i,'p')).join('')+(it.s.length?`<div class="sl sls">${t('suffixes')}</div>`:'')+it.s.map((a,i)=>line(a,i,'s')).join('');
  const tag=(it.corr?`<span class="tagv">🌑 ${t('corrupted')}</span> `:'')+(it.frac?`<span class="tagx">${t('fractured')}</span>`:it.stab<=0&&!it.unid?`<span class="tagx">${t('sealed')}</span>`:'');
+ if(inter)return `<div class="card big r${r} ${ec?'el':''} ${it.corr?'corr':''}" id="wcard" style="--rc:${it.corr?'#a855f7':col};--ec:${ec||col}"><div class="rib">${it.corr?t('corrupted'):t(RAR[r][0])}</div><div class="art" data-act="tilt"><div class="aur"></div>${wcv(src,96,1)}${extra.head?`<div class="arth">${extra.head}</div>`:''}</div><div class="nm">${nameOf(it)}</div><div class="sub">✦ ${t(RAR[r][0])} ${t(it.base)} ✦ ${tag}${it.lp?` <span class="lpb" data-help="lp">✦ ${t('lp')}</span>`:''}</div>
+ ${it.unid?'':`<div class="sb ${it.stab<12?'low':''}"><i style="width:${Math.min(100,it.stab/it.stab0*100)}%"></i><span>⚖ ${t('stability')} ${it.stab}/${it.stab0}</span></div>`}<div class="affs">${body}</div>${extra.foot||''}<div class="ilr">✦ ${t('ilvlL')} ${it.ilvl} · ${t('maxT')} T${maxTier(it.ilvl)}</div></div>`;
  return `<div class="card r${r} ${inter?'':'mini'} ${ec?'el':''} ${it.corr?'corr':''}" ${inter?'id="wcard"':''} style="--rc:${col};--ec:${ec||col}"><div class="ch"><div class="ic">${wcv(src,inter?60:40,inter)}</div><div class="grow"><div class="nm">${nameOf(it)}</div><div class="sub">${t(RAR[r][0])} · ilvl ${it.ilvl} · ${t('maxT')} T${maxTier(it.ilvl)} ${tag}</div>${it.lp?`<span class="lpb" data-help="lp">✦ ${t('lp')}</span>`:''}</div>${extra.head||''}</div>
  ${it.unid?'':`<div class="sb ${it.stab<12?'low':''}"><i style="width:${Math.min(100,it.stab/it.stab0*100)}%"></i><span>⚖ ${t('stability')} ${it.stab}/${it.stab0}</span></div>`}<div class="affs">${body}</div>${extra.foot||''}</div>`}
-function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl} · 🔆${S.cur.embers} · <span style="color:#d898ff" title="${t('prestige')}">👑${Math.floor(presPct()*100)}%</span><div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;
+function renderTop(){$('#gold').innerHTML='<span class="coin"></span><b>'+S.gold.toLocaleString('en-US')+'</b>';$('#rep').innerHTML=`<span class="lvb">${S.lvl}</span><div class="grow"><div class="lvt"><span>Lv ${S.lvl}</span><span>🔆${S.cur.embers} <span style="color:#d898ff" title="${t('prestige')}">👑${Math.floor(presPct()*100)}%</span></span></div><div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div><div class="xpt">${S.xp} / ${needXp(S.lvl)} XP</div></div>`;
  $('#ticker').innerHTML=`<span class="hot">🔥 ${t('hot')}: ${afShort(S.hot)} ×${CONFIG.hotMul}</span> · ${t('changes')} <span class="cd" data-u="trendAt"></span>`;document.documentElement.lang=S.lang}
-function renderTabs(){const qd=S.quests.filter(q=>q&&q.p>=q.n).length;$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}${k==='bounties'&&qd?`<span class="badge">${qd}</span>`:''}${k==='upgrades'&&(mpGain()||S.mp)?`<span class="badge" style="background:#8a2cff">👑</span>`:''}</button>`).join('')}
+const TICO={market:'<svg viewBox="0 0 24 24"><path d="M3 9l2-5h14l2 5" fill="none"/><path d="M3 9h18v2a3 3 0 01-6 0 3 3 0 01-6 0 3 3 0 01-6 0z" class="f"/><path d="M5 13v7h14v-7M10 20v-5h4v5" fill="none"/></svg>',
+workshop:'<svg viewBox="0 0 24 24"><path d="M4 8h11l5 2v2h-6l-1 3h-4l-1-3H4z" class="f"/><path d="M8 15h6l1 5H7z" class="f"/></svg>',
+bounties:'<svg viewBox="0 0 24 24"><path d="M6 3h11a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V5" fill="none"/><path d="M9 8h7M9 12h7M9 16h4" fill="none"/></svg>',
+codex:'<svg viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-14c-3-.5-6 0-8 1.5zM12 6v14" fill="none"/></svg>',
+upgrades:'<svg viewBox="0 0 24 24"><path d="M12 3l7 7h-4v6H9v-6H5z" class="f"/><path d="M8 20h8" fill="none"/></svg>'};
+function renderTabs(){const qd=S.quests.filter(q=>q&&q.p>=q.n).length;$('#tabs').innerHTML=['market','workshop','bounties','codex','upgrades'].map(k=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${TICO[k]}</b>${t(k)}${k==='bounties'&&qd?`<span class="badge">${qd}</span>`:''}${k==='upgrades'&&(mpGain()||S.mp)?`<span class="badge" style="background:#8a2cff">👑</span>`:''}</button>`).join('')}
 const BAR=['augment','reroll','preroll','sroll','annul','essence','ember','omen','corrupt','lock'];
 function abtn(a){const r=why(a),d=ACTS[a],sc=CONFIG.stabCost[a];const om=true;const cnt=d.cur?'×'+S.cur[d.cur]:a==='essence'?essCost()+'🪙':a==='omen'?'×'+(S.cur.omenP+S.cur.omenS+S.cur.omenF):'';const st=sc?'⚖'+sc:a==='ember'?'+'+CONFIG.emberRestore:'';
- return `<button class="ab ${(r&&r!=='BUY')||!om?'dim':''} ${a==='omen'&&S.omen?'act':''} ${a==='corrupt'?'vd':''}" id="a-${a}" data-act="act" data-arg="${a}" data-help="${a}">${cnt?`<span class="ac">${cnt}</span>`:''}${st?`<span class="as">${st}</span>`:''}<span class="ai">${CICO[a]}</span><span class="an">${t('b_'+a)}</span></button>`}
+ return `<button class="ab c-${a} ${(r&&r!=='BUY')||!om?'dim':''} ${a==='omen'&&S.omen?'act':''} ${a==='corrupt'?'vd':''}" id="a-${a}" data-act="act" data-arg="${a}" data-help="${a}">${cnt?`<span class="ac">${cnt}</span>`:''}${st?`<span class="as">${st}</span>`:''}<span class="ai">${CICO[a]}</span><span class="an">${t('b_'+a)}</span></button>`}
 function hintHtml(it){const g=S.guide<3?`<b class="warn">${t('g'+(S.guide+1))}</b>&nbsp;`:'';if(it.frac)return g+'<span class="bad">'+t('fracShort')+'</span>';if(it.corr)return g+'<span class="tagv">'+t('corrShort')+'</span>';if(it.stab<=0)return g+'<span class="warn">'+t('sealedShort')+'</span>';
  return g+(S.omen?`<span style="color:#c86bff">🔮 ${t(S.omen)}</span>&nbsp;· `:'')+(S.guide<3?'':t('tapAff'))}
 const V={
