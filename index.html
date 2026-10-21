@@ -1,130 +1,157 @@
 <!DOCTYPE html>
 <html lang="sk"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#15110d">
 <title>Affix Merchant</title>
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#0e0c0a;color:#d9c79a;font-family:Georgia,'Times New Roman',serif}
-body{background:radial-gradient(circle at 50% 0,#2a231b,#0e0c0a 70%)}
-#app{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding-bottom:74px}
-header{position:sticky;top:0;z-index:5;background:linear-gradient(#1d1813,#15110d);border-bottom:2px solid #4a3b28;padding:6px 8px;box-shadow:0 3px 10px #000a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;background:#0e0c0a;color:#e2d2a8;font-family:Georgia,'Times New Roman',serif;overscroll-behavior:none}
+body{background:radial-gradient(ellipse at 50% -10%,#3a2d1e,#0e0c0a 65%)}
+#app{max-width:560px;margin:0 auto;height:100vh;height:100dvh;display:flex;flex-direction:column}
+header{flex:none;background:linear-gradient(#211a13,#15110d);border-bottom:2px solid #5a4630;padding:5px 8px 4px;box-shadow:0 3px 10px #000a;padding-top:max(5px,env(safe-area-inset-top))}
 .row{display:flex;align-items:center;gap:6px}
-#gold{font-size:20px;font-weight:bold;color:#ffd76a;flex:1}
-#rep{font-size:13px;min-width:90px}
+#gold{font-size:20px;font-weight:bold;color:#ffd76a;text-shadow:0 0 8px #b8862f88;min-width:84px}
+#rep{flex:1;font-size:12px}
 .bar{height:6px;background:#2b2219;border:1px solid #4a3b28;border-radius:4px;overflow:hidden}
-.bar i{display:block;height:100%;background:linear-gradient(90deg,#b8862f,#ffd76a)}
-button{font-family:inherit;color:#f0e2bb;background:linear-gradient(#4a3b28,#2c2318);border:1px solid #8a6d3e;border-radius:8px;padding:10px 12px;font-size:15px;min-height:44px;cursor:pointer;box-shadow:inset 0 1px 0 #ffffff22,0 2px 4px #0008}
-button:active{transform:translateY(1px);filter:brightness(1.2)}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#b8862f,#ffd76a);transition:width .6s}
+button{font-family:inherit;color:#f0e2bb;background:linear-gradient(#4d3d29,#2a2117);border:1px solid #8a6d3e;border-radius:9px;padding:8px 10px;font-size:15px;min-height:42px;cursor:pointer;box-shadow:inset 0 1px 0 #ffffff22,0 2px 4px #0008;touch-action:manipulation}
+button:active{transform:translateY(1px) scale(.97);filter:brightness(1.25)}
 button:disabled{opacity:.4;filter:grayscale(1)}
-button.sm{min-height:36px;padding:6px 9px;font-size:13px}
-button.gold{background:linear-gradient(#a07a2c,#5e4518);border-color:#ffd76a;color:#fff6d8}
+button.sm{min-height:34px;padding:4px 8px;font-size:13px}
+button.gold{background:linear-gradient(#a8812f,#5e4518);border-color:#ffd76a;color:#fff6d8}
 button.red{background:linear-gradient(#7a2c22,#421510);border-color:#d0584a}
-#curs{display:flex;gap:8px;font-size:14px;margin-top:4px;flex-wrap:wrap}
-#curs span{background:#0008;border:1px solid #3a2e20;border-radius:6px;padding:2px 6px}
-#ticker{margin-top:5px;font-size:13px;background:#000a;border:1px solid #6b2d10;border-radius:6px;padding:4px 8px;color:#ffb36b;overflow:hidden;white-space:nowrap}
+#ticker{margin-top:4px;font-size:12px;background:#000a;border:1px solid #6b2d10;border-radius:6px;padding:3px 8px;color:#ffb36b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #ticker .hot{animation:pulse 1.2s infinite alternate}
 @keyframes pulse{to{color:#fff2a8;text-shadow:0 0 8px #ff7b00}}
-main{flex:1;padding:8px}
-nav{position:fixed;bottom:0;left:0;right:0;z-index:6;display:flex;justify-content:center;background:#15110d;border-top:2px solid #4a3b28}
-nav div{display:flex;max-width:560px;width:100%}
-nav button{flex:1;border-radius:0;border:none;border-right:1px solid #3a2e20;background:none;min-height:64px;font-size:11px;padding:4px 2px;box-shadow:none}
-nav button b{display:block;font-size:22px}
+main{flex:1;min-height:0;overflow:auto;padding:6px 8px;-webkit-overflow-scrolling:touch}
+nav{flex:none;display:flex;background:#15110d;border-top:2px solid #5a4630;padding-bottom:env(safe-area-inset-bottom)}
+nav button{flex:1;border-radius:0;border:none;border-right:1px solid #3a2e20;background:none;min-height:54px;font-size:10px;padding:2px;box-shadow:none;position:relative}
+nav button b{display:block;font-size:20px}
 nav button.on{background:linear-gradient(#4a3b28,#221a12);color:#ffd76a}
-h2{font-size:18px;margin:6px 0 8px;color:#e8c77a;border-bottom:1px solid #4a3b28;padding-bottom:4px}
-.panel{background:linear-gradient(#211b15,#17130f);border:1px solid #4a3b28;border-radius:10px;padding:10px;margin-bottom:10px}
-.card{position:relative;background:linear-gradient(#1b1612,#0f0c0a);border:2px solid var(--rc);border-radius:10px;padding:10px;margin-bottom:10px;box-shadow:0 0 12px -2px var(--rc),inset 0 0 20px #000}
+nav .badge{position:absolute;top:4px;right:18%;background:#d33;color:#fff;border-radius:9px;font-size:10px;padding:0 5px}
+h2{font-size:16px;margin:4px 0 6px;color:#e8c77a}
+.panel{background:linear-gradient(#231c15,#17130f);border:1px solid #4a3b28;border-radius:10px;padding:8px;margin-bottom:8px}
+.card{position:relative;background:linear-gradient(160deg,#221b14,#0f0c0a 60%,#1a140f);border:2px solid var(--rc);border-radius:12px;padding:8px;box-shadow:0 0 14px -3px var(--rc),inset 0 0 24px #000}
+.card:before,.card:after{content:'';position:absolute;width:14px;height:14px;border:2px solid var(--rc);opacity:.8;pointer-events:none}
+.card:before{top:3px;left:3px;border-right:none;border-bottom:none;border-radius:6px 0 0 0}.card:after{bottom:3px;right:3px;border-left:none;border-top:none;border-radius:0 0 6px 0}
 .card.r3{animation:glow 2s infinite alternate}
-@keyframes glow{to{box-shadow:0 0 24px 2px var(--rc),inset 0 0 20px #000}}
-.ch{display:flex;gap:10px;align-items:center}
-.ic{width:56px;height:56px;flex:none;border:1px solid #4a3b28;border-radius:8px;background:radial-gradient(#2e261d,#0d0b09)}
+@keyframes glow{to{box-shadow:0 0 26px 2px var(--rc),inset 0 0 24px #000}}
+.ch{display:flex;gap:8px;align-items:center}
+.ic{width:46px;height:46px;flex:none;border:1px solid var(--rc);border-radius:9px;background:radial-gradient(circle at 50% 40%,#3a3024,#0d0b09)}
 .ic svg{width:100%;height:100%}
-.nm{font-size:17px;font-weight:bold;color:var(--rc)}
-.sub{font-size:12px;opacity:.85}
-.frac{color:#ff5a4a;font-weight:bold}
-.affs{margin-top:8px}
-.af{padding:7px 8px;margin:3px 0;border-radius:6px;background:#0006;border:1px solid transparent;font-size:14px}
+.nm{font-size:16px;font-weight:bold;color:var(--rc);text-shadow:0 0 6px #000}
+.sub{font-size:11px;opacity:.85}
+.tagx{color:#ff5a4a;font-weight:bold}
+.sb{position:relative;height:22px;margin:6px 0 4px;background:#1a120c;border:1px solid #6a5232;border-radius:11px;overflow:hidden}
+.sb i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#2f7fd0,#6fd0ff);transition:width .9s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 10px #6fd0ff88}
+.sb.low i{background:linear-gradient(90deg,#a02020,#ff6a4a)}
+.sb span{position:relative;display:block;text-align:center;font-size:13px;line-height:20px;font-weight:bold;color:#fff;text-shadow:0 1px 2px #000}
+.affs{overflow:auto;min-height:0}
+.af{display:flex;gap:6px;align-items:center;padding:4px 7px;margin:2px 0;border-radius:6px;background:#0007;border:1px solid transparent;font-size:13.5px;line-height:1.25}
 .af.ia{cursor:pointer}
-.af.sel{border-color:#ffd76a;background:#3a2e1a}
-.af .tg{display:inline-block;min-width:44px;font-size:11px;opacity:.85}
+.af.sel{border-color:#ffd76a;background:#3a2e1a;box-shadow:0 0 8px #ffd76a55}
+.af .tg{flex:none;font-size:10px;min-width:34px;padding:1px 3px;border-radius:4px;background:#0008;text-align:center;border:1px solid currentColor}
+.af .v{font-weight:bold}
+.af.slot .v{color:#fff;text-shadow:0 0 6px #fff}
+.af.tierup{animation:tup 1.2s}
+@keyframes tup{0%{background:#ffd76a;transform:scale(1.05)}100%{background:#0007}}
+.af.settle{animation:stl .5s}
+@keyframes stl{0%{background:#ffffff44}100%{background:#0007}}
 .t1{color:#ff8c1a;text-shadow:0 0 6px #ff6a00}.t2{color:#c86bff}.t3{color:#4aa3ff}.t4{color:#5fd35f}.t5{color:#bbb}
-.lbl{font-size:11px;opacity:.6;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
-.stab{font-size:12px;margin-top:6px}
-.price{font-size:16px;color:#ffd76a;font-weight:bold}
-.flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.grow{flex:1}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.cbtn{display:flex;gap:4px}.cbtn button:first-child{flex:1}
-.strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px}
-.strip button{width:58px;height:58px;padding:2px;flex:none;border:2px solid var(--rc)}
+.muted{opacity:.7;font-size:12px}
+.good{color:#6be36b}.warn{color:#ffb84a}.bad{color:#ff5a4a}.pos{color:#6be36b}.neg{color:#ff6a5a}
+.flex{display:flex;gap:6px;align-items:center}.grow{flex:1}
+.ws{height:100%;display:flex;flex-direction:column;gap:5px}
+.ws .card{flex:0 1 auto;min-height:0;display:flex;flex-direction:column}
+.strip{flex:none;display:flex;gap:5px;overflow-x:auto}
+.strip button{width:44px;height:44px;min-height:0;padding:2px;flex:none;border:2px solid var(--rc,#8a6d3e)}
 .strip button.on{box-shadow:0 0 10px var(--rc);background:#3a2e1a}
 .strip svg{width:100%;height:100%}
-.muted{opacity:.7;font-size:13px}
-.odds{font-size:13px;line-height:1.5;margin:6px 0}
-.good{color:#6be36b}.warn{color:#ffb84a}.bad{color:#ff5a4a}
-.cx{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:3px;font-size:12px;align-items:center}
-.cx div.c{height:22px;border-radius:4px;background:#0008;border:1px solid #3a2e20;text-align:center;line-height:20px}
-.cx div.c.on{background:currentColor}
-.cx div.c.on span{color:#000}
+#hint{flex:none;font-size:12px;min-height:34px;line-height:1.3;padding:3px 8px;background:#0008;border:1px solid #3a2e20;border-radius:8px;display:flex;align-items:center;flex-wrap:wrap}
+.agrid{flex:none;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.ab{position:relative;height:58px;min-height:0;padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
+.ab .ai{font-size:20px}.ab .an{font-size:10.5px;white-space:nowrap}
+.ab .ac{position:absolute;top:2px;left:4px;font-size:11px;font-weight:bold;color:#ffd76a}
+.ab .as{position:absolute;top:2px;right:4px;font-size:10px;color:#7fd0ff}
+.ab .ax{position:absolute;bottom:13px;right:6px;font-size:10px;font-weight:bold;color:#fff;background:#000a;border-radius:3px;padding:0 2px}
+.ab.dim{opacity:.45}
+.ab.no{animation:no .3s}
+@keyframes no{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.sellrow{flex:none;display:grid;grid-template-columns:1.6fr 1fr;gap:5px}
+.sellrow button{min-height:50px;line-height:1.1}
+.mk{height:100%;display:flex;flex-direction:column;gap:5px}
+.mk .top{flex:none;display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.mk .top button{font-size:12px;min-height:44px;padding:4px}
+.list{flex:1;min-height:0;overflow:auto;padding-right:2px}
+.list .card{margin-bottom:7px}
+.mini .af{font-size:12px;padding:2px 6px}
+.mini .sb{height:14px;margin:4px 0}.mini .sb span{font-size:10px;line-height:12px}
 .hidden{display:none!important}
 #modal{position:fixed;inset:0;z-index:20;background:#000c;display:flex;align-items:center;justify-content:center;padding:14px}
-#modal .box{max-width:500px;width:100%;max-height:88vh;overflow:auto;background:linear-gradient(#2a2219,#17130f);border:2px solid #8a6d3e;border-radius:12px;padding:14px;font-size:15px;line-height:1.45}
-#toast{position:fixed;left:50%;bottom:80px;font-size:13px;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:90%;max-width:420px}
-#toast div{background:#000e;border:1px solid #b8862f;border-radius:8px;padding:8px 12px;text-align:center;animation:tin .25s}
-@keyframes tin{from{opacity:0;transform:translateY(-10px)}}
+#modal .box{max-width:480px;width:100%;max-height:86dvh;overflow:auto;background:linear-gradient(#2a2219,#17130f);border:2px solid #8a6d3e;border-radius:14px;padding:14px;font-size:14.5px;line-height:1.45;animation:pop .3s}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+#sheet{position:fixed;inset:0;z-index:19;background:#000b;display:flex;align-items:flex-end;justify-content:center}
+#sheet .box{max-width:560px;width:100%;max-height:88dvh;overflow:auto;background:linear-gradient(#2a2219,#17130f);border:2px solid #8a6d3e;border-radius:16px 16px 0 0;padding:10px;animation:up .25s}
+@keyframes up{from{transform:translateY(40%)}}
+.shopi{border:1px solid #4a3b28;border-radius:10px;padding:6px 8px;margin-bottom:6px;background:#0005}
+.shopi button{min-height:44px}
+.si{display:flex;gap:8px;align-items:center;border:1px solid #4a3b28;border-left:4px solid var(--rc);border-radius:8px;padding:6px;margin-bottom:6px;background:#0005}
+.si .ic{width:40px;height:40px}
+#toast{position:fixed;left:50%;bottom:calc(64px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;gap:4px;pointer-events:none;width:92%;max-width:420px;font-size:13px}
+#toast div{background:#000e;border:1px solid #b8862f;border-radius:8px;padding:6px 10px;text-align:center;animation:tin .25s}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}}
 #fx{position:fixed;inset:0;pointer-events:none;z-index:25}
 #flash{position:fixed;inset:0;pointer-events:none;z-index:24;opacity:0;background:radial-gradient(#ffd76a,#ff6a0088 50%,transparent 80%)}
 #flash.go{animation:flash 1s}
 @keyframes flash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.float{position:fixed;z-index:26;pointer-events:none;font-weight:bold;font-size:20px;text-shadow:0 0 6px #000,0 0 12px currentColor;animation:flt 1.5s forwards;transform:translateX(-50%);white-space:nowrap}
+@keyframes flt{0%{opacity:0;margin-top:10px}15%{opacity:1;font-size:26px}100%{opacity:0;margin-top:-60px}}
 .shake{animation:shake .4s}
-@keyframes shake{20%{transform:translateX(-7px) rotate(-1deg)}40%{transform:translateX(7px) rotate(1deg)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes shake{20%{transform:translateX(-6px) rotate(-1deg)}40%{transform:translateX(6px) rotate(1deg)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
 .reveal{animation:rev .7s}
 @keyframes rev{0%{transform:rotateY(90deg) scale(.8);filter:brightness(3)}100%{transform:none}}
 .big{font-size:22px;text-align:center;color:#ff8c1a;text-shadow:0 0 10px #ff6a00}
-.stab,.fstab{position:relative}
-.sbar i{transition:width .9s ease-out}
-.float{position:absolute;right:6px;top:-6px;color:#ff6a4a;font-weight:bold;font-size:18px;text-shadow:0 0 6px #000,0 0 10px #ff3b2a;animation:flt 1.6s forwards;pointer-events:none;z-index:3}
-@keyframes flt{0%{opacity:0;transform:translateY(8px) scale(.8)}15%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:translateY(-40px)}}
-#shop{position:fixed;inset:0;z-index:19;background:#000c;display:flex;align-items:flex-end;justify-content:center}
-#shop .box{max-width:560px;width:100%;max-height:92vh;overflow:auto;background:linear-gradient(#2a2219,#17130f);border:2px solid #8a6d3e;border-radius:14px 14px 0 0;padding:12px}
-.shopi{border:1px solid #4a3b28;border-radius:10px;padding:8px;margin-bottom:8px;background:#0005}
-.shopi button{min-height:50px;font-size:15px}
-#curs{cursor:pointer}
-.info{font-size:12px;background:#3a1510;border:1px solid #d0584a;border-radius:6px;padding:6px;margin-top:6px;color:#ffc9c0}
-.pos{color:#6be36b}.neg{color:#ff6a5a}
+.lvl{font-size:64px;text-align:center;animation:spin 1s}
+@keyframes spin{from{transform:scale(0) rotate(-180deg)}}
+.q{display:flex;gap:6px;align-items:center;margin:4px 0;font-size:13px}
+.cx{display:grid;grid-template-columns:1.7fr repeat(5,1fr);gap:3px;font-size:11.5px;align-items:center}
+.cx div.c{height:20px;border-radius:4px;background:#0008;border:1px solid #3a2e20;text-align:center;line-height:18px}
+.cx div.c.on{background:currentColor}.cx div.c.on span{color:#000}
+@media (max-height:700px){#gold{font-size:17px}.ab{height:48px}.ab .ai{font-size:17px}.af{font-size:12.5px;padding:3px 6px}.ic{width:38px;height:38px}.nm{font-size:14px}.sb{height:18px;margin:4px 0 2px}.sb span{line-height:16px;font-size:12px}.sellrow button{min-height:44px}nav button{min-height:48px}nav button b{font-size:17px}.strip button{width:38px;height:38px}#hint{min-height:30px;font-size:11.5px}}
 </style></head>
 <body>
 <div id="app">
 <header>
- <div class="row"><div id="gold"></div><div id="rep"></div><button class="sm" id="langBtn" data-act="lang"></button><button class="sm" data-act="shop" id="shopBtn">🛒</button><button class="sm" data-act="help">?</button></div>
- <div id="curs" data-act="shop"></div>
+ <div class="row"><div id="gold"></div><div id="rep"></div><button class="sm" data-act="sheet" data-arg="shop" id="shopBtn">🛒</button><button class="sm" id="langBtn" data-act="lang"></button><button class="sm" data-act="help">?</button></div>
  <div id="ticker"></div>
 </header>
 <main id="view"></main>
+<nav id="tabs"></nav>
 </div>
-<nav><div id="tabs"></div></nav>
+<div id="sheet" class="hidden"><div class="box" id="sheetBox"></div></div>
 <div id="modal" class="hidden"><div class="box" id="modalBox"></div></div>
-<div id="shop" class="hidden"><div class="box" id="shopBox"></div></div><div id="toast"></div>
+<div id="toast"></div>
 <canvas id="fx"></canvas>
 <div id="flash"></div>
 <script>
 'use strict';
 // ================= CONFIG (tuning) =================
 const CONFIG={
- startGold:100, startCur:{reroll:3,augment:5,annul:2,lock:0},
- curCost:{reroll:5,augment:7,annul:6,lock:40}, forgeGold:3,
- marketSize:5, marketRefreshSec:60, marketRefreshCost:5, trendSec:180, bountyRefreshSec:150,
+ startGold:100,
+ startCur:{augment:5,reroll:3,preroll:1,sroll:1,annul:2,tannul:1,swap:1,lock:0,embers:1},
+ curCost:{augment:7,reroll:5,preroll:6,sroll:6,annul:6,tannul:14,swap:12,lock:40},
+ lockEmbers:1,
+ stabCost:{augment:6,reroll:4,preroll:3,sroll:3,annul:3,tannul:5,swap:6,essence:8,lock:0,ember:0},
+ forgeGold:3, t1ForgeEmbers:2, emberRestore:15, essenceCost:24,
+ marketSize:6, marketRefreshSec:60, marketRefreshCost:5, trendSec:180, bountyRefreshSec:150, bountySkipCost:5, charityCooldown:120,
  crateCost:35, baseStab:[35,55], startStall:6, lockLvl:3,
- essenceCost:24, shardCost:{reroll:5,augment:7,annul:6,lock:30}, charityCooldown:120, bountySkipCost:5,
- tierW:{5:10,4:22,3:45,2:95,1:220},        // value weight of an affix by tier
- rollW:{5:50,4:30,3:14,2:5,1:1.5},          // chance weights for rolling tiers
- tierIlvl:{5:1,4:12,3:28,2:48,1:68},        // min item level for tier
- sellMul:0.95, priceFactor:[0.8,1.3], bountyExact:2.6, bountyPartial:1.3, hotMul:2,
- forgeCost:t=>[4+(5-t)*3,12+(5-t)*6],       // stability cost range when forging from tier t
- fractureShare:0.88,                         // failed forge: fracture, otherwise shatter
- daily:{gold:25,aug:2}, repBase:60, saveKey:'affixMerchant.v1'
+ tierW:{5:10,4:22,3:45,2:95,1:220}, rollW:{5:50,4:30,3:14,2:5,1:1.5}, tierIlvl:{5:1,4:12,3:28,2:48,1:68},
+ sellMul:.95, junkMul:.5, fracMul:.4, pristine:.35, priceFactor:[.8,1.3],
+ bountyExact:2.6, bountyPartial:1.3, hotMul:2,
+ forgeCost:t=>[4+(5-t)*3,12+(5-t)*6], fractureShare:.88,
+ daily:{gold:25,aug:2,embers:1}, repBase:60, saveKey:'affixMerchant.v1'
 };
 window.CONFIG=CONFIG;
-// ================= DATA =================
 const AFF=[
  {k:'pphys',s:'p',b:8},{k:'fphys',s:'p',b:3},{k:'ffire',s:'p',b:4},{k:'fcold',s:'p',b:4},{k:'flight',s:'p',b:5},{k:'pele',s:'p',b:7},
  {k:'aspd',s:'s',b:2},{k:'crit',s:'s',b:2},{k:'cmult',s:'s',b:6},{k:'rfire',s:'s',b:4},{k:'rcold',s:'s',b:4},{k:'rlight',s:'s',b:4},{k:'cspd',s:'s',b:3}];
@@ -132,130 +159,125 @@ const AFM={};AFF.forEach(a=>AFM[a.k]=a);
 const BASES=[['sword',1],['axe',1],['dagger',1],['bow',2],['staff',3],['wand',4]];
 const RAR=[['normal','#c8c8c8'],['magic','#8c8cff'],['rare','#ffff77'],['exalted','#ff9a3c']];
 const NA=['Doom','Storm','Grim','Blood','Dusk','Rune','Ash','Frost','Bane','Dread','Gale','Soul'],NB=['Bite','Song','Edge','Fang','Thirst','Call','Spire','Wail','Mark','Gnash','Reaver','Kiss'];
-const FACES=['🧙','🛡️','🏹','🗡️','👑','🧝','🧔','👩‍🦰','🧛','🤠'];
-const CUSTN=['Marek','Zuzka','Brom','Ilsa','Vlado','Kael','Eva','Tibor','Nyx','Oskar'];
-const CURS=['reroll','augment','annul','lock'],CICO={reroll:'🎲',augment:'💠',annul:'🌀',lock:'🔒'};
+const FACES=['🧙','🛡️','🏹','🗡️','👑','🧝','🧔','👩‍🦰','🧛','🤠'],CUSTN=['Marek','Zuzka','Brom','Ilsa','Vlado','Kael','Eva','Tibor','Nyx','Oskar'];
+const CURS=['augment','reroll','preroll','sroll','annul','tannul','swap','lock'];
+const CICO={augment:'💠',reroll:'🎲',preroll:'🎲',sroll:'🎲',annul:'🌀',tannul:'✂️',swap:'🔁',lock:'🔒',embers:'🔆',ember:'🔆',essence:'🧪',forge:'🔥',shop:'🛒'};
+const CTAG={preroll:'P',sroll:'S'};
+const ACTS={augment:{cur:'augment'},reroll:{cur:'reroll'},preroll:{cur:'preroll'},sroll:{cur:'sroll'},annul:{cur:'annul'},tannul:{cur:'tannul',sel:1},swap:{cur:'swap',sel:1},essence:{},forge:{sel:1},lock:{cur:'lock',sel:1},ember:{cur:'embers'},shop:{}};
+const AORDER=['augment','reroll','preroll','sroll','annul','tannul','swap','essence','forge','lock','ember','shop'];
 const UPS=[{k:'stall',max:4,cost:l=>60*2**l,req:l=>l+1},{k:'stab',max:5,cost:l=>50*2**l,req:l=>l+1},{k:'haggle',max:5,cost:l=>40*2**l,req:l=>l+2},{k:'tongue',max:5,cost:l=>70*2**l,req:l=>l+2}];
-// ================= I18N =================
+const QPOOL=['sell','t1','forge','bounty','salvage','rare','crafts','profit'];
 const I18N={
-sk:{shop:'Obchod',shopT:'Obchod s menami',owned:'máš',needGold:'Chýba ti',unlockAt:'Odomkne sa na úrovni reputácie',close:'Zavrieť',shards:'Úlomky',
- src_reroll:'Zdroj: obchod, denný bonus, výmena úlomkov',src_augment:'Zdroj: obchod, denný bonus (+2), výmena úlomkov',src_annul:'Zdroj: obchod, výmena úlomkov',src_lock:'Zdroj: obchod od úrovne 3, výmena úlomkov',
- essInfo:'🧪 Esencie (cielené pridanie konkrétneho afixu) nájdeš v Dielni pri vybranom predmete. 🧩 Úlomky získaš rozobratím predmetov.',
- essence:'Esencia – pridaj konkrétny afix',essenceD:'Pridá presne zvolený afix (tier je náhodný podľa ilvl). Drahšie, ale ideálne pre zákazky.',
- salvage:'Rozobrať',salvaged:'Rozobraté: +{n} 🧩 úlomkov',missing:'Chýba',skip:'Iný zákazník',
- charityT:'Si bez peňazí?',charityD:'Starý kováč ti daruje obyčajnú zbraň, aby si mohol začať znova.',charityBtn:'Vziať darček',charityWait:'Ďalší dar o',
- fracInfo:'💔 Prasknutý predmet sa už nedá upravovať (meny ani Vyhňa). Môžeš ho stále predať (−15 % hodnoty), odovzdať zákazníkovi alebo rozobrať na úlomky.',
- compare:'oproti vybranému',maxTierIl:'max. tier',ilvlExpl:'Tento predmet má ilvl {i}, preto môže mať najviac tier T{m}. Na T{n} treba ilvl {r}+. Kúp predmet s vyšším ilvl.',
- addFirst:'Predmet nemá afixy – najprv pridaj afix 💠 alebo esenciou.',confirmT:'Riskantné kovanie!',confirmYes:'Kovať aj tak',cancel:'Zrušiť',
- afterForge:'po kovaní',loss:'strata',noRoom:'Na tejto strane nie je miesto.',buyHint:'Nemáš žiadny – otváram obchod.',
-market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Rozvoj',
- normal:'Bežný',magic:'Magický',rare:'Vzácny',exalted:'Vznešený',
- sword:'Meč',axe:'Sekera',dagger:'Dýka',bow:'Luk',staff:'Palica',wand:'Prútik',
- reroll:'Kameň prehodenia',augment:'Kameň rozšírenia',annul:'Kameň zrušenia',lock:'Runa zámku',
- rerollD:'Nanovo hodí hodnoty afixov',augmentD:'Pridá náhodný afix',annulD:'Odstráni náhodný afix',lockD:'Zamkne vybraný afix (1×)',
- forge:'Vyhňa',stability:'Stabilita',prefixes:'Prefixy',suffixes:'Sufixy',hot:'HORÚCI TREND',changes:'zmena o',
- buy:'Kúpiť',sell:'Predať za',paid:'kúpené za',value:'hodnota',newStock:'Nový tovar o',refresh:'Obnoviť',stall:'Stánok',
- crate:'Tajomná debna',crateD:'Neidentifikovaný predmet. Môže byť smeť… alebo poklad.',identify:'Identifikovať',unid:'Neidentifikovaný',
- noItem:'Nemáš vybraný predmet. Kúp zbraň na Trhu.',selectAff:'Ťukni na afix, aby si ho vybral pre Vyhňu alebo Zámok.',
- forgeBtn:'Kovať',forgeCost:'Cena stability',safe:'Úspech',fracture:'Prasknutie',shatter:'Rozbitie',maxTier:'Už je T1!',ilvlLow:'Príliš nízky ilvl pre vyšší tier',
- fractured:'PRASKNUTÝ',fracturedT:'Predmet praskol! Už sa nedá upravovať.',shatteredT:'Predmet sa ROZTRIESKAL na prach!',
- noCur:'Nemáš túto menu – dokúp ju (+).',noGold:'Málo zlata!',stallFull:'Stánok je plný!',full:'Všetkých 6 afixov je obsadených.',nothing:'Nie je čo zmeniť.',
- locked:'Zamknuté',fragile:'Prasknutý predmet sa nedá upravovať.',
- wants:'Chce',minIlvl:'min. ilvl',deliver:'Odovzdať',exact:'PRESNÁ ZHODA',partial:'Čiastočná zhoda',nomatch:'Nezhoduje sa',leaves:'odchádza o',selItem:'Vybraný predmet',
- codexT:'Kódex afixov',bonuses:'Bonusy',rowB:'Každý kompletný riadok: +2 stabilita na nové predmety',pageP:'Kompletné prefixy: meny o 20 % lacnejšie',pageS:'Kompletné sufixy: predaj +10 %',
- hof:'Sieň slávy',hofE:'Zatiaľ žiadny dokonalý predmet (6× T1).',stats:'Štatistiky',sold:'Predané',profit:'Zisk',crafts:'Úpravy',t1s:'T1 hody',
- rep:'Reputácia',level:'Úroveň',unlocks:'Odomykanie',up_stall:'Väčší stánok',up_stallD:'+1 miesto na predmety',up_stab:'Pevná ruka',up_stabD:'+8 stabilita nových predmetov',
- up_haggle:'Zjednávanie',up_haggleD:'Nákup −4 %',up_tongue:'Medový jazyk',up_tongueD:'Predaj +4 %',needLvl:'Treba úroveň',maxed:'MAX',
+sk:{market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Rozvoj',
+ normal:'Bežný',magic:'Magický',rare:'Vzácny',exalted:'Vznešený',sword:'Meč',axe:'Sekera',dagger:'Dýka',bow:'Luk',staff:'Palica',wand:'Prútik',
+ augment:'Kameň rozšírenia',reroll:'Kameň prehodenia',preroll:'Kameň prehodenia prefixov',sroll:'Kameň prehodenia sufixov',annul:'Kameň zrušenia',tannul:'Kameň vystrihnutia',swap:'Kameň výmeny',lock:'Runa zámku',embers:'Uhlíky vyhne',essence:'Esencia',forge:'Vyhňa',
+ augmentD:'Pridá náhodný afix.',rerollD:'Nanovo hodí hodnoty všetkých afixov.',prerollD:'Nanovo hodí hodnoty len prefixov.',srollD:'Nanovo hodí hodnoty len sufixov.',annulD:'Odstráni náhodný afix.',tannulD:'Odstráni afix, ktorý si vyberieš.',swapD:'Vymení vybraný afix za nový náhodný na tej istej strane.',lockD:'Zamkne vybraný afix – ochráni ho pri ďalšej náhodnej úprave.',embersD:'Obnoví +15 stability. Potrebné na T1 kovanie a Runu zámku. Získaš ich LEN rozobratím predmetov.',
+ s_augment:'Rozšíriť',s_reroll:'Prehodiť',s_preroll:'Prefixy',s_sroll:'Sufixy',s_annul:'Zrušiť',s_tannul:'Vystrihnúť',s_swap:'Výmena',s_essence:'Esencia',s_forge:'Vyhňa',s_lock:'Zámok',s_ember:'Uhlík',s_shop:'Obchod',
+ stability:'Stabilita',hot:'HORÚCI',changes:'zmena o',buy:'Kúpiť',sell:'Predať',paid:'kúpené',value:'hodnota',refresh:'Nový tovar',stash:'Sklad',
+ crate:'Tajomná debna',crateD:'Neidentifikovaný predmet – smeť alebo poklad.',identify:'Identifikovať',unid:'Neidentifikovaný',needId:'Najprv identifikuj predmet.',
+ noItem:'Nemáš vybraný predmet. Kúp zbraň na Trhu.',pickAff:'Najprv ťukni na afix na karte.',pickHint:'Ťukni na afix → potom Vyhňa / Výmena / Vystrihnúť / Zámok.',
+ maxTier:'Už je T1!',ilvlShort:'ilvl {i} dovoľuje max. T{m} (T{n} chce ilvl {r}+)',
+ fractured:'PRASKNUTÝ',sealed:'ZAPEČATENÝ',fracShort:'Prasknutý – nedá sa upravovať. Rozober na uhlíky.',sealedShort:'Stabilita 0 – zapečatené. Použi 🔆 Uhlík alebo predaj.',
+ fracturedT:'Predmet praskol! Už sa nedá upravovať – rozober ho na uhlíky.',shatteredT:'Predmet sa ROZTRIESKAL!',
+ lowStab:'Málo stability',noEmbers:'Nemáš uhlíky – rozober nejaký predmet.',stabFull:'Stabilita je plná.',needEmbers:'T1 kovanie chce 🔆',
+ noGold:'Málo zlata!',stallFull:'Sklad je plný!',full:'Všetkých 6 afixov je obsadených.',nothing:'Nie je čo zmeniť.',isLocked:'Afix je zamknutý.',
+ forgeCost:'stabilita',confirmT:'Riskantné kovanie!',confirmYes:'Kovať aj tak',cancel:'Zrušiť',
+ wants:'Chce',minIlvl:'ilvl',deliver:'Odovzdať',exact:'PRESNÁ ZHODA',partial:'Čiastočná',nomatch:'Nezhoduje sa',leaves:'odchádza o',selItem:'Vybraný',missing:'Chýba',
+ quests:'Úlohy',claim:'Vybrať',qDone:'Úloha splnená!',qsell:'Predaj predmet za {n}+🪙',qt1:'Hoď T1 afix',qforge:'Kuj {n}×',qbounty:'Splň zákazku',qsalvage:'Rozober {n} predmety',qrare:'Maj predmet so 4+ afixmi',qcrafts:'Urob {n} úprav',qprofit:'Zarob {n}🪙 zisku',
+ codexT:'Kódex afixov',bonuses:'Bonusy',rowB:'Každý kompletný riadok: +2 stabilita nových predmetov',pageP:'Všetky prefixy: meny −20 %',pageS:'Všetky sufixy: predaj +10 %',
+ hof:'Sieň slávy',hofE:'Zatiaľ žiadny dokonalý predmet (6× T1).',stats:'Štatistiky',sold:'Predané',profit:'Zisk',crafts:'Úpravy',t1s:'T1 hody',streak:'Séria dní',
+ rep:'Reputácia',level:'Úroveň',up_stall:'Väčší sklad',up_stallD:'+1 miesto',up_stab:'Pevná ruka',up_stabD:'+8 stabilita nových predmetov',up_haggle:'Zjednávanie',up_haggleD:'Nákup −4 %',up_tongue:'Medový jazyk',up_tongueD:'Predaj +4 %',needLvl:'Treba úroveň',maxed:'MAX',
  u1:'Meč, Sekera, Dýka',u2:'Luk + Tajomná debna',u3:'Palica + Runa zámku',u4:'Prútik + zákazky s 3 afixmi',uI:'Každá úroveň: +10 max ilvl na trhu',
- lvlUp:'Nová úroveň reputácie!',jackpot:'T1 JACKPOT!',newCx:'Nový záznam v kódexe',perfect:'LEGENDÁRNY DOKONALÝ PREDMET!',perfectD:'Všetkých 6 afixov je T1. Zapísané do Siene slávy!',
- daily:'Denný bonus',streak:'Séria dní',ok:'OK',reset:'Zmazať postup',resetQ:'Naozaj zmazať všetok postup?',yes:'Áno, zmazať',no:'Nie',
- sold2:'Predané',profitW:'zisk',bountyDone:'Zákazka splnená!',got:'Získaný',lang:'EN',
+ lvlUp:'NOVÁ ÚROVEŇ!',jackpot:'T1 JACKPOT!',newCx:'Kódex',perfect:'LEGENDÁRNY DOKONALÝ PREDMET!',perfectD:'Všetkých 6 afixov je T1. Zapísané do Siene slávy!',
+ daily:'Denný bonus',ok:'OK',reset:'Zmazať postup',resetQ:'Naozaj zmazať všetok postup?',yes:'Áno, zmazať',no:'Nie',
+ profitW:'zisk',loss:'strata',lang:'EN',shopT:'Obchod s menami',owned:'máš',needGold:'Chýba',unlockAt:'Odomkne sa na úrovni',close:'Zavrieť',
+ src:'📍 Zdroj mien: obchod, denný bonus, odmeny úloh',srcE:'📍 Zdroj: LEN rozobratie predmetov (♻ v Dielni)',essenceT:'🧪 Esencia – vyber afix',essenceD2:'Pridá presne zvolený afix (tier náhodný podľa ilvl).',
+ salvage:'Rozobrať',salvaged:'+{n} 🔆 uhlíkov',charityT:'Bez peňazí?',charityBtn:'🎁 Dar od kováča',charityWait:'Dar o',
+ junk:'smeť – rozober',compare:'vs vybraný',maxT:'max',buyHint:'Nemáš – otváram obchod.',
  tutorial:`<h2>⚒️ Affix Merchant – návod</h2>
-<p><b>Cieľ:</b> kúp zbraň na <b>Trhu</b>, vylepši ju v <b>Dielni</b> a predaj so ziskom (alebo ju odovzdaj zákazníkovi).</p>
-<p><b>Afixy:</b> predmet má max. <b>3 prefixy</b> (poškodenie) a <b>3 sufixy</b> (rýchlosť, kritické zásahy, odolnosti).</p>
-<p><b>Tiery:</b> každý afix má tier <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1 (najlepší)</span>. <b>ilvl</b> (úroveň predmetu) určuje, aký vysoký tier môže padnúť.</p>
-<p><b>Meny:</b> 🎲 prehodí hodnoty, 💠 pridá afix, 🌀 odstráni afix, 🔒 ochráni jeden afix pri ďalšej úprave.</p>
-<p><b>Vyhňa:</b> vyber afix a zvýš jeho tier. Každé kovanie míňa <b>Stabilitu</b> (náhodne). Ak stabilita nestačí, predmet <span class="bad">praskne</span> (už sa nedá upravovať) alebo sa zriedka <span class="bad">roztrieska</span>. Šance vidíš vždy pred kovaním.</p>
-<p><b>Odkiaľ meny:</b> 🛒 Obchod (ťukni na meny hore), denný bonus, 🧩 úlomky z rozobratých predmetov. 🧪 Esencia pridá konkrétny afix – ideálne na zákazky.</p><p><b>Prasknutý</b> predmet sa už nedá upravovať, ale dá sa predať alebo rozobrať.</p><p><b>Tip:</b> 🔥 horúci afix má dvojnásobnú cenu. Zákazníci platia za presnú zhodu až 2,6×!</p>`},
-en:{shop:'Shop',shopT:'Currency shop',owned:'owned',needGold:'You need',unlockAt:'Unlocks at reputation level',close:'Close',shards:'Shards',
- src_reroll:'Source: shop, daily bonus, shard exchange',src_augment:'Source: shop, daily bonus (+2), shard exchange',src_annul:'Source: shop, shard exchange',src_lock:'Source: shop from level 3, shard exchange',
- essInfo:'🧪 Essences (targeted add of a specific affix) are in the Workshop for the selected item. 🧩 Shards come from salvaging items.',
- essence:'Essence – add a specific affix',essenceD:'Adds exactly the chosen affix (tier is random by ilvl). Pricier, but perfect for bounties.',
- salvage:'Salvage',salvaged:'Salvaged: +{n} 🧩 shards',missing:'Missing',skip:'Other customer',
- charityT:'Broke?',charityD:'The old smith gives you a plain weapon so you can start again.',charityBtn:'Take the gift',charityWait:'Next gift in',
- fracInfo:'💔 A fractured item can no longer be crafted (no currencies, no Forge). You can still sell it (−15% value), deliver it to a customer or salvage it into shards.',
- compare:'vs selected',maxTierIl:'max tier',ilvlExpl:'This item is ilvl {i}, so it can have at most tier T{m}. T{n} needs ilvl {r}+. Buy an item with higher ilvl.',
- addFirst:'Item has no affixes – add one first with 💠 or an Essence.',confirmT:'Risky forge!',confirmYes:'Forge anyway',cancel:'Cancel',
- afterForge:'after forge',loss:'loss',noRoom:'No free slot on that side.',buyHint:'You have none – opening the shop.',
-market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'Upgrades',
- normal:'Normal',magic:'Magic',rare:'Rare',exalted:'Exalted',
- sword:'Sword',axe:'Axe',dagger:'Dagger',bow:'Bow',staff:'Staff',wand:'Wand',
- reroll:'Reroll Stone',augment:'Augment Stone',annul:'Annul Stone',lock:'Lock Rune',
- rerollD:'Rerolls affix values',augmentD:'Adds a random affix',annulD:'Removes a random affix',lockD:'Locks selected affix (one use)',
- forge:'Forge',stability:'Stability',prefixes:'Prefixes',suffixes:'Suffixes',hot:'HOT TREND',changes:'changes in',
- buy:'Buy',sell:'Sell for',paid:'paid',value:'value',newStock:'New stock in',refresh:'Refresh',stall:'Stall',
- crate:'Mystery Crate',crateD:'Unidentified item. Could be junk… or treasure.',identify:'Identify',unid:'Unidentified',
- noItem:'No item selected. Buy a weapon at the Market.',selectAff:'Tap an affix to select it for Forge or Lock.',
- forgeBtn:'Forge',forgeCost:'Stability cost',safe:'Success',fracture:'Fracture',shatter:'Shatter',maxTier:'Already T1!',ilvlLow:'Item level too low for higher tier',
- fractured:'FRACTURED',fracturedT:'The item fractured! It can no longer be crafted.',shatteredT:'The item SHATTERED into dust!',
- noCur:'You have none – buy more (+).',noGold:'Not enough gold!',stallFull:'Stall is full!',full:'All 6 affix slots are taken.',nothing:'Nothing to change.',
- locked:'Locked',fragile:'Fractured items cannot be crafted.',
- wants:'Wants',minIlvl:'min ilvl',deliver:'Deliver',exact:'EXACT MATCH',partial:'Partial match',nomatch:'No match',leaves:'leaves in',selItem:'Selected item',
- codexT:'Affix Codex',bonuses:'Bonuses',rowB:'Each complete row: +2 stability on new items',pageP:'All prefixes: currencies 20% cheaper',pageS:'All suffixes: sell +10%',
- hof:'Hall of Fame',hofE:'No perfect item yet (6× T1).',stats:'Stats',sold:'Sold',profit:'Profit',crafts:'Crafts',t1s:'T1 rolls',
- rep:'Reputation',level:'Level',unlocks:'Unlocks',up_stall:'Bigger stall',up_stallD:'+1 item slot',up_stab:'Steady hands',up_stabD:'+8 stability on new items',
- up_haggle:'Haggler',up_haggleD:'Buy −4%',up_tongue:'Silver tongue',up_tongueD:'Sell +4%',needLvl:'Needs level',maxed:'MAX',
+<p><b>Cieľ:</b> kúp zbraň na <b>Trhu</b>, vylepši ju v <b>Dielni</b>, predaj so ziskom alebo ju odovzdaj zákazníkovi.</p>
+<p><b>Afixy:</b> max. <b>3 prefixy (P)</b> – poškodenie, a <b>3 sufixy (S)</b> – rýchlosť, kritické zásahy, odolnosti. Tiery <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1</span>. <b>ilvl</b> určuje najvyšší možný tier.</p>
+<p><b>⚖ Stabilita = rozpočet predmetu.</b> KAŽDÁ úprava ju míňa (cena je modrou na tlačidle vpravo hore). Na 0 je predmet <b>zapečatený</b>. Zvyšná stabilita zvyšuje predajnú cenu (nedotknutosť) a niektorí zákazníci ju vyžadujú.</p>
+<p><b>Akcie:</b> 💠 pridá afix · 🎲 prehodí hodnoty (P/S len prefixy/sufixy) · 🌀 zruší náhodný · ✂️ zruší vybraný · 🔁 vymení vybraný · 🧪 pridá konkrétny afix · 🔥 Vyhňa zvýši tier (riziko prasknutia) · 🔒 zamkne afix.</p>
+<p><b>♻ Rozobratie</b> dá <b>🔆 uhlíky</b> (nedajú sa kúpiť): obnovia stabilitu, treba ich na T1 kovanie a Runu zámku. Smeť a prasknuté predmety sa oplatí rozobrať – predaj dá málo.</p>`},
+en:{market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'Upgrades',
+ normal:'Normal',magic:'Magic',rare:'Rare',exalted:'Exalted',sword:'Sword',axe:'Axe',dagger:'Dagger',bow:'Bow',staff:'Staff',wand:'Wand',
+ augment:'Augment Stone',reroll:'Reroll Stone',preroll:'Prefix Reroll Stone',sroll:'Suffix Reroll Stone',annul:'Annul Stone',tannul:'Excise Stone',swap:'Swap Stone',lock:'Lock Rune',embers:'Forge Embers',essence:'Essence',forge:'Forge',
+ augmentD:'Adds a random affix.',rerollD:'Rerolls values of all affixes.',prerollD:'Rerolls values of prefixes only.',srollD:'Rerolls values of suffixes only.',annulD:'Removes a random affix.',tannulD:'Removes the affix you choose.',swapD:'Replaces the selected affix with a new random one of the same side.',lockD:'Locks the selected affix – protects it from the next random craft.',embersD:'Restores +15 stability. Needed for T1 forging and Lock Runes. ONLY from salvaging items.',
+ s_augment:'Augment',s_reroll:'Reroll',s_preroll:'Prefixes',s_sroll:'Suffixes',s_annul:'Annul',s_tannul:'Excise',s_swap:'Swap',s_essence:'Essence',s_forge:'Forge',s_lock:'Lock',s_ember:'Ember',s_shop:'Shop',
+ stability:'Stability',hot:'HOT',changes:'changes in',buy:'Buy',sell:'Sell',paid:'paid',value:'value',refresh:'New stock',stash:'Stash',
+ crate:'Mystery Crate',crateD:'Unidentified item – junk or treasure.',identify:'Identify',unid:'Unidentified',needId:'Identify the item first.',
+ noItem:'No item selected. Buy a weapon at the Market.',pickAff:'Tap an affix on the card first.',pickHint:'Tap an affix → then Forge / Swap / Excise / Lock.',
+ maxTier:'Already T1!',ilvlShort:'ilvl {i} allows max T{m} (T{n} needs ilvl {r}+)',
+ fractured:'FRACTURED',sealed:'SEALED',fracShort:'Fractured – cannot be crafted. Salvage it for embers.',sealedShort:'Stability 0 – sealed. Use a 🔆 Ember or sell.',
+ fracturedT:'The item fractured! No more crafting – salvage it for embers.',shatteredT:'The item SHATTERED!',
+ lowStab:'Not enough stability',noEmbers:'No embers – salvage an item.',stabFull:'Stability is full.',needEmbers:'T1 forge needs 🔆',
+ noGold:'Not enough gold!',stallFull:'Stash is full!',full:'All 6 affix slots are taken.',nothing:'Nothing to change.',isLocked:'Affix is locked.',
+ forgeCost:'stability',confirmT:'Risky forge!',confirmYes:'Forge anyway',cancel:'Cancel',
+ wants:'Wants',minIlvl:'ilvl',deliver:'Deliver',exact:'EXACT MATCH',partial:'Partial',nomatch:'No match',leaves:'leaves in',selItem:'Selected',missing:'Missing',
+ quests:'Goals',claim:'Claim',qDone:'Goal complete!',qsell:'Sell an item for {n}+🪙',qt1:'Roll a T1 affix',qforge:'Forge {n}×',qbounty:'Fulfil a bounty',qsalvage:'Salvage {n} items',qrare:'Own an item with 4+ affixes',qcrafts:'Do {n} crafts',qprofit:'Earn {n}🪙 profit',
+ codexT:'Affix Codex',bonuses:'Bonuses',rowB:'Each complete row: +2 stability on new items',pageP:'All prefixes: currencies −20%',pageS:'All suffixes: sell +10%',
+ hof:'Hall of Fame',hofE:'No perfect item yet (6× T1).',stats:'Stats',sold:'Sold',profit:'Profit',crafts:'Crafts',t1s:'T1 rolls',streak:'Login streak',
+ rep:'Reputation',level:'Level',up_stall:'Bigger stash',up_stallD:'+1 slot',up_stab:'Steady hands',up_stabD:'+8 stability on new items',up_haggle:'Haggler',up_haggleD:'Buy −4%',up_tongue:'Silver tongue',up_tongueD:'Sell +4%',needLvl:'Needs level',maxed:'MAX',
  u1:'Sword, Axe, Dagger',u2:'Bow + Mystery Crate',u3:'Staff + Lock Rune',u4:'Wand + 3-affix bounties',uI:'Each level: +10 max market ilvl',
- lvlUp:'Reputation level up!',jackpot:'T1 JACKPOT!',newCx:'New codex entry',perfect:'LEGENDARY PERFECT ITEM!',perfectD:'All 6 affixes are T1. Added to the Hall of Fame!',
- daily:'Daily bonus',streak:'Login streak',ok:'OK',reset:'Reset progress',resetQ:'Really delete all progress?',yes:'Yes, delete',no:'No',
- sold2:'Sold',profitW:'profit',bountyDone:'Bounty fulfilled!',got:'Got',lang:'SK',
+ lvlUp:'LEVEL UP!',jackpot:'T1 JACKPOT!',newCx:'Codex',perfect:'LEGENDARY PERFECT ITEM!',perfectD:'All 6 affixes are T1. Added to the Hall of Fame!',
+ daily:'Daily bonus',ok:'OK',reset:'Reset progress',resetQ:'Really delete all progress?',yes:'Yes, delete',no:'No',
+ profitW:'profit',loss:'loss',lang:'SK',shopT:'Currency shop',owned:'owned',needGold:'Need',unlockAt:'Unlocks at level',close:'Close',
+ src:'📍 Currency sources: shop, daily bonus, goal rewards',srcE:'📍 Source: ONLY salvaging items (♻ in Workshop)',essenceT:'🧪 Essence – choose an affix',essenceD2:'Adds exactly the chosen affix (tier random by ilvl).',
+ salvage:'Salvage',salvaged:'+{n} 🔆 embers',charityT:'Broke?',charityBtn:'🎁 Smith\'s gift',charityWait:'Gift in',
+ junk:'junk – salvage',compare:'vs selected',maxT:'max',buyHint:'None left – opening the shop.',
  tutorial:`<h2>⚒️ Affix Merchant – guide</h2>
-<p><b>Goal:</b> buy a weapon at the <b>Market</b>, craft it in the <b>Workshop</b>, sell for profit (or deliver to a customer).</p>
-<p><b>Affixes:</b> an item has up to <b>3 prefixes</b> (damage) and <b>3 suffixes</b> (speed, crits, resistances).</p>
-<p><b>Tiers:</b> each affix has a tier <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1 (best)</span>. <b>ilvl</b> (item level) limits which tiers can roll.</p>
-<p><b>Currencies:</b> 🎲 rerolls values, 💠 adds an affix, 🌀 removes an affix, 🔒 protects one affix for the next craft.</p>
-<p><b>Forge:</b> pick an affix and raise its tier. Each forge costs random <b>Stability</b>. If stability runs out the item <span class="bad">fractures</span> (no more crafting) or rarely <span class="bad">shatters</span>. Odds are always shown before you forge.</p>
-<p><b>Where currencies come from:</b> 🛒 Shop (tap the currencies at the top), daily bonus, 🧩 shards from salvaged items. 🧪 Essences add a specific affix – great for bounties.</p><p><b>Fractured</b> items can't be crafted any more but can be sold or salvaged.</p><p><b>Tip:</b> the 🔥 hot affix is worth double. Customers pay up to 2.6× for an exact match!</p>`}};
+<p><b>Goal:</b> buy a weapon at the <b>Market</b>, craft it in the <b>Workshop</b>, sell for profit or deliver to a customer.</p>
+<p><b>Affixes:</b> up to <b>3 prefixes (P)</b> – damage, and <b>3 suffixes (S)</b> – speed, crits, resistances. Tiers <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1</span>. <b>ilvl</b> limits the best tier.</p>
+<p><b>⚖ Stability = the item's crafting budget.</b> EVERY craft spends it (blue cost, top-right of each button). At 0 the item is <b>sealed</b>. Leftover stability raises the sale price (pristine bonus) and some customers require it.</p>
+<p><b>Actions:</b> 💠 add affix · 🎲 reroll values (P/S prefixes/suffixes only) · 🌀 annul random · ✂️ remove chosen · 🔁 swap chosen · 🧪 add a specific affix · 🔥 Forge raises tier (fracture risk) · 🔒 lock affix.</p>
+<p><b>♻ Salvage</b> gives <b>🔆 Embers</b> (can't be bought): restore stability, needed for T1 forging and Lock Runes. Junk and fractured items are worth salvaging – selling them pays little.</p>`}};
 const AT={sk:{pphys:['+{v}% fyzického poškodenia','Fyz. %'],fphys:['+{v} fyzického poškodenia','Fyz. plošné'],ffire:['+{v} ohnivého poškodenia','Oheň'],fcold:['+{v} mrazivého poškodenia','Mráz'],flight:['+{v} bleskového poškodenia','Blesk'],pele:['+{v}% elementálneho poškodenia','Element %'],aspd:['+{v}% rýchlosti útoku','Rýchl. útoku'],crit:['+{v}% šance na kritický zásah','Krit. šanca'],cmult:['+{v}% kritického násobiča','Krit. násobič'],rfire:['+{v}% odolnosti voči ohňu','Odol. oheň'],rcold:['+{v}% odolnosti voči mrazu','Odol. mráz'],rlight:['+{v}% odolnosti voči blesku','Odol. blesk'],cspd:['+{v}% rýchlosti kúzlenia','Rýchl. kúzlenia']},
 en:{pphys:['+{v}% Physical Damage','Phys %'],fphys:['+{v} Physical Damage','Flat Phys'],ffire:['+{v} Fire Damage','Fire'],fcold:['+{v} Cold Damage','Cold'],flight:['+{v} Lightning Damage','Lightning'],pele:['+{v}% Elemental Damage','Elemental %'],aspd:['+{v}% Attack Speed','Attack Speed'],crit:['+{v}% Critical Chance','Crit Chance'],cmult:['+{v}% Critical Multiplier','Crit Multi'],rfire:['+{v}% Fire Resistance','Fire Res'],rcold:['+{v}% Cold Resistance','Cold Res'],rlight:['+{v}% Lightning Resistance','Lightning Res'],cspd:['+{v}% Cast Speed','Cast Speed']}};
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.en[k]||k;
-const afText=a=>AT[S.lang][a.k][0].replace('{v}',a.v), afShort=k=>AT[S.lang][k][1];
-// ================= UTIL =================
+const afText=a=>AT[S.lang][a.k][0].replace('{v}','<span class="v">'+a.v+'</span>'),afShort=k=>AT[S.lang][k][1];
 const $=s=>document.querySelector(s),R=Math.random,ri=(a,b)=>a+Math.floor(R()*(b-a+1)),pick=a=>a[Math.floor(R()*a.length)];
 function wpick(o){let tot=0;for(const k in o)tot+=o[k];let r=R()*tot;for(const k in o){r-=o[k];if(r<=0)return k}return Object.keys(o)[0]}
 const fmt=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
-// ================= AUDIO =================
 let AC;function ac(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
-function tone(f,d=.12,type='sine',v=.15,dl=0){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t0=a.currentTime+dl;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+d+.03)}
+function tone(f,d=.12,type='sine',v=.15,dl=0,f2){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t0=a.currentTime+dl;o.type=type;o.frequency.setValueAtTime(f,t0);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+d+.03)}
 function noise(d=.5,v=.3){const a=ac();if(!a)return;const b=a.createBuffer(1,a.sampleRate*d,a.sampleRate),c=b.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=(R()*2-1)*(1-i/c.length);const s=a.createBufferSource(),g=a.createGain();g.gain.value=v;s.buffer=b;s.connect(g).connect(a.destination);s.start()}
-const SND={click:()=>tone(620,.05,'square',.04),coin:()=>{tone(988,.08,'square',.07);tone(1319,.18,'square',.07,.07)},craft:()=>{tone(300,.1,'triangle',.15);tone(460,.14,'triangle',.12,.05)},
- fail:()=>{tone(160,.45,'sawtooth',.13);tone(105,.6,'sawtooth',.11,.1);noise(.3,.15)},jackpot:()=>[523,659,784,1047,1319,1568].forEach((f,i)=>tone(f,.3,'square',.08,i*.08)),shatter:()=>{noise(.8,.4);tone(80,.8,'sawtooth',.15)},lvl:()=>[392,523,659,784].forEach((f,i)=>tone(f,.25,'triangle',.12,i*.1))};
-// ================= FX =================
+const SND={click:()=>tone(620,.05,'square',.03),tick:()=>tone(1200+R()*400,.03,'square',.025),
+ coin:()=>{tone(988,.08,'square',.06);tone(1319,.18,'square',.06,.07)},
+ coins:()=>{for(let i=0;i<6;i++)tone(900+R()*700,.09,'square',.045,i*.06)},
+ craft:()=>{tone(260,.12,'triangle',.16,0,520);tone(780,.1,'sine',.07,.08)},
+ tierup:()=>{tone(400,.35,'triangle',.13,0,1200);tone(1600,.2,'sine',.06,.25)},
+ fail:()=>{tone(180,.5,'sawtooth',.12,0,70);noise(.3,.15)},
+ jackpot:()=>[523,659,784,1047,1319,1568].forEach((f,i)=>tone(f,.3,'square',.07,i*.08)),
+ shatter:()=>{noise(.8,.35);tone(90,.8,'sawtooth',.13,0,40)},salvage:()=>{noise(.25,.2);tone(300,.3,'triangle',.12,.05,900)},
+ lvl:()=>[392,523,659,784,1047].forEach((f,i)=>{tone(f,.35,'triangle',.12,i*.11);tone(f*1.5,.3,'sine',.05,i*.11)})};
 const cv=$('#fx'),cx=cv.getContext('2d');let parts=[],fxOn=false;
 function resize(){cv.width=innerWidth;cv.height=innerHeight}addEventListener('resize',resize);resize();
-function sparks(el,color,n=30){const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};const x=r.left+r.width/2,y=r.top+Math.min(r.height/2,200);
- for(let i=0;i<n;i++){const a=R()*6.28,s=2+R()*6;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,l:40+R()*30,c:Array.isArray(color)?pick(color):color})}if(!fxOn){fxOn=true;requestAnimationFrame(loop)}}
-function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.l>0);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.2;p.l--;cx.globalAlpha=Math.min(1,p.l/30);cx.fillStyle=p.c;cx.fillRect(p.x,p.y,3,3)}cx.globalAlpha=1;if(parts.length)requestAnimationFrame(loop);else fxOn=false}
-function anim(sel,cls){const e=$(sel);if(!e)return;e.classList.remove(cls);void e.offsetWidth;e.classList.add(cls)}
+function sparks(el,color,n=30,up){const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};const x=r.left+r.width/2,y=r.top+r.height/2;
+ for(let i=0;i<n;i++){const a=up?-1.57+(R()-.5)*1.6:R()*6.28,s=2+R()*(up?9:6);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,l:40+R()*30,c:Array.isArray(color)?pick(color):color,sz:2+R()*3})}if(!fxOn){fxOn=true;requestAnimationFrame(loop)}}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.l>0);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.22;p.l--;cx.globalAlpha=Math.min(1,p.l/30);cx.fillStyle=p.c;cx.beginPath();cx.arc(p.x,p.y,p.sz,0,6.3);cx.fill()}cx.globalAlpha=1;if(parts.length)requestAnimationFrame(loop);else fxOn=false}
+function anim(sel,cls){const e=typeof sel==='string'?$(sel):sel;if(!e)return;e.classList.remove(cls);void e.offsetWidth;e.classList.add(cls)}
+function floatAt(el,txt,color){const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};const d=document.createElement('div');d.className='float';d.style.left=(r.left+r.width/2)+'px';d.style.top=(r.top)+'px';d.style.color=color||'#ffd76a';d.innerHTML=txt;document.body.appendChild(d);setTimeout(()=>d.remove(),1500)}
 function toast(m){const d=document.createElement('div');d.innerHTML=m;const T=$('#toast');T.appendChild(d);while(T.children.length>3)T.firstChild.remove();setTimeout(()=>d.remove(),2400)}
 let mq=[];function modal(h){mq.push(h);if(mq.length===1)showM()}
-function showM(){$('#modalBox').innerHTML=mq[0]+(mq[0].includes('data-act="closeModal"')||mq[0].includes('data-act="resetYes"')?'':`<p style="text-align:center"><button class="gold" data-act="closeModal">${t('ok')}</button></p>`);$('#modal').classList.remove('hidden')}
+function showM(){const h=mq[0];$('#modalBox').innerHTML=h+(h.includes('data-act="closeModal"')||h.includes('data-act="resetYes"')?'':`<p style="text-align:center;margin-bottom:0"><button class="gold" style="min-width:120px" data-act="closeModal">${t('ok')}</button></p>`);$('#modal').classList.remove('hidden')}
 function closeM(){mq.shift();if(mq.length)showM();else $('#modal').classList.add('hidden')}
-// ================= ICONS =================
+const GR='<defs><linearGradient id="st" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f4f7fa"/><stop offset=".5" stop-color="#aeb8c2"/><stop offset="1" stop-color="#6d7781"/></linearGradient><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#a06e1e"/></linearGradient><radialGradient id="orb"><stop offset="0" stop-color="#e6f7ff"/><stop offset=".5" stop-color="#4fb0ff"/><stop offset="1" stop-color="#173f7a"/></radialGradient></defs>';
 function icon(b){const P={
- sword:'<path d="M50 8 L57 9 L56 15 L25 46 L18 39Z" fill="#d6dde4" stroke="#8a96a0"/><path d="M13 36 L28 51" stroke="#c9993c" stroke-width="5" stroke-linecap="round"/><path d="M20 44 L9 55" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/><circle cx="8" cy="56" r="3" fill="#c9993c"/>',
- axe:'<path d="M14 54 L46 14" stroke="#7a5230" stroke-width="5" stroke-linecap="round"/><path d="M36 10 Q58 8 58 30 Q48 26 42 30 L34 20Z" fill="#c8ced4" stroke="#7d868e"/>',
- dagger:'<path d="M44 14 L50 14 L49 20 L30 39 L25 34Z" fill="#e2e7ec" stroke="#8a96a0"/><path d="M21 31 L33 43" stroke="#c9993c" stroke-width="4" stroke-linecap="round"/><path d="M26 38 L16 48" stroke="#5a2e5e" stroke-width="5" stroke-linecap="round"/>',
- bow:'<path d="M18 6 Q60 32 18 58" fill="none" stroke="#9b6a35" stroke-width="5" stroke-linecap="round"/><path d="M18 6 L18 58" stroke="#e8e0c8" stroke-width="1.5"/><path d="M10 32 L50 32 M44 27 L52 32 L44 37" stroke="#ccc" stroke-width="2" fill="none"/>',
- staff:'<path d="M18 58 L42 18" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/><circle cx="45" cy="13" r="8" fill="#5fb3ff" stroke="#c9993c" stroke-width="2"/><circle cx="43" cy="11" r="2.5" fill="#fff"/>',
- wand:'<path d="M14 52 L38 28" stroke="#d8cbb0" stroke-width="4" stroke-linecap="round"/><path d="M44 10 L47 19 L56 22 L47 25 L44 34 L41 25 L32 22 L41 19Z" fill="#ffd76a"/>'};
- return `<svg viewBox="0 0 64 64">${P[b]}</svg>`}
-// ================= STATE =================
+ sword:'<path d="M51 7 L58 8 L57 14 L26 46 L18 38Z" fill="url(#st)" stroke="#55606a"/><path d="M50 10 L24 40" stroke="#fff" stroke-opacity=".6"/><path d="M12 35 L29 52" stroke="url(#gd)" stroke-width="6" stroke-linecap="round"/><path d="M21 44 L10 55" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/><circle cx="8" cy="57" r="3.5" fill="url(#gd)"/>',
+ axe:'<path d="M13 55 L46 13" stroke="#7a5230" stroke-width="5" stroke-linecap="round"/><path d="M35 9 Q60 6 59 32 Q49 26 42 31 L33 20Z" fill="url(#st)" stroke="#55606a"/><path d="M38 12 Q55 12 56 26" stroke="#fff" stroke-opacity=".5" fill="none"/><circle cx="44" cy="17" r="2.5" fill="url(#gd)"/>',
+ dagger:'<path d="M45 13 L52 12 L51 19 L31 39 L25 33Z" fill="url(#st)" stroke="#55606a"/><path d="M20 30 L34 44" stroke="url(#gd)" stroke-width="5" stroke-linecap="round"/><path d="M26 38 L15 49" stroke="#5a2e5e" stroke-width="5" stroke-linecap="round"/><circle cx="13" cy="51" r="3" fill="#c86bff"/>',
+ bow:'<path d="M18 5 Q62 32 18 59" fill="none" stroke="#9b6a35" stroke-width="5" stroke-linecap="round"/><path d="M18 5 Q58 32 18 59" fill="none" stroke="#e0b070" stroke-width="1.2"/><path d="M18 5 L18 59" stroke="#efe6cc" stroke-width="1.3"/><path d="M8 32 L50 32" stroke="#ccc" stroke-width="2"/><path d="M44 26 L54 32 L44 38Z" fill="url(#st)"/><path d="M8 28 L13 32 L8 36" stroke="#d33" stroke-width="2" fill="none"/>',
+ staff:'<path d="M17 59 L42 19" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/><path d="M38 24 Q36 12 46 10 Q56 14 51 22" stroke="url(#gd)" stroke-width="2.5" fill="none"/><circle cx="46" cy="16" r="7.5" fill="url(#orb)"/><circle cx="44" cy="14" r="2" fill="#fff"/>',
+ wand:'<path d="M13 53 L37 29" stroke="#d8cbb0" stroke-width="4" stroke-linecap="round"/><path d="M13 53 L20 46" stroke="url(#gd)" stroke-width="5" stroke-linecap="round"/><path d="M44 9 L47.5 19 L57 22 L47.5 25 L44 35 L40.5 25 L31 22 L40.5 19Z" fill="url(#gd)"/><circle cx="44" cy="22" r="2.5" fill="#fff"/>'};
+ return `<svg viewBox="0 0 64 64">${GR}${P[b]}</svg>`}
 let S;
-function fresh(){return{v:1,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0},login:{last:'',streak:0},tut:false,nid:1,shards:0,helpAt:0}}
+function fresh(){return{v:2,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],quests:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0},login:{last:'',streak:0},tut:false,nid:1,helpAt:0}}
 function save(){try{localStorage.setItem(CONFIG.saveKey,JSON.stringify(S))}catch(e){}}
-function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&d.v===1){S=Object.assign(fresh(),d);return true}}catch(e){}S=fresh();return false}
-// ================= RULES =================
+function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&(d.v===1||d.v===2)){S=Object.assign(fresh(),d);
+  for(const k in CONFIG.startCur)if(S.cur[k]==null)S.cur[k]=CONFIG.startCur[k];
+  if(d.v===1){S.cur.embers+=Math.floor((d.shards||0)/5);delete S.shards;S.v=2}
+  S.items.concat(S.market).forEach(it=>{if(!it.stab0)it.stab0=Math.max(it.stab,40)});S.bounties.forEach(b=>{if(b.minStab==null)b.minStab=0});return true}}catch(e){}S=fresh();return false}
 const all=it=>[...it.p,...it.s];
 const rarity=it=>{const n=it.unid?3:all(it).length;return n===0?0:n<=2?1:n<=5?2:3};
 const maxTier=il=>{let m=5;for(let x=5;x>=1;x--)if(il>=CONFIG.tierIlvl[x])m=x;return m};
@@ -277,137 +299,184 @@ function addAffix(it,boost){const sides=[];if(it.p.length<3)sides.push('p');if(i
  const used=new Set(all(it).map(a=>a.k));const a=pick(AFF.filter(x=>x.s===side&&!used.has(x.k)));const tr=rollTier(it.ilvl,boost),q=R();const af={k:a.k,t:tr,q,v:rollVal(a,tr,q),lock:false};it[side].push(af);return af}
 function makeItem(il,n,boost){const it={id:S.nid++,base:pick(unlockedBases()),ilvl:il,p:[],s:[],stab:0,frac:false,cost:0,name:pick(NA)+' '+pick(NB)};it.stab=it.stab0=ri(...CONFIG.baseStab)+stabBonus();for(let i=0;i<n;i++)addAffix(it,boost);return it}
 const affVal=a=>CONFIG.tierW[a.t]*(S.demand[a.k]||1)*(.7+.6*a.q)*(S.hot===a.k?CONFIG.hotMul:1);
-function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=affVal(a);if(A.length>=6)v*=1.3;else if(A.length>=4)v*=1.1;if(it.frac)v*=.85;return Math.max(1,Math.round(v))}
+const isJunk=it=>all(it).length<=1||it.frac;
+function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=affVal(a);if(A.length>=6)v*=1.3;else if(A.length>=4)v*=1.1;
+ v*=1+CONFIG.pristine*Math.max(0,it.stab)/Math.max(1,it.stab0);if(it.frac)v*=CONFIG.fracMul;else if(A.length<=1)v*=CONFIG.junkMul;return Math.max(1,Math.round(v))}
 const sellPrice=it=>Math.round(itemValue(it)*CONFIG.sellMul*sellBonus());
-const buyPrice=it=>it.fixed||Math.max(1,Math.round(itemValue(it)*it.pf*buyMul()));
-function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(5,mx-30),mx);const it=makeItem(il,+wpick({0:40,1:25,2:18,3:10,4:5,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
+const buyPrice=it=>Math.max(1,Math.round(itemValue(it)*it.pf*buyMul()));
+const salvageN=it=>1+Math.floor(all(it).length/2)+(it.frac?2:0)+(!it.frac&&it.stab<=0?1:0);
+function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(5,mx-30),mx);const it=makeItem(il,+wpick({0:35,1:25,2:20,3:12,4:6,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
 function rotateTrend(){const prev=S.hot;let k;do k=pick(AFF).k;while(k===prev);S.hot=k;for(const a of AFF)S.demand[a.k]=Math.min(1.5,Math.max(.6,(S.demand[a.k]||1)*(.85+R()*.3)));S.trendAt=S.play+CONFIG.trendSec}
 function genBounty(){const keys=[pick(AFF.filter(a=>a.s==='p')).k,pick(AFF.filter(a=>a.s==='s')).k];if(S.lvl>=4&&R()<.4){let k;do k=pick(AFF).k;while(keys.includes(k));keys.push(k)}
- return{id:S.nid++,face:pick(FACES),name:pick(CUSTN),keys,minIlvl:Math.max(1,Math.round(ri(1,marketMax()*.6)/5)*5),until:S.play+CONFIG.bountyRefreshSec+ri(0,60),bonus:ri(5,30)}}
+ return{id:S.nid++,face:pick(FACES),name:pick(CUSTN),keys,minIlvl:Math.max(1,Math.round(ri(1,marketMax()*.6)/5)*5),minStab:R()<.35?ri(1,4)*5:0,until:S.play+CONFIG.bountyRefreshSec+ri(0,60),bonus:ri(5,30)}}
 function bMatch(b,it){if(!it||it.unid)return{m:0,hit:0};const ks=all(it).map(a=>a.k),hit=b.keys.filter(k=>ks.includes(k)).length,v=itemValue(it);
- if(hit===b.keys.length&&it.ilvl>=b.minIlvl)return{m:2,hit,pay:Math.round(v*CONFIG.bountyExact+20+b.bonus)};if(hit>0)return{m:1,hit,pay:Math.round(v*CONFIG.bountyPartial)};return{m:0,hit}}
-function discover(a){const key=a.k+a.t;if(S.codex[key])return;const rb=rowDone(a.k),pp=pageDone('p'),ps=pageDone('s');S.codex[key]=1;toast('📖 '+t('newCx')+': <span class="t'+a.t+'">'+afShort(a.k)+' T'+a.t+'</span>');
+ if(hit===b.keys.length&&it.ilvl>=b.minIlvl&&it.stab>=b.minStab)return{m:2,hit,pay:Math.round(v*CONFIG.bountyExact+20+b.bonus)};if(hit>0)return{m:1,hit,pay:Math.round(v*CONFIG.bountyPartial)};return{m:0,hit}}
+function genQuest(){const ex=S.quests.filter(Boolean).map(q=>q.k);let k;do k=pick(QPOOL);while(ex.includes(k));const L=S.lvl;
+ const n={sell:Math.round((50+L*50)/10)*10,t1:1,forge:2+L,bounty:1,salvage:2,rare:4,crafts:8+L*2,profit:80+L*60}[k];return{k,n,p:0,g:25+L*15,c:pick(['augment','reroll','swap','tannul','sroll']),cn:2,e:k==='forge'||k==='t1'?1:0}}
+function qp(k,v,max){S.quests.forEach(q=>{if(!q||q.k!==k||q.p>=q.n)return;if(max){if(k==='sell'){if(v>=q.n)q.p=q.n}else q.p=Math.max(q.p,Math.min(v,q.n))}else q.p+=v;if(q.p>=q.n){q.p=q.n;toast('🎯 '+t('qDone'));SND.tierup()}})}
+function discover(a){if(!a)return;const key=a.k+a.t;if(S.codex[key])return;const rb=rowDone(a.k),pp=pageDone('p'),ps=pageDone('s');S.codex[key]=1;toast('📖 '+t('newCx')+': <span class="t'+a.t+'">'+afShort(a.k)+' T'+a.t+'</span>');
  if(!rb&&rowDone(a.k))toast('✨ '+t('rowB'));if(!pp&&pageDone('p'))toast('✨ '+t('pageP'));if(!ps&&pageDone('s'))toast('✨ '+t('pageS'))}
-function addXp(n){S.xp+=n;while(S.xp>=needXp(S.lvl)){S.xp-=needXp(S.lvl);S.lvl++;SND.lvl();modal(`<div class="big">⭐ ${t('lvlUp')}</div><p style="text-align:center">${t('level')} ${S.lvl}<br>${S.lvl<=4?t('u'+S.lvl):''}<br>${t('uI')}</p>`)}}
-function jackpot(){S.stats.t1++;anim('#flash','go');sparks($('#wcard'),['#ffd76a','#ff8c1a','#fff'],90);SND.jackpot();toast('<span class="t1">🌟 '+t('jackpot')+'</span>')}
-function checkPerfect(it){const A=all(it);if(A.length===6&&A.every(a=>a.t===1)&&!it.hof){it.hof=1;S.hof.push({name:it.name,base:it.base,ilvl:it.ilvl,at:new Date().toLocaleDateString()});setTimeout(()=>{anim('#flash','go');SND.jackpot()},500);modal(`<div class="big">👑 ${t('perfect')}</div><p style="text-align:center">${it.name}<br>${t('perfectD')}</p>`)}}
+function addXp(n){S.xp+=n;while(S.xp>=needXp(S.lvl)){S.xp-=needXp(S.lvl);S.lvl++;celebrate()}}
+function celebrate(){SND.lvl();anim('#flash','go');setTimeout(()=>{sparks(null,['#ffd76a','#ff8c1a','#6fd0ff','#c86bff','#fff'],160,true)},100);
+ modal(`<div class="lvl">⭐</div><div class="big">${t('lvlUp')}</div><p style="text-align:center;font-size:18px">${t('level')} <b>${S.lvl}</b></p><p style="text-align:center">${S.lvl<=4?'🔓 '+t('u'+S.lvl)+'<br>':''}${t('uI')} (${marketMax()})</p>`)}
+function jackpot(){S.stats.t1++;qp('t1',1);anim('#flash','go');sparks($('#wcard'),['#ffd76a','#ff8c1a','#fff'],90);SND.jackpot();floatAt($('#wcard'),'🌟 '+t('jackpot'),'#ff8c1a')}
+function checkPerfect(it){const A=all(it);if(A.length===6&&A.every(a=>a.t===1)&&!it.hof){it.hof=1;S.hof.push({name:it.name,base:it.base,ilvl:it.ilvl,at:new Date().toLocaleDateString()});setTimeout(()=>{anim('#flash','go');SND.jackpot()},500);modal(`<div class="lvl">👑</div><div class="big">${t('perfect')}</div><p style="text-align:center">${it.name}<br>${t('perfectD')}</p>`)}}
 const cur=()=>S.items[S.sel];
-// ================= ACTIONS =================
+function getSelAff(it){if(!S.selAff||!it)return null;return it[S.selAff[0]][+S.selAff.slice(1)]||null}
+const idOf=(it,a)=>{let i=it.p.indexOf(a);if(i>=0)return'p'+i;i=it.s.indexOf(a);return i>=0?'s'+i:null};
+function forgeOdds(it,a){const[l,h]=CONFIG.forgeCost(a.t),ps=Math.max(0,Math.min(1,(it.stab-l+1)/(h-l+1))),pf=(1-ps)*CONFIG.fractureShare;return{l,h,ps,pf,ph:(1-ps)-pf}}
+const ilvlTxt=(it,sa)=>t('ilvlShort').replace('{i}',it.ilvl).replace('{m}',maxTier(it.ilvl)).replace('{n}',sa.t-1).replace('{r}',CONFIG.tierIlvl[sa.t-1]);
+function why(a){if(a==='shop')return'';const it=cur();if(!it)return t('noItem');if(it.unid)return t('needId');if(it.frac)return t('fracShort');
+ const A=all(it),sa=getSelAff(it),d=ACTS[a];
+ if(a==='ember'){if(S.cur.embers<1)return t('noEmbers');if(it.stab>=it.stab0)return t('stabFull');return''}
+ if(it.stab<=0)return t('sealedShort');
+ if(a==='lock'&&S.lvl<CONFIG.lockLvl)return t('unlockAt')+' '+CONFIG.lockLvl;
+ if(d.sel&&!sa)return t('pickAff');
+ const sc=CONFIG.stabCost[a]||0;if(sc&&it.stab<sc)return t('lowStab')+' (⚖'+sc+')';
+ if(d.cur&&S.cur[d.cur]<1)return'BUY';
+ const free=x=>!x.lock;
+ if((a==='augment'||a==='essence')&&A.length>=6)return t('full');
+ if((a==='reroll'||a==='annul')&&!A.some(free))return t('nothing');
+ if(a==='preroll'&&!it.p.some(free))return t('nothing');
+ if(a==='sroll'&&!it.s.some(free))return t('nothing');
+ if((a==='tannul'||a==='swap'||a==='lock')&&sa.lock)return t('isLocked');
+ if(a==='swap'&&!AFF.some(x=>x.s===AFM[sa.k].s&&!A.some(y=>y.k===x.k)))return t('nothing');
+ if(a==='essence'&&S.gold<CONFIG.essenceCost)return t('needGold')+' '+(CONFIG.essenceCost-S.gold)+'🪙';
+ if(a==='forge'){if(sa.t===1)return t('maxTier');if(maxTier(it.ilvl)>sa.t-1)return ilvlTxt(it,sa);if(sa.t===2&&S.cur.embers<CONFIG.t1ForgeEmbers)return t('needEmbers')+'×'+CONFIG.t1ForgeEmbers;if(S.gold<CONFIG.forgeGold)return t('noGold')}
+ return''}
+let sheet=null;
+function doCraft(a){const it=cur(),A=all(it),sa=getSelAff(it),sc=CONFIG.stabCost[a]||0,d=ACTS[a],from=it.stab;let slot=[],jack=false;
+ switch(a){
+  case'augment':{const x=addAffix(it);discover(x);jack=x.t===1;slot=[idOf(it,x)];break}
+  case'reroll':case'preroll':case'sroll':{const f=A.filter(x=>!x.lock&&(a==='reroll'||(a==='preroll'?it.p.includes(x):it.s.includes(x))));f.forEach(x=>{x.q=R();x.v=rollVal(AFM[x.k],x.t,x.q)});slot=f.map(x=>idOf(it,x));A.forEach(x=>x.lock=false);break}
+  case'annul':{const x=pick(A.filter(x=>!x.lock));it.p=it.p.filter(y=>y!==x);it.s=it.s.filter(y=>y!==x);A.forEach(x=>x.lock=false);S.selAff=null;break}
+  case'tannul':it.p=it.p.filter(y=>y!==sa);it.s=it.s.filter(y=>y!==sa);S.selAff=null;break;
+  case'swap':{const side=AFM[sa.k].s,dd=pick(AFF.filter(x=>x.s===side&&!A.some(y=>y.k===x.k))),tr=rollTier(it.ilvl),q=R();Object.assign(sa,{k:dd.k,t:tr,q,v:rollVal(dd,tr,q)});discover(sa);jack=tr===1;slot=[S.selAff];break}
+  case'lock':sa.lock=true;break;
+  case'ember':it.stab=Math.min(it.stab0,it.stab+CONFIG.emberRestore);break;
+ }
+ if(d.cur)S.cur[d.cur]--;it.stab=Math.max(0,it.stab-sc);S.stats.crafts++;qp('crafts',1);qp('rare',all(it).length,1);
+ render();const card=$('#wcard');anim(card,'shake');sparks(card,a==='annul'||a==='tannul'?'#9be':a==='ember'?'#ffb84a':'#ffd76a',25);SND.craft();
+ slotAnim(slot);if(it.stab!==from)fxStab(it,from);if(jack)setTimeout(jackpot,650);if(it.stab<=0&&from>0)toast('🔒 '+t('sealedShort'));checkPerfect(it);save()}
+function slotAnim(ids){const els=ids.filter(Boolean).map(id=>document.querySelector(`#wcard .af[data-arg="${id}"]`)).filter(Boolean);if(!els.length)return;
+ els.forEach(e=>{e.classList.add('slot');e._fin=e.querySelector('.v').textContent});let n=0;const iv=setInterval(()=>{n++;els.forEach(e=>{const v=e.querySelector('.v');if(v)v.textContent=Math.max(1,Math.round(+e._fin*(0.3+R()*1.4)))});SND.tick();
+  if(n>=10){clearInterval(iv);els.forEach(e=>{const v=e.querySelector('.v');if(v)v.textContent=e._fin;e.classList.remove('slot');anim(e,'settle')})}},55)}
+function fxStab(it,from){document.querySelectorAll('#wcard .sb i').forEach(i=>{i.style.transition='none';i.style.width=Math.min(100,from/it.stab0*100)+'%';void i.offsetWidth;i.style.transition='';requestAnimationFrame(()=>requestAnimationFrame(()=>{i.style.width=Math.min(100,it.stab/it.stab0*100)+'%'}))});
+ const diff=it.stab-from;floatAt($('#wcard .sb'),(diff>0?'+':'−')+Math.abs(diff)+' ⚖',diff>0?'#6fd0ff':'#ff6a4a')}
+function finishItem(){S.items.splice(S.sel,1);S.sel=S.items.length?S.items.length-1:-1;S.selAff=null}
 const ACT={
- tab:a=>{S.tab=a},
- lang:()=>{S.lang=S.lang==='sk'?'en':'sk'},
- help:()=>modal(t('tutorial')),
- closeModal:()=>{closeM();return 'noR'},
+ tab:a=>{S.tab=a;sheet=null},lang:()=>{S.lang=S.lang==='sk'?'en':'sk'},help:()=>modal(t('tutorial')),
+ closeModal:()=>{closeM();return'noR'},sheet:m=>{sheet=m;SND.click()},closeSheet:()=>{sheet=null},
  buy:i=>{const it=S.market[+i];if(!it)return;const p=buyPrice(it);if(S.gold<p)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));
   S.gold-=p;it.cost=p;delete it.pf;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.market.splice(+i,1);all(it).forEach(discover);SND.coin();toast('🪙 −'+p)},
- crate:()=>{if(S.lvl<2)return;if(S.gold<CONFIG.crateCost)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));const mx=marketMax();
+ crate:()=>{if(S.lvl<2)return toast(t('needLvl')+' 2');if(S.gold<CONFIG.crateCost)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));const mx=marketMax();
   S.gold-=CONFIG.crateCost;const it=makeItem(ri(Math.round(mx*.6),mx),ri(2,6),true);it.unid=true;it.cost=CONFIG.crateCost;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.tab='workshop';SND.coin()},
  refresh:()=>{const rc=S.market.length?CONFIG.marketRefreshCost:0;if(S.gold<rc)return toast(t('noGold'));S.gold-=rc;genMarket();SND.click()},
- selItem:i=>{S.sel=+i;S.selAff=null;SND.click()},
+ selItem:i=>{S.sel=+i;S.selAff=null;sheet=null;S.tab='workshop';SND.click()},
  selAff:a=>{S.selAff=S.selAff===a?null:a;SND.click()},
- identify:()=>{const it=cur();if(!it||!it.unid)return;it.unid=false;render();anim('#wcard','reveal');all(it).forEach(discover);SND.craft();sparks($('#wcard'),'#ffff77',40);if(all(it).some(a=>a.t===1))setTimeout(jackpot,400);checkPerfect(it);save();return 'noR'},
- shop:()=>{shopOpen=true;SND.click()},closeShop:()=>{shopOpen=false},
- buyCur:a=>{const[c,nn]=a.split(':'),n=+(nn||1);if(c==='lock'&&S.lvl<CONFIG.lockLvl)return toast(t('unlockAt')+' '+CONFIG.lockLvl);const p=curCost(c)*n;if(S.gold<p)return toast(t('needGold')+' '+(p-S.gold)+'🪙');S.gold-=p;S.cur[c]+=n;SND.coin();toast(CICO[c]+' +'+n+' · 🪙 −'+p)},
- buyShard:c=>{if(c==='lock'&&S.lvl<CONFIG.lockLvl)return;const p=CONFIG.shardCost[c];if(S.shards<p)return;S.shards-=p;S.cur[c]++;SND.coin();toast(CICO[c]+' +1 · 🧩 −'+p)},
- essOpen:()=>{essOpen=!essOpen},
- essence:k=>{const it=cur(),d=AFM[k];if(!it||it.unid||it.frac)return;if(it[d.s].length>=3)return toast(t('noRoom'));if(all(it).some(a=>a.k===k))return;if(S.gold<CONFIG.essenceCost)return toast(t('needGold')+' '+(CONFIG.essenceCost-S.gold)+'🪙');
-  S.gold-=CONFIG.essenceCost;const tr=rollTier(it.ilvl),q=R(),af={k,t:tr,q,v:rollVal(d,tr,q),lock:false};it[d.s].push(af);discover(af);S.stats.crafts++;essOpen=false;render();anim('#wcard','shake');sparks($('#wcard'),'#7fe3ff',35);SND.craft();if(tr===1)jackpot();checkPerfect(it);save();return 'noR'},
- salvage:()=>{const it=cur();if(!it||it.unid)return;const n=1+all(it).reduce((x,a)=>x+(6-a.t),0);S.shards+=n;finishItem();SND.shatter();sparks(null,'#9be',40);toast(t('salvaged').replace('{n}',n))},
+ identify:()=>{const it=cur();if(!it||!it.unid)return;it.unid=false;render();anim('#wcard','reveal');all(it).forEach(discover);SND.tierup();sparks($('#wcard'),'#ffff77',50);if(all(it).some(a=>a.t===1))setTimeout(jackpot,400);checkPerfect(it);save();return'noR'},
+ buyCur:a=>{const[c,nn]=a.split(':'),n=+(nn||1);if(c==='lock'&&S.lvl<CONFIG.lockLvl)return toast(t('unlockAt')+' '+CONFIG.lockLvl);const p=curCost(c)*n,e=c==='lock'?CONFIG.lockEmbers*n:0;
+  if(S.gold<p)return toast(t('needGold')+' '+(p-S.gold)+'🪙');if(S.cur.embers<e)return toast(t('noEmbers'));S.gold-=p;S.cur.embers-=e;S.cur[c]+=n;SND.coin();toast(CICO[c]+' +'+n+' · 🪙 −'+p)},
+ act:a=>{if(a==='shop'){sheet='shop';return}const r=why(a),btn=$('#a-'+a);
+  if(r==='BUY'){toast(t('buyHint'));sheet='shop';return}if(r){toast(r);anim(btn,'no');if(r===t('pickAff'))anim('#wcard .affs','shake');return'noR'}
+  if(a==='essence'){sheet='essence';return}if(a==='forge')return ACT.forgeAsk();doCraft(a);return'noR'},
+ essence:k=>{const it=cur(),d=AFM[k];sheet=null;if(why('essence'))return;if(it[d.s].length>=3||all(it).some(a=>a.k===k))return;const from=it.stab;
+  S.gold-=CONFIG.essenceCost;const tr=rollTier(it.ilvl),q=R(),af={k,t:tr,q,v:rollVal(d,tr,q),lock:false};it[d.s].push(af);discover(af);it.stab=Math.max(0,it.stab-CONFIG.stabCost.essence);S.stats.crafts++;qp('crafts',1);qp('rare',all(it).length,1);
+  render();anim('#wcard','shake');sparks($('#wcard'),'#7fe3ff',35);SND.craft();slotAnim([idOf(it,af)]);fxStab(it,from);if(tr===1)setTimeout(jackpot,650);checkPerfect(it);save();return'noR'},
+ salvage:i=>{const btn=i!=null?$('#sv-'+i):$('#salvageBtn');if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const n=salvageN(it),r=btn?btn.getBoundingClientRect():null;S.cur.embers+=n;qp('salvage',1);finishItem();SND.salvage();render();
+  const ph={getBoundingClientRect:()=>r||{left:innerWidth/2,top:innerHeight/2,width:0,height:0}};sparks(ph,['#ffb84a','#ff6a00','#ffd76a'],45,true);floatAt(ph,t('salvaged').replace('{n}',n),'#ffb84a');save();return'noR'},
  charity:()=>{if(S.play<S.helpAt)return;const it=makeItem(ri(10,20),1);it.cost=0;all(it).forEach(discover);S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.helpAt=S.play+CONFIG.charityCooldown;S.tab='workshop';SND.coin()},
  skipB:i=>{if(S.gold<CONFIG.bountySkipCost)return toast(t('noGold'));S.gold-=CONFIG.bountySkipCost;S.bounties[+i]=genBounty();SND.click()},
- forgeAsk:()=>{const it=cur(),a=it&&getSelAff(it);if(!a)return;const o=forgeOdds(it,a);if(o.ps>=1)return ACT.forge();modal(`<div class="big">⚠️ ${t('confirmT')}</div><p style="text-align:center">${afShort(a.k)} T${a.t} → T${a.t-1}<br>${t('stability')} ${it.stab} · ${t('forgeCost')} ${o.l}–${o.h}<br><span class="good">✔ ${Math.round(o.ps*100)}%</span> · <span class="warn">💔 ${Math.round(o.pf*100)}%</span> · <span class="bad">💥 ${Math.round(o.ph*100)}%</span></p><div class="flex"><button class="red grow" id="forgeYes" data-act="forgeYes">🔥 ${t('confirmYes')}</button><button class="grow" data-act="closeModal">${t('cancel')}</button></div>`)},
+ claim:i=>{const q=S.quests[+i];if(!q||q.p<q.n)return;S.gold+=q.g;S.cur[q.c]+=q.cn;S.cur.embers+=q.e;S.quests[+i]=null;S.quests[+i]=genQuest();SND.coins();sparks($('#gold'),'#ffd76a',40);toast(`🎯 +${q.g}🪙 +${q.cn}${CICO[q.c]}${q.e?' +'+q.e+'🔆':''}`)},
+ forgeAsk:()=>{const it=cur(),a=getSelAff(it),o=forgeOdds(it,a);if(o.ps>=1)return ACT.forge();
+  modal(`<div class="big">⚠️ ${t('confirmT')}</div><p style="text-align:center">${afShort(a.k)} T${a.t} → T${a.t-1}<br>⚖ ${it.stab} · ${t('forgeCost')} ${o.l}–${o.h}<br><span class="good">✔ ${Math.round(o.ps*100)}%</span> · <span class="warn">💔 ${Math.round(o.pf*100)}%</span> · <span class="bad">💥 ${Math.round(o.ph*100)}%</span></p><div class="flex"><button class="red grow" id="forgeYes" data-act="forgeYes">🔥 ${t('confirmYes')}</button><button class="grow" data-act="closeModal">${t('cancel')}</button></div>`);return'noR'},
  forgeYes:()=>{closeM();return ACT.forge()},
- use:c=>{const it=cur();if(!it||it.unid)return;if(it.frac)return toast(t('fragile'));if(S.cur[c]<=0){if(c==='lock'&&S.lvl<CONFIG.lockLvl)return;toast(t('buyHint'));shopOpen=true;return}const A=all(it);let jack=false;
-  if(c==='reroll'){const f=A.filter(a=>!a.lock);if(!f.length)return toast(t('nothing'));f.forEach(a=>{a.q=R();a.v=rollVal(AFM[a.k],a.t,a.q)});A.forEach(a=>a.lock=false)}
-  else if(c==='augment'){if(A.length>=6)return toast(t('full'));const a=addAffix(it);discover(a);jack=a.t===1}
-  else if(c==='annul'){const f=A.filter(a=>!a.lock);if(!f.length)return toast(t('nothing'));const a=pick(f);it.p=it.p.filter(x=>x!==a);it.s=it.s.filter(x=>x!==a);A.forEach(a=>a.lock=false);S.selAff=null}
-  else if(c==='lock'){const a=getSelAff(it);if(!a)return toast(t('selectAff'));if(a.lock)return;a.lock=true}
-  S.cur[c]--;S.stats.crafts++;render();anim('#wcard','shake');sparks($('#wcard'),c==='annul'?'#9be':'#ffd76a',25);SND.craft();if(jack)jackpot();checkPerfect(it);save();return 'noR'},
- forge:()=>{const it=cur(),a=it&&getSelAff(it);if(!a||it.frac||it.unid)return;if(a.t===1)return toast(t('maxTier'));if(maxTier(it.ilvl)>a.t-1)return toast(t('ilvlLow'));if(S.gold<CONFIG.forgeGold)return toast(t('noGold'));
-  S.gold-=CONFIG.forgeGold;S.stats.crafts++;const[l,h]=CONFIG.forgeCost(a.t),c=ri(l,h);
-  if(c<=it.stab){const from=it.stab;it.stab-=c;a.t--;a.v=rollVal(AFM[a.k],a.t,a.q);discover(a);render();fxStab(it,c,from);anim('#wcard','shake');sparks($('#wcard'),['#ffb84a','#ff6a00'],45);SND.craft();toast('⚒️ −'+c+' '+t('stability'));if(a.t===1)jackpot();checkPerfect(it)}
-  else if(R()<CONFIG.fractureShare){const from=it.stab;it.frac=true;it.stab=0;render();fxStab(it,from,from);anim('#wcard','shake');sparks($('#wcard'),'#ff3b2a',50);SND.fail();toast('<span class="bad">💔 '+t('fracturedT')+'</span>')}
-  else{S.items.splice(S.sel,1);S.sel=S.items.length?0:-1;S.selAff=null;render();sparks(null,['#aaa','#ff3b2a','#555'],120);SND.shatter();toast('<span class="bad">💥 '+t('shatteredT')+'</span>')}
-  save();return 'noR'},
- sell:()=>{const it=cur();if(!it||it.unid)return;const p=sellPrice(it),pr=p-it.cost;S.gold+=p;S.stats.sold++;S.stats.profit+=pr;finishItem();addXp(Math.max(2,Math.round(pr)));SND.coin();sparks($('#gold'),'#ffd76a',30);toast(`🪙 +${p} (${t('profitW')} ${pr>=0?'+':''}${pr})`)},
- deliver:i=>{const b=S.bounties[+i],it=cur(),m=bMatch(b,it);if(!m.m)return;S.gold+=m.pay;const pr=m.pay-it.cost;S.stats.sold++;S.stats.profit+=pr;finishItem();addXp(Math.max(5,Math.round(pr*(m.m===2?1.5:1))));S.bounties[+i]=genBounty();SND.coin();if(m.m===2)SND.jackpot();sparks($('#gold'),'#ffd76a',60);toast('📜 '+t('bountyDone')+' 🪙 +'+m.pay)},
+ forge:()=>{const it=cur(),a=getSelAff(it);if(!a||why('forge'))return;S.gold-=CONFIG.forgeGold;if(a.t===2)S.cur.embers-=CONFIG.t1ForgeEmbers;S.stats.crafts++;qp('crafts',1);qp('forge',1);
+  const[l,h]=CONFIG.forgeCost(a.t),c=ri(l,h),from=it.stab,id=S.selAff;
+  if(c<=it.stab){it.stab-=c;a.t--;a.v=rollVal(AFM[a.k],a.t,a.q);discover(a);render();const ln=$(`#wcard .af[data-arg="${id}"]`);anim(ln,'tierup');sparks(ln||$('#wcard'),['#ffb84a','#ff6a00','#fff'],45,true);SND.tierup();fxStab(it,from);if(a.t===1)setTimeout(jackpot,400);if(it.stab<=0)toast('🔒 '+t('sealedShort'));checkPerfect(it)}
+  else if(R()<CONFIG.fractureShare){it.frac=true;it.stab=0;render();anim('#wcard','shake');sparks($('#wcard'),'#ff3b2a',60);SND.fail();fxStab(it,from);toast('<span class="bad">💔 '+t('fracturedT')+'</span>')}
+  else{finishItem();render();sparks(null,['#aaa','#ff3b2a','#555'],120);SND.shatter();toast('<span class="bad">💥 '+t('shatteredT')+'</span>')}
+  save();return'noR'},
+ sell:i=>{const btn=i!=null?$('#sl-'+i):$('#sellBtn');if(i!=null)S.sel=+i;const it=cur();if(!it||it.unid)return;const p=sellPrice(it),pr=p-it.cost,r=btn?btn.getBoundingClientRect():null;S.gold+=p;S.stats.sold++;S.stats.profit+=pr;qp('sell',p,1);if(pr>0)qp('profit',pr);finishItem();
+  SND.coins();render();const ph={getBoundingClientRect:()=>r||{left:innerWidth/2,top:innerHeight/2,width:0,height:0}};sparks(ph,['#ffd76a','#ffe9a8','#b8862f'],50,true);floatAt(ph,`+${p}🪙 <span style="font-size:15px;color:${pr>=0?'#6be36b':'#ff6a5a'}">(${pr>=0?'+':''}${pr})</span>`);anim('#gold','shake');addXp(Math.max(2,Math.round(pr)));save();return'noR'},
+ deliver:i=>{const b=S.bounties[+i],it=cur(),m=bMatch(b,it);if(!m.m)return;const btn=$('#dl-'+i),r=btn.getBoundingClientRect();S.gold+=m.pay;const pr=m.pay-it.cost;S.stats.sold++;S.stats.profit+=pr;if(pr>0)qp('profit',pr);qp('bounty',1);finishItem();S.bounties[+i]=genBounty();
+  SND.coins();if(m.m===2)SND.jackpot();render();const ph={getBoundingClientRect:()=>r};sparks(ph,'#ffd76a',60,true);floatAt(ph,'+'+m.pay+'🪙');addXp(Math.max(5,Math.round(pr*(m.m===2?1.5:1))));save();return'noR'},
  upgrade:k=>{const u=UPS.find(x=>x.k===k),l=S.up[k];if(l>=u.max||S.lvl<u.req(l))return;const c=u.cost(l);if(S.gold<c)return toast(t('noGold'));S.gold-=c;S.up[k]++;SND.lvl()},
  reset:()=>modal(`<p>${t('resetQ')}</p><p class="flex"><button class="red" data-act="resetYes">${t('yes')}</button><button data-act="closeModal">${t('no')}</button></p>`),
- resetYes:()=>{localStorage.removeItem(CONFIG.saveKey);location.reload();return 'noR'}
+ resetYes:()=>{localStorage.removeItem(CONFIG.saveKey);location.reload();return'noR'}
 };
-let shopOpen=false,essOpen=false;
-const sMax=it=>Math.max(it.stab0||60,it.stab,1);
-function sbar(it,w){return `<div class="bar sbar"><i style="width:${Math.min(100,w/sMax(it)*100)}%;background:${w<15?'#d33':''}"></i></div>`}
-function fxStab(it,c,from){document.querySelectorAll('.sbar i').forEach(i=>{i.style.transition='none';i.style.width=Math.min(100,from/sMax(it)*100)+'%';void i.offsetWidth;i.style.transition='';requestAnimationFrame(()=>requestAnimationFrame(()=>{i.style.width=Math.min(100,it.stab/sMax(it)*100)+'%'}))});
- document.querySelectorAll('.stab,.fstab').forEach(b=>{const f=document.createElement('div');f.className='float';f.textContent='−'+c+' ⚖ '+t('stability');b.appendChild(f);setTimeout(()=>f.remove(),1700)})}
-function forgeOdds(it,a){const[l,h]=CONFIG.forgeCost(a.t),ps=Math.max(0,Math.min(1,(it.stab-l+1)/(h-l+1))),pf=(1-ps)*CONFIG.fractureShare;return{l,h,ps,pf,ph:(1-ps)-pf}}
-function shopHtml(){return `<h2>🛒 ${t('shopT')}</h2><div class="muted" style="margin-bottom:8px">🪙 ${S.gold} · 🧩 ${t('shards')}: ${S.shards}</div>`+CURS.map(c=>{const lk=c==='lock'&&S.lvl<CONFIG.lockLvl,p=curCost(c),sp=CONFIG.shardCost[c];
- const why=lk?`🔒 ${t('unlockAt')} ${CONFIG.lockLvl} (${t('level')} ${S.lvl})`:S.gold<p?`${t('needGold')} ${p-S.gold}🪙`:S.gold<p*5?`×5: ${t('needGold')} ${p*5-S.gold}🪙`:'';
- return `<div class="shopi"><div class="flex"><div style="font-size:30px">${CICO[c]}</div><div class="grow"><b>${t(c)}</b> · ${t('owned')}: <b id="own-${c}">${S.cur[c]}</b><div class="muted">${t(c+'D')}</div><div class="muted" style="font-size:11px">📍 ${t('src_'+c)}</div></div></div>
- <div class="flex" style="margin-top:6px"><button class="gold grow" id="shop-${c}-1" data-act="buyCur" data-arg="${c}:1" ${lk||S.gold<p?'disabled':''}>×1 · ${p}🪙</button><button class="gold grow" id="shop-${c}-5" data-act="buyCur" data-arg="${c}:5" ${lk||S.gold<p*5?'disabled':''}>×5 · ${p*5}🪙</button><button class="grow" id="shard-${c}" data-act="buyShard" data-arg="${c}" ${lk||S.shards<sp?'disabled':''}>🧩 ${sp}</button></div>${why?`<div class="warn" style="font-size:12px;margin-top:4px">${why}</div>`:''}</div>`}).join('')+`<div class="muted" style="margin:6px 0">${t('essInfo')}</div><button style="width:100%" id="closeShop" data-act="closeShop">✖ ${t('close')}</button>`}
-function finishItem(){S.items.splice(S.sel,1);S.sel=S.items.length?S.items.length-1:-1;S.selAff=null}
-function getSelAff(it){if(!S.selAff)return null;return it[S.selAff[0]][+S.selAff.slice(1)]||null}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;ac();const r=ACT[b.dataset.act]&&ACT[b.dataset.act](b.dataset.arg);if(r!=='noR'){render();save()}});
-// ================= RENDER =================
-function itemCard(it,inter,extra=''){const r=rarity(it),col=RAR[r][1];
- const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" ${inter?`data-act="selAff" data-arg="${id}"`:''}><span class="tg">${s==='p'?'P':'S'} T${a.t}</span>${afText(a)}${S.hot===a.k?' 🔥':''}${a.lock?' 🔒':''}</div>`};
- const body=it.unid?`<div class="af t5" style="text-align:center">❓ ${t('unid')} ❓</div>`:
-  (it.p.length?`<div class="lbl">${t('prefixes')}</div>`+it.p.map((a,i)=>line(a,i,'p')).join(''):'')+(it.s.length?`<div class="lbl">${t('suffixes')}</div>`+it.s.map((a,i)=>line(a,i,'s')).join(''):'');
- const nm=it.unid?t('crate'):r>=2?it.name:t(it.base);
- return `<div class="card r${r}" ${inter?'id="wcard"':''} style="--rc:${col}"><div class="ch"><div class="ic">${icon(it.base)}</div><div class="grow"><div class="nm">${nm}</div><div class="sub">${t(RAR[r][0])} · ${t(it.base)} · ilvl ${it.ilvl} ${it.frac?`<span class="frac">· ${t('fractured')}</span>`:''}</div></div></div>
- ${it.unid?'':`<div class="stab">⚖ ${t('stability')}: <b class="stabv">${it.stab}</b> <span class="muted">· ${t('maxTierIl')} T${maxTier(it.ilvl)}</span>${sbar(it,it.stab)}</div>`}<div class="affs">${body}</div>${it.frac&&inter?`<div class="info">${t('fracInfo')}</div>`:''}${extra}</div>`}
-function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl}<div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;$('#langBtn').textContent='🌐 '+t('lang');
- $('#curs').innerHTML=CURS.map(c=>`<span title="${t(c)}">${CICO[c]} ${S.cur[c]}</span>`).join('')+`<span>🧩 ${S.shards}</span><span>📦 ${S.items.length}/${stallSize()}</span><span>🛒 ${t('shop')}</span>`;
+$('#sheet').addEventListener('click',e=>{if(e.target.id==='sheet'){sheet=null;render()}});
+function itemCard(it,inter,extra={}){const r=rarity(it),col=RAR[r][1];
+ const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" data-arg="${id}" ${inter?'data-act="selAff"':''}><span class="tg">${s.toUpperCase()}·T${a.t}</span><span class="grow">${afText(a)}</span>${S.hot===a.k?'🔥':''}${a.lock?'🔒':''}</div>`};
+ const body=it.unid?`<div class="af t5" style="justify-content:center">❓ ${t('unid')} ❓</div>`:it.p.map((a,i)=>line(a,i,'p')).join('')+it.s.map((a,i)=>line(a,i,'s')).join('');
+ const nm=it.unid?t('crate'):r>=2?it.name:t(it.base);const tag=it.frac?`<span class="tagx">${t('fractured')}</span>`:it.stab<=0&&!it.unid?`<span class="tagx">${t('sealed')}</span>`:'';
+ return `<div class="card r${r} ${inter?'':'mini'}" ${inter?'id="wcard"':''} style="--rc:${col}"><div class="ch"><div class="ic">${icon(it.base)}</div><div class="grow"><div class="nm">${nm}</div><div class="sub">${t(RAR[r][0])} · ilvl ${it.ilvl} · ${t('maxT')} T${maxTier(it.ilvl)} ${tag}</div></div>${extra.head||''}</div>
+ ${it.unid?'':`<div class="sb ${it.stab<12?'low':''}"><i style="width:${Math.min(100,it.stab/it.stab0*100)}%"></i><span>⚖ ${t('stability')} ${it.stab}/${it.stab0}</span></div>`}<div class="affs">${body}</div>${extra.foot||''}</div>`}
+function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl} · 🔆${S.cur.embers} · 📦${S.items.length}/${stallSize()}<div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;$('#langBtn').textContent=t('lang');
  $('#ticker').innerHTML=`<span class="hot">🔥 ${t('hot')}: ${afShort(S.hot)} ×${CONFIG.hotMul}</span> · ${t('changes')} <span class="cd" data-u="trendAt"></span>`;document.documentElement.lang=S.lang}
-function renderTabs(){$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}</button>`).join('')}
+function renderTabs(){const qd=S.quests.filter(q=>q&&q.p>=q.n).length;$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}${k==='bounties'&&qd?`<span class="badge">${qd}</span>`:''}</button>`).join('')}
+function abtn(a){const it=cur(),r=why(a),d=ACTS[a],sc=CONFIG.stabCost[a],sa=it&&getSelAff(it);const cnt=d.cur?'×'+S.cur[d.cur]:a==='essence'?CONFIG.essenceCost+'🪙':a==='forge'?CONFIG.forgeGold+'🪙':'';
+ const st=sc?'⚖'+sc:a==='forge'&&sa&&sa.t>1?'⚖'+CONFIG.forgeCost(sa.t).join('-'):a==='ember'?'+'+CONFIG.emberRestore:'';
+ return `<button class="ab ${r&&r!=='BUY'?'dim':''}" id="a-${a}" data-act="act" data-arg="${a}" title="${t(a==='ember'?'embers':a)}">${cnt?`<span class="ac">${cnt}</span>`:''}${st?`<span class="as">${st}</span>`:''}<span class="ai">${CICO[a]}</span>${CTAG[a]?`<span class="ax">${CTAG[a]}</span>`:''}<span class="an">${t('s_'+a)}</span></button>`}
+function hintHtml(it){if(it.frac)return '<span class="bad">'+t('fracShort')+'</span>';if(it.stab<=0)return '<span class="warn">'+t('sealedShort')+'</span>';
+ const sa=getSelAff(it);if(!sa)return all(it).length?t('pickHint'):'💠 '+t('augmentD');
+ let s=`<span class="t${sa.t}">${afShort(sa.k)} T${sa.t}</span>&nbsp;`;
+ if(sa.t===1)return s+'· '+t('maxTier');if(maxTier(it.ilvl)>sa.t-1)return s+'· <span class="warn">'+ilvlTxt(it,sa)+'</span>';
+ const o=forgeOdds(it,sa);return s+`🔥→T${sa.t-1}: ⚖${o.l}–${o.h} · <span class="good">✔${Math.round(o.ps*100)}%</span>&nbsp;<span class="warn">💔${Math.round(o.pf*100)}%</span>&nbsp;<span class="bad">💥${Math.round(o.ph*100)}%</span>${sa.t===2?` · 🔆×${CONFIG.t1ForgeEmbers}`:''}`}
 const V={
- market:()=>{const sel=cur(),cheap=Math.min(...S.market.map(buyPrice),999);return `${S.gold<cheap&&!S.items.length?`<div class="panel" style="border-color:#6be36b"><b>🤝 ${t('charityT')}</b><div class="muted">${t('charityD')}</div><button class="gold" style="width:100%;margin-top:6px" id="charity" data-act="charity" ${S.play<S.helpAt?'disabled':''}>${S.play<S.helpAt?t('charityWait')+' '+fmt(S.helpAt-S.play):'🎁 '+t('charityBtn')}</button></div>`:''}
- <button class="gold" style="width:100%;margin-bottom:10px" data-act="shop" id="openShop">🛒 ${t('shopT')}</button><div class="panel flex"><div class="grow muted">${t('newStock')} <span class="cd" data-u="marketAt"></span></div><button class="sm" id="refreshBtn" data-act="refresh">🔄 ${t('refresh')} (${S.market.length?CONFIG.marketRefreshCost+'🪙':'0🪙'})</button></div>
- <div class="panel flex" style="border-color:#ffff7766"><div style="font-size:34px">🎁</div><div class="grow"><b>${t('crate')}</b><div class="muted">${S.lvl>=2?t('crateD'):t('needLvl')+' 2'}</div></div><button class="gold" data-act="crate" ${S.lvl<2?'disabled':''}>${CONFIG.crateCost}🪙</button></div>
- ${S.market.map((it,i)=>{const d=sel&&!sel.unid?itemValue(it)-itemValue(sel):null;return itemCard(it,false,`<div class="flex" style="margin-top:8px"><div class="grow muted">${t('value')} ~${itemValue(it)}🪙${d!==null?`<br><span class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d}</span> ${t('compare')}`:''}</div><button class="gold buy" data-act="buy" data-arg="${i}">${t('buy')} ${buyPrice(it)}🪙</button></div>`)}).join('')}`},
- workshop:()=>{const it=cur();const strip=`<div class="strip">${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${x.unid?'<span style="font-size:28px">❓</span>':icon(x.base)}</button>`).join('')}</div>`;
-  if(!it)return strip+`<div class="panel">${t('noItem')}</div><div class="flex"><button class="gold grow" data-act="tab" data-arg="market">🏪 ${t('market')}</button><button class="gold grow" data-act="shop">🛒 ${t('shop')}</button></div>`;
-  if(it.unid)return strip+itemCard(it,true)+`<button class="gold" style="width:100%" data-act="identify">🔍 ${t('identify')}</button>`;
-  const dis=it.frac?'disabled':'',sa=getSelAff(it);
-  let forge=`<div class="muted">${all(it).length?t('selectAff'):t('addFirst')}</div>`;
-  if(it.frac)forge=`<div class="info">${t('fracInfo')}</div>`;
-  else if(sa){if(sa.t===1)forge=`<div class="t1">${t('maxTier')}</div>`;else if(maxTier(it.ilvl)>sa.t-1)forge=`<div class="warn">${t('ilvlExpl').replace('{i}',it.ilvl).replace('{m}',maxTier(it.ilvl)).replace('{n}',sa.t-1).replace('{r}',CONFIG.tierIlvl[sa.t-1])}</div>`;else{const{l,h,ps,pf,ph}=forgeOdds(it,sa);
-   forge=`<div class="odds"><span class="t${sa.t}">${afShort(sa.k)} T${sa.t}</span> → <span class="t${sa.t-1}">T${sa.t-1}</span><br>${t('forgeCost')}: <b>${l}–${h}</b> (${t('stability')} ${it.stab})<br><span class="good">✔ ${t('safe')} ${Math.round(ps*100)}%</span> · <span class="warn">💔 ${t('fracture')} ${Math.round(pf*100)}%</span> · <span class="bad">💥 ${t('shatter')} ${Math.round(ph*100)}%</span></div><button class="${ps<1?'red':'gold'}" id="forgeBtn" style="width:100%" data-act="forgeAsk" ${dis}>${ps<1?'⚠️ ':''}🔥 ${t('forgeBtn')} (${CONFIG.forgeGold}🪙)</button>`}}
-  return strip+itemCard(it,true)+`<div class="panel"><div class="grid2">${CURS.map(c=>{const lk=c==='lock'&&S.lvl<3;return `<div><div class="cbtn"><button id="use-${c}" data-act="use" data-arg="${c}" ${dis||lk||(c==='lock'&&!sa)?'disabled':''} title="${t(c+'D')}">${CICO[c]} ×${S.cur[c]}</button><button id="buy-${c}" data-act="buyCur" data-arg="${c}:1" ${lk||S.gold<curCost(c)?'disabled':''}>+1 · ${curCost(c)}🪙</button></div><div class="muted" style="font-size:11px">${lk?'🔒 '+t('unlockAt')+' 3':t(c)+': '+t(c+'D')}</div></div>`}).join('')}</div></div>
-  <div class="panel"><h2>🧪 ${t('essence')}</h2><div class="muted">${t('essenceD')}</div><button style="width:100%;margin-top:6px" id="essToggle" data-act="essOpen" ${dis}>${essOpen?'▲':'▼'} ${CONFIG.essenceCost}🪙</button>
-  ${essOpen&&!it.frac?`<div class="grid2" style="margin-top:6px">${AFF.filter(a=>it[a.s].length<3&&!all(it).some(x=>x.k===a.k)).map(a=>`<button class="sm ess" data-act="essence" data-arg="${a.k}" ${S.gold<CONFIG.essenceCost?'disabled':''}>${a.s==='p'?'P':'S'} ${afShort(a.k)}${S.hot===a.k?' 🔥':''}</button>`).join('')||`<div class="muted">${t('full')}</div>`}</div>${S.gold<CONFIG.essenceCost?`<div class="warn">${t('needGold')} ${CONFIG.essenceCost-S.gold}🪙</div>`:''}`:''}</div>
-  <div class="panel"><h2>🔥 ${t('forge')}</h2><div class="fstab">⚖ ${t('stability')}: <b class="stabv">${it.stab}</b>${sbar(it,it.stab)}</div>${forge}</div>
-  ${(()=>{const sp=sellPrice(it),pr=sp-it.cost;return `<button class="gold" id="sellBtn" style="width:100%;font-size:18px" data-act="sell">🪙 ${t('sell')} ${sp} <span class="${pr>=0?'pos':'neg'}">(${pr>=0?t('profitW')+' +'+pr:t('loss')+' '+pr})</span><div class="muted" style="font-size:12px">${t('paid')} ${it.cost}🪙</div></button>
-  <button style="width:100%;margin-top:8px" id="salvageBtn" data-act="salvage">🧩 ${t('salvage')} (+${1+all(it).reduce((x,a)=>x+(6-a.t),0)} ${t('shards')})</button>`})()}`},
- bounties:()=>{const it=cur();return `<div class="panel muted">${t('selItem')}: ${it?(it.unid?t('unid'):(rarity(it)>=2?it.name:t(it.base))+' · ilvl '+it.ilvl):'—'}</div>`+S.bounties.map((b,i)=>{const m=bMatch(b,it);
-  return `<div class="panel"><div class="flex"><div style="font-size:36px">${b.face}</div><div class="grow"><b>${b.name}</b> <span class="muted">· ${t('leaves')} <span class="cd" data-u="b${i}"></span></span><div>${t('wants')}: ${b.keys.map(k=>`<b class="t3">${afShort(k)}</b>`).join(' + ')} · ${t('minIlvl')} ${b.minIlvl}</div></div></div>
-  <div class="flex" style="margin-top:6px"><div class="grow ${m.m===2?'good':m.m===1?'warn':'muted'}">${m.m===2?'✔ '+t('exact'):m.m===1?'≈ '+t('partial')+` (${m.hit}/${b.keys.length})`:t('nomatch')}</div>${it&&!it.unid&&m.m<2?`<div class="muted" style="width:100%;font-size:12px">${t('missing')}: ${b.keys.filter(k=>!all(it).some(a=>a.k===k)).map(afShort).join(', ')||'-'}${it.ilvl<b.minIlvl?' · ilvl '+b.minIlvl+'+':''} → 🧪 ${t('essence')}</div>`:''}<button class="sm" data-act="skipB" data-arg="${i}">↻ ${CONFIG.bountySkipCost}🪙</button><button class="gold deliver" data-act="deliver" data-arg="${i}" ${m.m?'':'disabled'}>${t('deliver')}${m.m?' '+m.pay+'🪙':''}</button></div></div>`}).join('')},
+ market:()=>{const sel=cur(),cheap=Math.min(...S.market.map(buyPrice),999),broke=S.gold<cheap&&!S.items.length;
+  return `<div class="mk"><div class="top"><button id="refreshBtn" data-act="refresh">🔄 ${t('refresh')}<br><span class="cd" data-u="marketAt"></span> · ${S.market.length?CONFIG.marketRefreshCost:0}🪙</button>
+  <button class="gold" data-act="crate" id="crateBtn" ${S.lvl<2?'disabled':''}>🎁 ${t('crate')}<br>${S.lvl<2?t('needLvl')+' 2':CONFIG.crateCost+'🪙'}</button><button data-act="sheet" data-arg="stash" id="stashBtn">📦 ${t('stash')}<br>${S.items.length}/${stallSize()}</button></div>
+  ${broke?`<button class="gold" id="charity" data-act="charity" ${S.play<S.helpAt?'disabled':''}>${t('charityT')} ${S.play<S.helpAt?t('charityWait')+' '+fmt(S.helpAt-S.play):t('charityBtn')}</button>`:''}
+  <div class="list">${S.market.map((it,i)=>{const d=sel&&!sel.unid?itemValue(it)-itemValue(sel):null;
+   return itemCard(it,false,{head:`<button class="gold buy" data-act="buy" data-arg="${i}">${buyPrice(it)}🪙</button>`,foot:`<div class="muted" style="margin-top:3px">${t('value')} ~${itemValue(it)}🪙${isJunk(it)?' · ♻ '+t('junk'):''}${d!==null?` · <span class="${d>=0?'pos':'neg'}">${d>=0?'+':''}${d}</span> ${t('compare')}`:''}</div>`})}).join('')}</div></div>`},
+ workshop:()=>{const it=cur();const strip=`<div class="strip"><button data-act="sheet" data-arg="stash" id="stashBtn2">📦</button>${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${x.unid?'<span style="font-size:22px">❓</span>':icon(x.base)}</button>`).join('')}</div>`;
+  if(!it)return `<div class="ws">${strip}<div class="panel">${t('noItem')}</div><div class="flex"><button class="gold grow" data-act="tab" data-arg="market">🏪 ${t('market')}</button><button class="gold grow" data-act="sheet" data-arg="shop">🛒 ${t('s_shop')}</button></div></div>`;
+  if(it.unid)return `<div class="ws">${strip}${itemCard(it,true)}<button class="gold" style="min-height:56px" id="identifyBtn" data-act="identify">🔍 ${t('identify')}</button></div>`;
+  const sp=sellPrice(it),pr=sp-it.cost;
+  return `<div class="ws">${strip}${itemCard(it,true)}<div id="hint">${hintHtml(it)}</div><div class="agrid">${AORDER.map(abtn).join('')}</div>
+  <div class="sellrow"><button class="${isJunk(it)?'':'gold'}" id="sellBtn" data-act="sell">🪙 ${t('sell')} ${sp} <span style="font-size:12px" class="${pr>=0?'pos':'neg'}">${pr>=0?'+'+pr:pr}</span><br><span class="muted" style="font-size:11px">${pr>=0?t('profitW'):t('loss')} · ${t('paid')} ${it.cost}</span></button>
+  <button id="salvageBtn" data-act="salvage" ${isJunk(it)?'class="gold"':''}>♻ ${t('salvage')}<br><span style="font-size:12px">+${salvageN(it)} 🔆</span></button></div></div>`},
+ bounties:()=>{const it=cur();return `<div class="panel"><h2>🎯 ${t('quests')}</h2>${S.quests.map((q,i)=>`<div class="q"><div class="grow">${t('q'+q.k).replace('{n}',q.n)}<div class="bar"><i style="width:${q.p/q.n*100}%"></i></div></div><span class="muted">+${q.g}🪙 ${q.cn}${CICO[q.c]}${q.e?' 🔆':''}</span><button class="sm ${q.p>=q.n?'gold':''}" id="cl-${i}" data-act="claim" data-arg="${i}" ${q.p>=q.n?'':'disabled'}>${q.p>=q.n?t('claim'):q.p+'/'+q.n}</button></div>`).join('')}</div>
+  <div class="muted" style="margin:0 0 6px">${t('selItem')}: ${it?(it.unid?t('unid'):(rarity(it)>=2?it.name:t(it.base))+' · ilvl '+it.ilvl+' · ⚖'+it.stab):'—'}</div>`+S.bounties.map((b,i)=>{const m=bMatch(b,it);
+  const miss=it&&!it.unid&&m.m<2?[...b.keys.filter(k=>!all(it).some(a=>a.k===k)).map(afShort),...(it.ilvl<b.minIlvl?['ilvl '+b.minIlvl]:[]),...(it.stab<b.minStab?['⚖'+b.minStab]:[])]:[];
+  return `<div class="panel"><div class="flex"><div style="font-size:30px">${b.face}</div><div class="grow"><b>${b.name}</b> <span class="muted">· ${t('leaves')} <span class="cd" data-u="b${i}"></span></span><div style="font-size:13px">${t('wants')}: ${b.keys.map(k=>`<b class="t3">${afShort(k)}</b>`).join(' + ')} · ${t('minIlvl')} ${b.minIlvl}+${b.minStab?` · ⚖${b.minStab}+`:''}</div></div></div>
+  <div class="flex" style="margin-top:4px"><div class="grow ${m.m===2?'good':m.m===1?'warn':'muted'}" style="font-size:12px">${m.m===2?'✔ '+t('exact'):m.m===1?'≈ '+t('partial')+` (${m.hit}/${b.keys.length})`:t('nomatch')}${miss.length?`<br><span class="muted">${t('missing')}: ${miss.join(', ')}</span>`:''}</div><button class="sm" data-act="skipB" data-arg="${i}">↻ ${CONFIG.bountySkipCost}🪙</button><button class="gold deliver" id="dl-${i}" data-act="deliver" data-arg="${i}" ${m.m?'':'disabled'}>${t('deliver')}${m.m?' '+m.pay+'🪙':''}</button></div></div>`}).join('')},
  codex:()=>{const n=Object.keys(S.codex).length;return `<div class="panel"><h2>📖 ${t('codexT')} ${n}/${AFF.length*5}</h2><div class="cx"><div></div>${[5,4,3,2,1].map(x=>`<div class="t${x}" style="text-align:center">T${x}</div>`).join('')}
-  ${AFF.map(a=>`<div>${a.s==='p'?'P':'S'} ${afShort(a.k)}${rowDone(a.k)?' ✨':''}</div>`+[5,4,3,2,1].map(x=>`<div class="c t${x} ${S.codex[a.k+x]?'on':''}"><span>${S.codex[a.k+x]?'✓':''}</span></div>`).join('')).join('')}</div></div>
+  ${AFF.map(a=>`<div>${a.s.toUpperCase()} ${afShort(a.k)}${rowDone(a.k)?' ✨':''}</div>`+[5,4,3,2,1].map(x=>`<div class="c t${x} ${S.codex[a.k+x]?'on':''}"><span>${S.codex[a.k+x]?'✓':''}</span></div>`).join('')).join('')}</div></div>
   <div class="panel"><h2>${t('bonuses')}</h2><div>${codexRows()?'✅':'⬜'} ${t('rowB')} (${codexRows()})</div><div>${pageDone('p')?'✅':'⬜'} ${t('pageP')}</div><div>${pageDone('s')?'✅':'⬜'} ${t('pageS')}</div></div>
   <div class="panel"><h2>👑 ${t('hof')}</h2>${S.hof.length?S.hof.map(h=>`<div class="t1">${h.name} · ${t(h.base)} · ilvl ${h.ilvl} · ${h.at}</div>`).join(''):`<div class="muted">${t('hofE')}</div>`}</div>
   <div class="panel"><h2>${t('stats')}</h2>${t('sold')}: ${S.stats.sold} · ${t('profit')}: ${S.stats.profit}🪙 · ${t('crafts')}: ${S.stats.crafts} · ${t('t1s')}: ${S.stats.t1} · ${t('streak')}: ${S.login.streak}</div>`},
  upgrades:()=>`<div class="panel"><h2>⭐ ${t('rep')} – ${t('level')} ${S.lvl}</h2><div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div><div class="muted">${S.xp}/${needXp(S.lvl)} XP</div>
-  <div class="lbl">${t('unlocks')}</div>${[1,2,3,4].map(l=>`<div>${S.lvl>=l?'✅':'🔒'} ${t('level')} ${l}: ${t('u'+l)}</div>`).join('')}<div class="muted">${t('uI')} (${marketMax()})</div></div>
+  ${[1,2,3,4].map(l=>`<div>${S.lvl>=l?'✅':'🔒'} ${t('level')} ${l}: ${t('u'+l)}</div>`).join('')}<div class="muted">${t('uI')} (${marketMax()})</div></div>
   ${UPS.map(u=>{const l=S.up[u.k],mx=l>=u.max,rq=u.req(l);return `<div class="panel flex"><div class="grow"><b>${t('up_'+u.k)}</b> (${l}/${u.max})<div class="muted">${t('up_'+u.k+'D')}${!mx&&S.lvl<rq?' · '+t('needLvl')+' '+rq:''}</div></div><button class="gold" data-act="upgrade" data-arg="${u.k}" ${mx||S.lvl<rq?'disabled':''}>${mx?t('maxed'):u.cost(l)+'🪙'}</button></div>`}).join('')}
   <button class="red sm" data-act="reset">🗑 ${t('reset')}</button>`
 };
-function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();if(shopOpen){$('#shopBox').innerHTML=shopHtml();$('#shop').classList.remove('hidden')}else $('#shop').classList.add('hidden');updCd()}
-function updCd(){document.querySelectorAll('.cd').forEach(e=>{const u=e.dataset.u,until=u[0]==='b'&&u!=='b'?(S.bounties[+u.slice(1)]||{}).until:S[u];e.textContent=fmt((until||0)-S.play)})}
-// ================= LOOP =================
+const SH={
+ shop:()=>`<div class="flex"><h2 class="grow">🛒 ${t('shopT')}</h2><span>🪙 ${S.gold} · 🔆 ${S.cur.embers}</span></div>`+CURS.map(c=>{const lk=c==='lock'&&S.lvl<CONFIG.lockLvl,p=curCost(c),e=c==='lock'?CONFIG.lockEmbers:0;
+  const w=lk?`🔒 ${t('unlockAt')} ${CONFIG.lockLvl}`:S.gold<p?`${t('needGold')} ${p-S.gold}🪙`:S.cur.embers<e?t('noEmbers'):'';
+  return `<div class="shopi"><div class="flex"><div style="font-size:24px">${CICO[c]}${CTAG[c]?`<sub style="font-size:11px">${CTAG[c]}</sub>`:''}</div><div class="grow"><b>${t(c)}</b> · ${t('owned')}: <b id="own-${c}">${S.cur[c]}</b>${CONFIG.stabCost[c]?` · <span style="color:#7fd0ff">⚖${CONFIG.stabCost[c]}</span>`:''}<div class="muted">${t(c+'D')}</div></div>
+  <button class="gold" id="shop-${c}-1" data-act="buyCur" data-arg="${c}:1" ${w?'disabled':''}>×1<br>${p}🪙${e?'+'+e+'🔆':''}</button><button class="gold" id="shop-${c}-5" data-act="buyCur" data-arg="${c}:5" ${w||S.gold<p*5||S.cur.embers<e*5?'disabled':''}>×5<br>${p*5}🪙</button></div>${w?`<div class="warn" style="font-size:12px">${w}</div>`:''}</div>`}).join('')+
+  `<div class="shopi"><div class="flex"><div style="font-size:24px">🔆</div><div class="grow"><b>${t('embers')}</b> · ${t('owned')}: <b>${S.cur.embers}</b><div class="muted">${t('embersD')}</div><div class="warn" style="font-size:12px">${t('srcE')}</div></div></div></div><div class="muted" style="margin:4px 0 8px">${t('src')}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
+ stash:()=>`<h2>📦 ${t('stash')} ${S.items.length}/${stallSize()}</h2>${S.items.length?S.items.map((x,i)=>`<div class="si" style="--rc:${RAR[rarity(x)][1]}"><div class="ic">${x.unid?'':icon(x.base)}</div><div class="grow" data-act="selItem" data-arg="${i}"><b style="color:var(--rc)">${x.unid?t('crate'):rarity(x)>=2?x.name:t(x.base)}</b>${x.frac?' <span class="tagx">💔</span>':''}<div class="muted">ilvl ${x.ilvl} · ${x.unid?'?':all(x).length+'× afix · ⚖'+x.stab+'/'+x.stab0}</div></div>
+  <button class="sm" data-act="selItem" data-arg="${i}">⚒️</button>${x.unid?'':`<button class="sm ${isJunk(x)?'':'gold'}" id="sl-${i}" data-act="sell" data-arg="${i}">${sellPrice(x)}🪙</button><button class="sm ${isJunk(x)?'gold':''}" id="sv-${i}" data-act="salvage" data-arg="${i}">♻${salvageN(x)}🔆</button>`}</div>`).join(''):`<div class="muted">${t('noItem')}</div>`}<button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`,
+ essence:()=>{const it=cur();return `<h2>${t('essenceT')}</h2><div class="muted">${t('essenceD2')} · ${CONFIG.essenceCost}🪙 · ⚖${CONFIG.stabCost.essence}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:8px 0">${it?AFF.filter(a=>it[a.s].length<3&&!all(it).some(x=>x.k===a.k)).map(a=>`<button class="ess" data-act="essence" data-arg="${a.k}">${a.s.toUpperCase()} · ${afShort(a.k)}${S.hot===a.k?' 🔥':''}</button>`).join(''):''}</div><button style="width:100%" id="closeSheet" data-act="closeSheet">✖ ${t('close')}</button>`}
+};
+function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();if(sheet&&SH[sheet]){$('#sheetBox').innerHTML=SH[sheet]();$('#sheet').classList.remove('hidden')}else $('#sheet').classList.add('hidden');updCd()}
+function updCd(){document.querySelectorAll('.cd').forEach(e=>{const u=e.dataset.u,until=u[0]==='b'?(S.bounties[+u.slice(1)]||{}).until:S[u];e.textContent=fmt((until||0)-S.play)})}
 function tick(){if(document.hidden)return;S.play++;let rr=false;
  if(S.play>=S.marketAt){genMarket();rr=S.tab==='market'}
  if(S.play>=S.trendAt){rotateTrend();toast('🔥 '+t('hot')+': '+afShort(S.hot));rr=true}
  S.bounties.forEach((b,i)=>{if(S.play>=b.until){S.bounties[i]=genBounty();if(S.tab==='bounties')rr=true}});
- if(rr)render();else{updCd()}if(S.play%5===0)save()}
-// ================= INIT =================
-function init(){const had=load();if(!S.hot)rotateTrend();if(!S.market.length)genMarket();while(S.bounties.length<3)S.bounties.push(genBounty());
+ if(rr&&!document.querySelector('.slot')&&!sheet)render();else{renderTop();updCd()}if(S.play%5===0)save()}
+function init(){load();if(!S.hot)rotateTrend();if(!S.market.length)genMarket();while(S.bounties.length<3)S.bounties.push(genBounty());S.quests=S.quests.filter(Boolean);while(S.quests.length<3)S.quests.push(genQuest());
  if(!S.tut){S.tut=true;modal(t('tutorial'))}
  const today=new Date().toDateString(),y=new Date(Date.now()-864e5).toDateString();
- if(S.login.last!==today){S.login.streak=S.login.last===y?S.login.streak+1:1;S.login.last=today;const g=CONFIG.daily.gold*Math.min(S.login.streak,7);S.gold+=g;S.cur.augment+=CONFIG.daily.aug;S.cur.reroll+=1;
-  modal(`<div class="big">🎁 ${t('daily')}</div><p style="text-align:center">${t('streak')}: <b>${S.login.streak}</b> 🔥<br>+${g}🪙 · +${CONFIG.daily.aug}💠 · +1🎲</p>`)}
+ if(S.login.last!==today){S.login.streak=S.login.last===y?S.login.streak+1:1;S.login.last=today;const g=CONFIG.daily.gold*Math.min(S.login.streak,7);S.gold+=g;S.cur.augment+=CONFIG.daily.aug;S.cur.reroll+=1;S.cur.embers+=CONFIG.daily.embers;
+  modal(`<div class="lvl">🎁</div><div class="big">${t('daily')}</div><p style="text-align:center">${t('streak')}: <b>${S.login.streak}</b> 🔥<br>+${g}🪙 · +${CONFIG.daily.aug}💠 · +1🎲 · +${CONFIG.daily.embers}🔆</p>`)}
  render();save();setInterval(tick,1000)}
-window.G={get S(){return S},ACT,render,itemValue,genMarket,makeItem,save};
+window.G={get S(){return S},ACT,render,itemValue,makeItem,save,why};
 init();
 </script>
 </body></html>
