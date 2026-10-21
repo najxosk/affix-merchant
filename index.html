@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="sk"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Affix Merchant</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#0e0c0a;color:#d9c79a;font-family:Georgia,'Times New Roman',serif}
+body{background:radial-gradient(circle at 50% 0,#2a231b,#0e0c0a 70%)}
+#app{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding-bottom:74px}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(#1d1813,#15110d);border-bottom:2px solid #4a3b28;padding:6px 8px;box-shadow:0 3px 10px #000a}
+.row{display:flex;align-items:center;gap:6px}
+#gold{font-size:20px;font-weight:bold;color:#ffd76a;flex:1}
+#rep{font-size:13px;min-width:90px}
+.bar{height:6px;background:#2b2219;border:1px solid #4a3b28;border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#b8862f,#ffd76a)}
+button{font-family:inherit;color:#f0e2bb;background:linear-gradient(#4a3b28,#2c2318);border:1px solid #8a6d3e;border-radius:8px;padding:10px 12px;font-size:15px;min-height:44px;cursor:pointer;box-shadow:inset 0 1px 0 #ffffff22,0 2px 4px #0008}
+button:active{transform:translateY(1px);filter:brightness(1.2)}
+button:disabled{opacity:.4;filter:grayscale(1)}
+button.sm{min-height:36px;padding:6px 9px;font-size:13px}
+button.gold{background:linear-gradient(#a07a2c,#5e4518);border-color:#ffd76a;color:#fff6d8}
+button.red{background:linear-gradient(#7a2c22,#421510);border-color:#d0584a}
+#curs{display:flex;gap:8px;font-size:14px;margin-top:4px;flex-wrap:wrap}
+#curs span{background:#0008;border:1px solid #3a2e20;border-radius:6px;padding:2px 6px}
+#ticker{margin-top:5px;font-size:13px;background:#000a;border:1px solid #6b2d10;border-radius:6px;padding:4px 8px;color:#ffb36b;overflow:hidden;white-space:nowrap}
+#ticker .hot{animation:pulse 1.2s infinite alternate}
+@keyframes pulse{to{color:#fff2a8;text-shadow:0 0 8px #ff7b00}}
+main{flex:1;padding:8px}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:6;display:flex;justify-content:center;background:#15110d;border-top:2px solid #4a3b28}
+nav div{display:flex;max-width:560px;width:100%}
+nav button{flex:1;border-radius:0;border:none;border-right:1px solid #3a2e20;background:none;min-height:64px;font-size:11px;padding:4px 2px;box-shadow:none}
+nav button b{display:block;font-size:22px}
+nav button.on{background:linear-gradient(#4a3b28,#221a12);color:#ffd76a}
+h2{font-size:18px;margin:6px 0 8px;color:#e8c77a;border-bottom:1px solid #4a3b28;padding-bottom:4px}
+.panel{background:linear-gradient(#211b15,#17130f);border:1px solid #4a3b28;border-radius:10px;padding:10px;margin-bottom:10px}
+.card{position:relative;background:linear-gradient(#1b1612,#0f0c0a);border:2px solid var(--rc);border-radius:10px;padding:10px;margin-bottom:10px;box-shadow:0 0 12px -2px var(--rc),inset 0 0 20px #000}
+.card.r3{animation:glow 2s infinite alternate}
+@keyframes glow{to{box-shadow:0 0 24px 2px var(--rc),inset 0 0 20px #000}}
+.ch{display:flex;gap:10px;align-items:center}
+.ic{width:56px;height:56px;flex:none;border:1px solid #4a3b28;border-radius:8px;background:radial-gradient(#2e261d,#0d0b09)}
+.ic svg{width:100%;height:100%}
+.nm{font-size:17px;font-weight:bold;color:var(--rc)}
+.sub{font-size:12px;opacity:.85}
+.frac{color:#ff5a4a;font-weight:bold}
+.affs{margin-top:8px}
+.af{padding:7px 8px;margin:3px 0;border-radius:6px;background:#0006;border:1px solid transparent;font-size:14px}
+.af.ia{cursor:pointer}
+.af.sel{border-color:#ffd76a;background:#3a2e1a}
+.af .tg{display:inline-block;min-width:44px;font-size:11px;opacity:.85}
+.t1{color:#ff8c1a;text-shadow:0 0 6px #ff6a00}.t2{color:#c86bff}.t3{color:#4aa3ff}.t4{color:#5fd35f}.t5{color:#bbb}
+.lbl{font-size:11px;opacity:.6;margin-top:6px;text-transform:uppercase;letter-spacing:1px}
+.stab{font-size:12px;margin-top:6px}
+.price{font-size:16px;color:#ffd76a;font-weight:bold}
+.flex{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.cbtn{display:flex;gap:4px}.cbtn button:first-child{flex:1}
+.strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:6px}
+.strip button{width:58px;height:58px;padding:2px;flex:none;border:2px solid var(--rc)}
+.strip button.on{box-shadow:0 0 10px var(--rc);background:#3a2e1a}
+.strip svg{width:100%;height:100%}
+.muted{opacity:.7;font-size:13px}
+.odds{font-size:13px;line-height:1.5;margin:6px 0}
+.good{color:#6be36b}.warn{color:#ffb84a}.bad{color:#ff5a4a}
+.cx{display:grid;grid-template-columns:1.6fr repeat(5,1fr);gap:3px;font-size:12px;align-items:center}
+.cx div.c{height:22px;border-radius:4px;background:#0008;border:1px solid #3a2e20;text-align:center;line-height:20px}
+.cx div.c.on{background:currentColor}
+.cx div.c.on span{color:#000}
+.hidden{display:none!important}
+#modal{position:fixed;inset:0;z-index:20;background:#000c;display:flex;align-items:center;justify-content:center;padding:14px}
+#modal .box{max-width:500px;width:100%;max-height:88vh;overflow:auto;background:linear-gradient(#2a2219,#17130f);border:2px solid #8a6d3e;border-radius:12px;padding:14px;font-size:15px;line-height:1.45}
+#toast{position:fixed;left:50%;bottom:80px;font-size:13px;transform:translateX(-50%);z-index:30;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:90%;max-width:420px}
+#toast div{background:#000e;border:1px solid #b8862f;border-radius:8px;padding:8px 12px;text-align:center;animation:tin .25s}
+@keyframes tin{from{opacity:0;transform:translateY(-10px)}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:25}
+#flash{position:fixed;inset:0;pointer-events:none;z-index:24;opacity:0;background:radial-gradient(#ffd76a,#ff6a0088 50%,transparent 80%)}
+#flash.go{animation:flash 1s}
+@keyframes flash{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-7px) rotate(-1deg)}40%{transform:translateX(7px) rotate(1deg)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.reveal{animation:rev .7s}
+@keyframes rev{0%{transform:rotateY(90deg) scale(.8);filter:brightness(3)}100%{transform:none}}
+.big{font-size:22px;text-align:center;color:#ff8c1a;text-shadow:0 0 10px #ff6a00}
+</style></head>
+<body>
+<div id="app">
+<header>
+ <div class="row"><div id="gold"></div><div id="rep"></div><button class="sm" id="langBtn" data-act="lang"></button><button class="sm" data-act="help">?</button></div>
+ <div id="curs"></div>
+ <div id="ticker"></div>
+</header>
+<main id="view"></main>
+</div>
+<nav><div id="tabs"></div></nav>
+<div id="modal" class="hidden"><div class="box" id="modalBox"></div></div>
+<div id="toast"></div>
+<canvas id="fx"></canvas>
+<div id="flash"></div>
+<script>
+'use strict';
+// ================= CONFIG (tuning) =================
+const CONFIG={
+ startGold:100, startCur:{reroll:3,augment:5,annul:2,lock:0},
+ curCost:{reroll:5,augment:7,annul:6,lock:40}, forgeGold:3,
+ marketSize:5, marketRefreshSec:60, marketRefreshCost:5, trendSec:180, bountyRefreshSec:150,
+ crateCost:35, baseStab:[35,55], startStall:4,
+ tierW:{5:10,4:22,3:45,2:95,1:220},        // value weight of an affix by tier
+ rollW:{5:50,4:30,3:14,2:5,1:1.5},          // chance weights for rolling tiers
+ tierIlvl:{5:1,4:12,3:28,2:48,1:68},        // min item level for tier
+ sellMul:0.95, priceFactor:[0.8,1.3], bountyExact:2.6, bountyPartial:1.3, hotMul:2,
+ forgeCost:t=>[4+(5-t)*3,12+(5-t)*6],       // stability cost range when forging from tier t
+ fractureShare:0.88,                         // failed forge: fracture, otherwise shatter
+ daily:{gold:25,aug:2}, repBase:60, saveKey:'affixMerchant.v1'
+};
+window.CONFIG=CONFIG;
+// ================= DATA =================
+const AFF=[
+ {k:'pphys',s:'p',b:8},{k:'fphys',s:'p',b:3},{k:'ffire',s:'p',b:4},{k:'fcold',s:'p',b:4},{k:'flight',s:'p',b:5},{k:'pele',s:'p',b:7},
+ {k:'aspd',s:'s',b:2},{k:'crit',s:'s',b:2},{k:'cmult',s:'s',b:6},{k:'rfire',s:'s',b:4},{k:'rcold',s:'s',b:4},{k:'rlight',s:'s',b:4},{k:'cspd',s:'s',b:3}];
+const AFM={};AFF.forEach(a=>AFM[a.k]=a);
+const BASES=[['sword',1],['axe',1],['dagger',1],['bow',2],['staff',3],['wand',4]];
+const RAR=[['normal','#c8c8c8'],['magic','#8c8cff'],['rare','#ffff77'],['exalted','#ff9a3c']];
+const NA=['Doom','Storm','Grim','Blood','Dusk','Rune','Ash','Frost','Bane','Dread','Gale','Soul'],NB=['Bite','Song','Edge','Fang','Thirst','Call','Spire','Wail','Mark','Gnash','Reaver','Kiss'];
+const FACES=['🧙','🛡️','🏹','🗡️','👑','🧝','🧔','👩‍🦰','🧛','🤠'];
+const CUSTN=['Marek','Zuzka','Brom','Ilsa','Vlado','Kael','Eva','Tibor','Nyx','Oskar'];
+const CURS=['reroll','augment','annul','lock'],CICO={reroll:'🎲',augment:'💠',annul:'🌀',lock:'🔒'};
+const UPS=[{k:'stall',max:4,cost:l=>60*2**l,req:l=>l+1},{k:'stab',max:5,cost:l=>50*2**l,req:l=>l+1},{k:'haggle',max:5,cost:l=>40*2**l,req:l=>l+2},{k:'tongue',max:5,cost:l=>70*2**l,req:l=>l+2}];
+// ================= I18N =================
+const I18N={
+sk:{market:'Trh',workshop:'Dielňa',bounties:'Zákazky',codex:'Kódex',upgrades:'Rozvoj',
+ normal:'Bežný',magic:'Magický',rare:'Vzácny',exalted:'Vznešený',
+ sword:'Meč',axe:'Sekera',dagger:'Dýka',bow:'Luk',staff:'Palica',wand:'Prútik',
+ reroll:'Kameň prehodenia',augment:'Kameň rozšírenia',annul:'Kameň zrušenia',lock:'Runa zámku',
+ rerollD:'Nanovo hodí hodnoty afixov',augmentD:'Pridá náhodný afix',annulD:'Odstráni náhodný afix',lockD:'Zamkne vybraný afix (1×)',
+ forge:'Vyhňa',stability:'Stabilita',prefixes:'Prefixy',suffixes:'Sufixy',hot:'HORÚCI TREND',changes:'zmena o',
+ buy:'Kúpiť',sell:'Predať za',paid:'kúpené za',value:'hodnota',newStock:'Nový tovar o',refresh:'Obnoviť',stall:'Stánok',
+ crate:'Tajomná debna',crateD:'Neidentifikovaný predmet. Môže byť smeť… alebo poklad.',identify:'Identifikovať',unid:'Neidentifikovaný',
+ noItem:'Nemáš vybraný predmet. Kúp zbraň na Trhu.',selectAff:'Ťukni na afix, aby si ho vybral pre Vyhňu alebo Zámok.',
+ forgeBtn:'Kovať',forgeCost:'Cena stability',safe:'Úspech',fracture:'Prasknutie',shatter:'Rozbitie',maxTier:'Už je T1!',ilvlLow:'Príliš nízky ilvl pre vyšší tier',
+ fractured:'PRASKNUTÝ',fracturedT:'Predmet praskol! Už sa nedá upravovať.',shatteredT:'Predmet sa ROZTRIESKAL na prach!',
+ noCur:'Nemáš túto menu – dokúp ju (+).',noGold:'Málo zlata!',stallFull:'Stánok je plný!',full:'Všetkých 6 afixov je obsadených.',nothing:'Nie je čo zmeniť.',
+ locked:'Zamknuté',fragile:'Prasknutý predmet sa nedá upravovať.',
+ wants:'Chce',minIlvl:'min. ilvl',deliver:'Odovzdať',exact:'PRESNÁ ZHODA',partial:'Čiastočná zhoda',nomatch:'Nezhoduje sa',leaves:'odchádza o',selItem:'Vybraný predmet',
+ codexT:'Kódex afixov',bonuses:'Bonusy',rowB:'Každý kompletný riadok: +2 stabilita na nové predmety',pageP:'Kompletné prefixy: meny o 20 % lacnejšie',pageS:'Kompletné sufixy: predaj +10 %',
+ hof:'Sieň slávy',hofE:'Zatiaľ žiadny dokonalý predmet (6× T1).',stats:'Štatistiky',sold:'Predané',profit:'Zisk',crafts:'Úpravy',t1s:'T1 hody',
+ rep:'Reputácia',level:'Úroveň',unlocks:'Odomykanie',up_stall:'Väčší stánok',up_stallD:'+1 miesto na predmety',up_stab:'Pevná ruka',up_stabD:'+8 stabilita nových predmetov',
+ up_haggle:'Zjednávanie',up_haggleD:'Nákup −4 %',up_tongue:'Medový jazyk',up_tongueD:'Predaj +4 %',needLvl:'Treba úroveň',maxed:'MAX',
+ u1:'Meč, Sekera, Dýka',u2:'Luk + Tajomná debna',u3:'Palica + Runa zámku',u4:'Prútik + zákazky s 3 afixmi',uI:'Každá úroveň: +10 max ilvl na trhu',
+ lvlUp:'Nová úroveň reputácie!',jackpot:'T1 JACKPOT!',newCx:'Nový záznam v kódexe',perfect:'LEGENDÁRNY DOKONALÝ PREDMET!',perfectD:'Všetkých 6 afixov je T1. Zapísané do Siene slávy!',
+ daily:'Denný bonus',streak:'Séria dní',ok:'OK',reset:'Zmazať postup',resetQ:'Naozaj zmazať všetok postup?',yes:'Áno, zmazať',no:'Nie',
+ sold2:'Predané',profitW:'zisk',bountyDone:'Zákazka splnená!',got:'Získaný',lang:'EN',
+ tutorial:`<h2>⚒️ Affix Merchant – návod</h2>
+<p><b>Cieľ:</b> kúp zbraň na <b>Trhu</b>, vylepši ju v <b>Dielni</b> a predaj so ziskom (alebo ju odovzdaj zákazníkovi).</p>
+<p><b>Afixy:</b> predmet má max. <b>3 prefixy</b> (poškodenie) a <b>3 sufixy</b> (rýchlosť, kritické zásahy, odolnosti).</p>
+<p><b>Tiery:</b> každý afix má tier <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1 (najlepší)</span>. <b>ilvl</b> (úroveň predmetu) určuje, aký vysoký tier môže padnúť.</p>
+<p><b>Meny:</b> 🎲 prehodí hodnoty, 💠 pridá afix, 🌀 odstráni afix, 🔒 ochráni jeden afix pri ďalšej úprave.</p>
+<p><b>Vyhňa:</b> vyber afix a zvýš jeho tier. Každé kovanie míňa <b>Stabilitu</b> (náhodne). Ak stabilita nestačí, predmet <span class="bad">praskne</span> (už sa nedá upravovať) alebo sa zriedka <span class="bad">roztrieska</span>. Šance vidíš vždy pred kovaním.</p>
+<p><b>Tip:</b> 🔥 horúci afix má dvojnásobnú cenu. Zákazníci platia za presnú zhodu až 2,6×!</p>`},
+en:{market:'Market',workshop:'Workshop',bounties:'Bounties',codex:'Codex',upgrades:'Upgrades',
+ normal:'Normal',magic:'Magic',rare:'Rare',exalted:'Exalted',
+ sword:'Sword',axe:'Axe',dagger:'Dagger',bow:'Bow',staff:'Staff',wand:'Wand',
+ reroll:'Reroll Stone',augment:'Augment Stone',annul:'Annul Stone',lock:'Lock Rune',
+ rerollD:'Rerolls affix values',augmentD:'Adds a random affix',annulD:'Removes a random affix',lockD:'Locks selected affix (one use)',
+ forge:'Forge',stability:'Stability',prefixes:'Prefixes',suffixes:'Suffixes',hot:'HOT TREND',changes:'changes in',
+ buy:'Buy',sell:'Sell for',paid:'paid',value:'value',newStock:'New stock in',refresh:'Refresh',stall:'Stall',
+ crate:'Mystery Crate',crateD:'Unidentified item. Could be junk… or treasure.',identify:'Identify',unid:'Unidentified',
+ noItem:'No item selected. Buy a weapon at the Market.',selectAff:'Tap an affix to select it for Forge or Lock.',
+ forgeBtn:'Forge',forgeCost:'Stability cost',safe:'Success',fracture:'Fracture',shatter:'Shatter',maxTier:'Already T1!',ilvlLow:'Item level too low for higher tier',
+ fractured:'FRACTURED',fracturedT:'The item fractured! It can no longer be crafted.',shatteredT:'The item SHATTERED into dust!',
+ noCur:'You have none – buy more (+).',noGold:'Not enough gold!',stallFull:'Stall is full!',full:'All 6 affix slots are taken.',nothing:'Nothing to change.',
+ locked:'Locked',fragile:'Fractured items cannot be crafted.',
+ wants:'Wants',minIlvl:'min ilvl',deliver:'Deliver',exact:'EXACT MATCH',partial:'Partial match',nomatch:'No match',leaves:'leaves in',selItem:'Selected item',
+ codexT:'Affix Codex',bonuses:'Bonuses',rowB:'Each complete row: +2 stability on new items',pageP:'All prefixes: currencies 20% cheaper',pageS:'All suffixes: sell +10%',
+ hof:'Hall of Fame',hofE:'No perfect item yet (6× T1).',stats:'Stats',sold:'Sold',profit:'Profit',crafts:'Crafts',t1s:'T1 rolls',
+ rep:'Reputation',level:'Level',unlocks:'Unlocks',up_stall:'Bigger stall',up_stallD:'+1 item slot',up_stab:'Steady hands',up_stabD:'+8 stability on new items',
+ up_haggle:'Haggler',up_haggleD:'Buy −4%',up_tongue:'Silver tongue',up_tongueD:'Sell +4%',needLvl:'Needs level',maxed:'MAX',
+ u1:'Sword, Axe, Dagger',u2:'Bow + Mystery Crate',u3:'Staff + Lock Rune',u4:'Wand + 3-affix bounties',uI:'Each level: +10 max market ilvl',
+ lvlUp:'Reputation level up!',jackpot:'T1 JACKPOT!',newCx:'New codex entry',perfect:'LEGENDARY PERFECT ITEM!',perfectD:'All 6 affixes are T1. Added to the Hall of Fame!',
+ daily:'Daily bonus',streak:'Login streak',ok:'OK',reset:'Reset progress',resetQ:'Really delete all progress?',yes:'Yes, delete',no:'No',
+ sold2:'Sold',profitW:'profit',bountyDone:'Bounty fulfilled!',got:'Got',lang:'SK',
+ tutorial:`<h2>⚒️ Affix Merchant – guide</h2>
+<p><b>Goal:</b> buy a weapon at the <b>Market</b>, craft it in the <b>Workshop</b>, sell for profit (or deliver to a customer).</p>
+<p><b>Affixes:</b> an item has up to <b>3 prefixes</b> (damage) and <b>3 suffixes</b> (speed, crits, resistances).</p>
+<p><b>Tiers:</b> each affix has a tier <span class="t5">T5</span> → <span class="t4">T4</span> → <span class="t3">T3</span> → <span class="t2">T2</span> → <span class="t1">T1 (best)</span>. <b>ilvl</b> (item level) limits which tiers can roll.</p>
+<p><b>Currencies:</b> 🎲 rerolls values, 💠 adds an affix, 🌀 removes an affix, 🔒 protects one affix for the next craft.</p>
+<p><b>Forge:</b> pick an affix and raise its tier. Each forge costs random <b>Stability</b>. If stability runs out the item <span class="bad">fractures</span> (no more crafting) or rarely <span class="bad">shatters</span>. Odds are always shown before you forge.</p>
+<p><b>Tip:</b> the 🔥 hot affix is worth double. Customers pay up to 2.6× for an exact match!</p>`}};
+const AT={sk:{pphys:['+{v}% fyzického poškodenia','Fyz. %'],fphys:['+{v} fyzického poškodenia','Fyz. plošné'],ffire:['+{v} ohnivého poškodenia','Oheň'],fcold:['+{v} mrazivého poškodenia','Mráz'],flight:['+{v} bleskového poškodenia','Blesk'],pele:['+{v}% elementálneho poškodenia','Element %'],aspd:['+{v}% rýchlosti útoku','Rýchl. útoku'],crit:['+{v}% šance na kritický zásah','Krit. šanca'],cmult:['+{v}% kritického násobiča','Krit. násobič'],rfire:['+{v}% odolnosti voči ohňu','Odol. oheň'],rcold:['+{v}% odolnosti voči mrazu','Odol. mráz'],rlight:['+{v}% odolnosti voči blesku','Odol. blesk'],cspd:['+{v}% rýchlosti kúzlenia','Rýchl. kúzlenia']},
+en:{pphys:['+{v}% Physical Damage','Phys %'],fphys:['+{v} Physical Damage','Flat Phys'],ffire:['+{v} Fire Damage','Fire'],fcold:['+{v} Cold Damage','Cold'],flight:['+{v} Lightning Damage','Lightning'],pele:['+{v}% Elemental Damage','Elemental %'],aspd:['+{v}% Attack Speed','Attack Speed'],crit:['+{v}% Critical Chance','Crit Chance'],cmult:['+{v}% Critical Multiplier','Crit Multi'],rfire:['+{v}% Fire Resistance','Fire Res'],rcold:['+{v}% Cold Resistance','Cold Res'],rlight:['+{v}% Lightning Resistance','Lightning Res'],cspd:['+{v}% Cast Speed','Cast Speed']}};
+const t=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.en[k]||k;
+const afText=a=>AT[S.lang][a.k][0].replace('{v}',a.v), afShort=k=>AT[S.lang][k][1];
+// ================= UTIL =================
+const $=s=>document.querySelector(s),R=Math.random,ri=(a,b)=>a+Math.floor(R()*(b-a+1)),pick=a=>a[Math.floor(R()*a.length)];
+function wpick(o){let tot=0;for(const k in o)tot+=o[k];let r=R()*tot;for(const k in o){r-=o[k];if(r<=0)return k}return Object.keys(o)[0]}
+const fmt=s=>{s=Math.max(0,Math.ceil(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+// ================= AUDIO =================
+let AC;function ac(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume()}catch(e){}return AC}
+function tone(f,d=.12,type='sine',v=.15,dl=0){const a=ac();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t0=a.currentTime+dl;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,t0);g.gain.exponentialRampToValueAtTime(.001,t0+d);o.connect(g).connect(a.destination);o.start(t0);o.stop(t0+d+.03)}
+function noise(d=.5,v=.3){const a=ac();if(!a)return;const b=a.createBuffer(1,a.sampleRate*d,a.sampleRate),c=b.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=(R()*2-1)*(1-i/c.length);const s=a.createBufferSource(),g=a.createGain();g.gain.value=v;s.buffer=b;s.connect(g).connect(a.destination);s.start()}
+const SND={click:()=>tone(620,.05,'square',.04),coin:()=>{tone(988,.08,'square',.07);tone(1319,.18,'square',.07,.07)},craft:()=>{tone(300,.1,'triangle',.15);tone(460,.14,'triangle',.12,.05)},
+ fail:()=>{tone(160,.45,'sawtooth',.13);tone(105,.6,'sawtooth',.11,.1);noise(.3,.15)},jackpot:()=>[523,659,784,1047,1319,1568].forEach((f,i)=>tone(f,.3,'square',.08,i*.08)),shatter:()=>{noise(.8,.4);tone(80,.8,'sawtooth',.15)},lvl:()=>[392,523,659,784].forEach((f,i)=>tone(f,.25,'triangle',.12,i*.1))};
+// ================= FX =================
+const cv=$('#fx'),cx=cv.getContext('2d');let parts=[],fxOn=false;
+function resize(){cv.width=innerWidth;cv.height=innerHeight}addEventListener('resize',resize);resize();
+function sparks(el,color,n=30){const r=el?el.getBoundingClientRect():{left:innerWidth/2,top:innerHeight/2,width:0,height:0};const x=r.left+r.width/2,y=r.top+Math.min(r.height/2,200);
+ for(let i=0;i<n;i++){const a=R()*6.28,s=2+R()*6;parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-2,l:40+R()*30,c:Array.isArray(color)?pick(color):color})}if(!fxOn){fxOn=true;requestAnimationFrame(loop)}}
+function loop(){cx.clearRect(0,0,cv.width,cv.height);parts=parts.filter(p=>p.l>0);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.2;p.l--;cx.globalAlpha=Math.min(1,p.l/30);cx.fillStyle=p.c;cx.fillRect(p.x,p.y,3,3)}cx.globalAlpha=1;if(parts.length)requestAnimationFrame(loop);else fxOn=false}
+function anim(sel,cls){const e=$(sel);if(!e)return;e.classList.remove(cls);void e.offsetWidth;e.classList.add(cls)}
+function toast(m){const d=document.createElement('div');d.innerHTML=m;const T=$('#toast');T.appendChild(d);while(T.children.length>3)T.firstChild.remove();setTimeout(()=>d.remove(),2400)}
+let mq=[];function modal(h){mq.push(h);if(mq.length===1)showM()}
+function showM(){$('#modalBox').innerHTML=mq[0]+(mq[0].includes('data-act="closeModal"')||mq[0].includes('data-act="resetYes"')?'':`<p style="text-align:center"><button class="gold" data-act="closeModal">${t('ok')}</button></p>`);$('#modal').classList.remove('hidden')}
+function closeM(){mq.shift();if(mq.length)showM();else $('#modal').classList.add('hidden')}
+// ================= ICONS =================
+function icon(b){const P={
+ sword:'<path d="M50 8 L57 9 L56 15 L25 46 L18 39Z" fill="#d6dde4" stroke="#8a96a0"/><path d="M13 36 L28 51" stroke="#c9993c" stroke-width="5" stroke-linecap="round"/><path d="M20 44 L9 55" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/><circle cx="8" cy="56" r="3" fill="#c9993c"/>',
+ axe:'<path d="M14 54 L46 14" stroke="#7a5230" stroke-width="5" stroke-linecap="round"/><path d="M36 10 Q58 8 58 30 Q48 26 42 30 L34 20Z" fill="#c8ced4" stroke="#7d868e"/>',
+ dagger:'<path d="M44 14 L50 14 L49 20 L30 39 L25 34Z" fill="#e2e7ec" stroke="#8a96a0"/><path d="M21 31 L33 43" stroke="#c9993c" stroke-width="4" stroke-linecap="round"/><path d="M26 38 L16 48" stroke="#5a2e5e" stroke-width="5" stroke-linecap="round"/>',
+ bow:'<path d="M18 6 Q60 32 18 58" fill="none" stroke="#9b6a35" stroke-width="5" stroke-linecap="round"/><path d="M18 6 L18 58" stroke="#e8e0c8" stroke-width="1.5"/><path d="M10 32 L50 32 M44 27 L52 32 L44 37" stroke="#ccc" stroke-width="2" fill="none"/>',
+ staff:'<path d="M18 58 L42 18" stroke="#6b4423" stroke-width="5" stroke-linecap="round"/><circle cx="45" cy="13" r="8" fill="#5fb3ff" stroke="#c9993c" stroke-width="2"/><circle cx="43" cy="11" r="2.5" fill="#fff"/>',
+ wand:'<path d="M14 52 L38 28" stroke="#d8cbb0" stroke-width="4" stroke-linecap="round"/><path d="M44 10 L47 19 L56 22 L47 25 L44 34 L41 25 L32 22 L41 19Z" fill="#ffd76a"/>'};
+ return `<svg viewBox="0 0 64 64">${P[b]}</svg>`}
+// ================= STATE =================
+let S;
+function fresh(){return{v:1,lang:'sk',tab:'market',gold:CONFIG.startGold,cur:{...CONFIG.startCur},items:[],sel:-1,selAff:null,market:[],marketAt:0,play:0,hot:null,trendAt:0,demand:{},bounties:[],xp:0,lvl:1,up:{stall:0,stab:0,haggle:0,tongue:0},codex:{},hof:[],stats:{sold:0,profit:0,t1:0,crafts:0},login:{last:'',streak:0},tut:false,nid:1}}
+function save(){try{localStorage.setItem(CONFIG.saveKey,JSON.stringify(S))}catch(e){}}
+function load(){try{const d=JSON.parse(localStorage.getItem(CONFIG.saveKey));if(d&&d.v===1){S=Object.assign(fresh(),d);return true}}catch(e){}S=fresh();return false}
+// ================= RULES =================
+const all=it=>[...it.p,...it.s];
+const rarity=it=>{const n=it.unid?3:all(it).length;return n===0?0:n<=2?1:n<=5?2:3};
+const maxTier=il=>{let m=5;for(let x=5;x>=1;x--)if(il>=CONFIG.tierIlvl[x])m=x;return m};
+const range=(a,tr)=>{const k=6-tr;return[a.b*k,Math.round(a.b*(k+.9))]};
+const rollVal=(a,tr,q)=>{const[l,h]=range(a,tr);return Math.round(l+(h-l)*q)};
+const marketMax=()=>Math.min(85,15+S.lvl*10);
+const stallSize=()=>CONFIG.startStall+S.up.stall;
+const unlockedBases=()=>BASES.filter(b=>b[1]<=S.lvl).map(b=>b[0]);
+const rowDone=k=>[1,2,3,4,5].every(x=>S.codex[k+x]);
+const codexRows=()=>AFF.filter(a=>rowDone(a.k)).length;
+const pageDone=s=>AFF.filter(a=>a.s===s).every(a=>rowDone(a.k));
+const curCost=c=>Math.round(CONFIG.curCost[c]*(pageDone('p')?.8:1));
+const stabBonus=()=>codexRows()*2+S.up.stab*8;
+const sellBonus=()=>1+S.up.tongue*.04+(pageDone('s')?.1:0);
+const buyMul=()=>1-S.up.haggle*.04;
+const needXp=l=>Math.round(CONFIG.repBase*Math.pow(l,1.6));
+function rollTier(il,boost){const m=maxTier(il),w={};for(let x=5;x>=m;x--)w[x]=CONFIG.rollW[x]*(boost&&x<=3?3:1);return+wpick(w)}
+function addAffix(it,boost){const sides=[];if(it.p.length<3)sides.push('p');if(it.s.length<3)sides.push('s');if(!sides.length)return null;const side=pick(sides);
+ const used=new Set(all(it).map(a=>a.k));const a=pick(AFF.filter(x=>x.s===side&&!used.has(x.k)));const tr=rollTier(it.ilvl,boost),q=R();const af={k:a.k,t:tr,q,v:rollVal(a,tr,q),lock:false};it[side].push(af);return af}
+function makeItem(il,n,boost){const it={id:S.nid++,base:pick(unlockedBases()),ilvl:il,p:[],s:[],stab:ri(...CONFIG.baseStab)+stabBonus(),frac:false,cost:0,name:pick(NA)+' '+pick(NB)};for(let i=0;i<n;i++)addAffix(it,boost);return it}
+const affVal=a=>CONFIG.tierW[a.t]*(S.demand[a.k]||1)*(.7+.6*a.q)*(S.hot===a.k?CONFIG.hotMul:1);
+function itemValue(it){let v=5+it.ilvl*.4;const A=all(it);for(const a of A)v+=affVal(a);if(A.length>=6)v*=1.3;else if(A.length>=4)v*=1.1;if(it.frac)v*=.85;return Math.max(1,Math.round(v))}
+const sellPrice=it=>Math.round(itemValue(it)*CONFIG.sellMul*sellBonus());
+const buyPrice=it=>it.fixed||Math.max(1,Math.round(itemValue(it)*it.pf*buyMul()));
+function genMarket(){const mx=marketMax();S.market=[];for(let i=0;i<CONFIG.marketSize;i++){const il=ri(Math.max(1,mx-30),mx);const it=makeItem(il,+wpick({0:40,1:25,2:18,3:10,4:5,5:2}));it.pf=CONFIG.priceFactor[0]+R()*(CONFIG.priceFactor[1]-CONFIG.priceFactor[0]);S.market.push(it)}S.marketAt=S.play+CONFIG.marketRefreshSec}
+function rotateTrend(){const prev=S.hot;let k;do k=pick(AFF).k;while(k===prev);S.hot=k;for(const a of AFF)S.demand[a.k]=Math.min(1.5,Math.max(.6,(S.demand[a.k]||1)*(.85+R()*.3)));S.trendAt=S.play+CONFIG.trendSec}
+function genBounty(){const keys=[pick(AFF.filter(a=>a.s==='p')).k,pick(AFF.filter(a=>a.s==='s')).k];if(S.lvl>=4&&R()<.4){let k;do k=pick(AFF).k;while(keys.includes(k));keys.push(k)}
+ return{id:S.nid++,face:pick(FACES),name:pick(CUSTN),keys,minIlvl:Math.max(1,Math.round(ri(1,marketMax()*.6)/5)*5),until:S.play+CONFIG.bountyRefreshSec+ri(0,60),bonus:ri(5,30)}}
+function bMatch(b,it){if(!it||it.unid)return{m:0,hit:0};const ks=all(it).map(a=>a.k),hit=b.keys.filter(k=>ks.includes(k)).length,v=itemValue(it);
+ if(hit===b.keys.length&&it.ilvl>=b.minIlvl)return{m:2,hit,pay:Math.round(v*CONFIG.bountyExact+20+b.bonus)};if(hit>0)return{m:1,hit,pay:Math.round(v*CONFIG.bountyPartial)};return{m:0,hit}}
+function discover(a){const key=a.k+a.t;if(S.codex[key])return;const rb=rowDone(a.k),pp=pageDone('p'),ps=pageDone('s');S.codex[key]=1;toast('📖 '+t('newCx')+': <span class="t'+a.t+'">'+afShort(a.k)+' T'+a.t+'</span>');
+ if(!rb&&rowDone(a.k))toast('✨ '+t('rowB'));if(!pp&&pageDone('p'))toast('✨ '+t('pageP'));if(!ps&&pageDone('s'))toast('✨ '+t('pageS'))}
+function addXp(n){S.xp+=n;while(S.xp>=needXp(S.lvl)){S.xp-=needXp(S.lvl);S.lvl++;SND.lvl();modal(`<div class="big">⭐ ${t('lvlUp')}</div><p style="text-align:center">${t('level')} ${S.lvl}<br>${S.lvl<=4?t('u'+S.lvl):''}<br>${t('uI')}</p>`)}}
+function jackpot(){S.stats.t1++;anim('#flash','go');sparks($('#wcard'),['#ffd76a','#ff8c1a','#fff'],90);SND.jackpot();toast('<span class="t1">🌟 '+t('jackpot')+'</span>')}
+function checkPerfect(it){const A=all(it);if(A.length===6&&A.every(a=>a.t===1)&&!it.hof){it.hof=1;S.hof.push({name:it.name,base:it.base,ilvl:it.ilvl,at:new Date().toLocaleDateString()});setTimeout(()=>{anim('#flash','go');SND.jackpot()},500);modal(`<div class="big">👑 ${t('perfect')}</div><p style="text-align:center">${it.name}<br>${t('perfectD')}</p>`)}}
+const cur=()=>S.items[S.sel];
+// ================= ACTIONS =================
+const ACT={
+ tab:a=>{S.tab=a},
+ lang:()=>{S.lang=S.lang==='sk'?'en':'sk'},
+ help:()=>modal(t('tutorial')),
+ closeModal:()=>{closeM();return 'noR'},
+ buy:i=>{const it=S.market[+i];if(!it)return;const p=buyPrice(it);if(S.gold<p)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));
+  S.gold-=p;it.cost=p;delete it.pf;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.market.splice(+i,1);all(it).forEach(discover);SND.coin();toast('🪙 −'+p)},
+ crate:()=>{if(S.lvl<2)return;if(S.gold<CONFIG.crateCost)return toast(t('noGold'));if(S.items.length>=stallSize())return toast(t('stallFull'));const mx=marketMax();
+  S.gold-=CONFIG.crateCost;const it=makeItem(ri(Math.round(mx*.6),mx),ri(2,6),true);it.unid=true;it.cost=CONFIG.crateCost;S.items.push(it);S.sel=S.items.length-1;S.selAff=null;S.tab='workshop';SND.coin()},
+ refresh:()=>{if(S.gold<CONFIG.marketRefreshCost)return toast(t('noGold'));S.gold-=CONFIG.marketRefreshCost;genMarket();SND.click()},
+ selItem:i=>{S.sel=+i;S.selAff=null;SND.click()},
+ selAff:a=>{S.selAff=S.selAff===a?null:a;SND.click()},
+ identify:()=>{const it=cur();if(!it||!it.unid)return;it.unid=false;render();anim('#wcard','reveal');all(it).forEach(discover);SND.craft();sparks($('#wcard'),'#ffff77',40);if(all(it).some(a=>a.t===1))setTimeout(jackpot,400);checkPerfect(it);save();return 'noR'},
+ buyCur:c=>{if(c==='lock'&&S.lvl<3)return;const p=curCost(c);if(S.gold<p)return toast(t('noGold'));S.gold-=p;S.cur[c]++;SND.coin()},
+ use:c=>{const it=cur();if(!it||it.unid)return;if(it.frac)return toast(t('fragile'));if(S.cur[c]<=0)return toast(t('noCur'));const A=all(it);let jack=false;
+  if(c==='reroll'){const f=A.filter(a=>!a.lock);if(!f.length)return toast(t('nothing'));f.forEach(a=>{a.q=R();a.v=rollVal(AFM[a.k],a.t,a.q)});A.forEach(a=>a.lock=false)}
+  else if(c==='augment'){if(A.length>=6)return toast(t('full'));const a=addAffix(it);discover(a);jack=a.t===1}
+  else if(c==='annul'){const f=A.filter(a=>!a.lock);if(!f.length)return toast(t('nothing'));const a=pick(f);it.p=it.p.filter(x=>x!==a);it.s=it.s.filter(x=>x!==a);A.forEach(a=>a.lock=false);S.selAff=null}
+  else if(c==='lock'){const a=getSelAff(it);if(!a)return toast(t('selectAff'));if(a.lock)return;a.lock=true}
+  S.cur[c]--;S.stats.crafts++;render();anim('#wcard','shake');sparks($('#wcard'),c==='annul'?'#9be':'#ffd76a',25);SND.craft();if(jack)jackpot();checkPerfect(it);save();return 'noR'},
+ forge:()=>{const it=cur(),a=it&&getSelAff(it);if(!a||it.frac||it.unid)return;if(a.t===1)return toast(t('maxTier'));if(maxTier(it.ilvl)>a.t-1)return toast(t('ilvlLow'));if(S.gold<CONFIG.forgeGold)return toast(t('noGold'));
+  S.gold-=CONFIG.forgeGold;S.stats.crafts++;const[l,h]=CONFIG.forgeCost(a.t),c=ri(l,h);
+  if(c<=it.stab){it.stab-=c;a.t--;a.v=rollVal(AFM[a.k],a.t,a.q);discover(a);render();anim('#wcard','shake');sparks($('#wcard'),['#ffb84a','#ff6a00'],45);SND.craft();toast('⚒️ −'+c+' '+t('stability'));if(a.t===1)jackpot();checkPerfect(it)}
+  else if(R()<CONFIG.fractureShare){it.frac=true;it.stab=0;render();anim('#wcard','shake');sparks($('#wcard'),'#ff3b2a',50);SND.fail();toast('<span class="bad">💔 '+t('fracturedT')+'</span>')}
+  else{S.items.splice(S.sel,1);S.sel=S.items.length?0:-1;S.selAff=null;render();sparks(null,['#aaa','#ff3b2a','#555'],120);SND.shatter();toast('<span class="bad">💥 '+t('shatteredT')+'</span>')}
+  save();return 'noR'},
+ sell:()=>{const it=cur();if(!it||it.unid)return;const p=sellPrice(it),pr=p-it.cost;S.gold+=p;S.stats.sold++;S.stats.profit+=pr;finishItem();addXp(Math.max(2,Math.round(pr)));SND.coin();sparks($('#gold'),'#ffd76a',30);toast(`🪙 +${p} (${t('profitW')} ${pr>=0?'+':''}${pr})`)},
+ deliver:i=>{const b=S.bounties[+i],it=cur(),m=bMatch(b,it);if(!m.m)return;S.gold+=m.pay;const pr=m.pay-it.cost;S.stats.sold++;S.stats.profit+=pr;finishItem();addXp(Math.max(5,Math.round(pr*(m.m===2?1.5:1))));S.bounties[+i]=genBounty();SND.coin();if(m.m===2)SND.jackpot();sparks($('#gold'),'#ffd76a',60);toast('📜 '+t('bountyDone')+' 🪙 +'+m.pay)},
+ upgrade:k=>{const u=UPS.find(x=>x.k===k),l=S.up[k];if(l>=u.max||S.lvl<u.req(l))return;const c=u.cost(l);if(S.gold<c)return toast(t('noGold'));S.gold-=c;S.up[k]++;SND.lvl()},
+ reset:()=>modal(`<p>${t('resetQ')}</p><p class="flex"><button class="red" data-act="resetYes">${t('yes')}</button><button data-act="closeModal">${t('no')}</button></p>`),
+ resetYes:()=>{localStorage.removeItem(CONFIG.saveKey);location.reload();return 'noR'}
+};
+function finishItem(){S.items.splice(S.sel,1);S.sel=S.items.length?S.items.length-1:-1;S.selAff=null}
+function getSelAff(it){if(!S.selAff)return null;return it[S.selAff[0]][+S.selAff.slice(1)]||null}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;ac();const r=ACT[b.dataset.act]&&ACT[b.dataset.act](b.dataset.arg);if(r!=='noR'){render();save()}});
+// ================= RENDER =================
+function itemCard(it,inter,extra=''){const r=rarity(it),col=RAR[r][1];
+ const line=(a,i,s)=>{const id=s+i,sl=inter&&S.selAff===id;return `<div class="af t${a.t} ${inter?'ia':''} ${sl?'sel':''}" ${inter?`data-act="selAff" data-arg="${id}"`:''}><span class="tg">${s==='p'?'P':'S'} T${a.t}</span>${afText(a)}${S.hot===a.k?' 🔥':''}${a.lock?' 🔒':''}</div>`};
+ const body=it.unid?`<div class="af t5" style="text-align:center">❓ ${t('unid')} ❓</div>`:
+  (it.p.length?`<div class="lbl">${t('prefixes')}</div>`+it.p.map((a,i)=>line(a,i,'p')).join(''):'')+(it.s.length?`<div class="lbl">${t('suffixes')}</div>`+it.s.map((a,i)=>line(a,i,'s')).join(''):'');
+ const nm=it.unid?t('crate'):r>=2?it.name:t(it.base);
+ return `<div class="card r${r}" ${inter?'id="wcard"':''} style="--rc:${col}"><div class="ch"><div class="ic">${icon(it.base)}</div><div class="grow"><div class="nm">${nm}</div><div class="sub">${t(RAR[r][0])} · ${t(it.base)} · ilvl ${it.ilvl} ${it.frac?`<span class="frac">· ${t('fractured')}</span>`:''}</div></div></div>
+ ${it.unid?'':`<div class="stab">⚖ ${t('stability')}: <b>${it.stab}</b><div class="bar"><i style="width:${Math.min(100,it.stab)}%;background:${it.stab<15?'#d33':''}"></i></div></div>`}<div class="affs">${body}</div>${extra}</div>`}
+function renderTop(){$('#gold').innerHTML='🪙 '+S.gold;$('#rep').innerHTML=`⭐ ${t('level')} ${S.lvl}<div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div>`;$('#langBtn').textContent='🌐 '+t('lang');
+ $('#curs').innerHTML=CURS.map(c=>`<span title="${t(c)}">${CICO[c]} ${S.cur[c]}</span>`).join('')+`<span>📦 ${S.items.length}/${stallSize()}</span>`;
+ $('#ticker').innerHTML=`<span class="hot">🔥 ${t('hot')}: ${afShort(S.hot)} ×${CONFIG.hotMul}</span> · ${t('changes')} <span class="cd" data-u="trendAt"></span>`;document.documentElement.lang=S.lang}
+function renderTabs(){$('#tabs').innerHTML=[['market','🏪'],['workshop','⚒️'],['bounties','📜'],['codex','📖'],['upgrades','⬆️']].map(([k,i])=>`<button class="${S.tab===k?'on':''}" data-act="tab" data-arg="${k}" id="tab-${k}"><b>${i}</b>${t(k)}</button>`).join('')}
+const V={
+ market:()=>`<div class="panel flex"><div class="grow muted">${t('newStock')} <span class="cd" data-u="marketAt"></span></div><button class="sm" data-act="refresh">🔄 ${t('refresh')} (${CONFIG.marketRefreshCost}🪙)</button></div>
+ <div class="panel flex" style="border-color:#ffff7766"><div style="font-size:34px">🎁</div><div class="grow"><b>${t('crate')}</b><div class="muted">${S.lvl>=2?t('crateD'):t('needLvl')+' 2'}</div></div><button class="gold" data-act="crate" ${S.lvl<2?'disabled':''}>${CONFIG.crateCost}🪙</button></div>
+ ${S.market.map((it,i)=>itemCard(it,false,`<div class="flex" style="margin-top:8px"><div class="grow muted">${t('value')} ~${itemValue(it)}🪙</div><button class="gold buy" data-act="buy" data-arg="${i}">${t('buy')} ${buyPrice(it)}🪙</button></div>`)).join('')}`,
+ workshop:()=>{const it=cur();const strip=`<div class="strip">${S.items.map((x,i)=>`<button class="${i===S.sel?'on':''}" style="--rc:${RAR[rarity(x)][1]}" data-act="selItem" data-arg="${i}">${x.unid?'<span style="font-size:28px">❓</span>':icon(x.base)}</button>`).join('')}</div>`;
+  if(!it)return strip+`<div class="panel">${t('noItem')}</div><button class="gold" data-act="tab" data-arg="market">🏪 ${t('market')}</button>`;
+  if(it.unid)return strip+itemCard(it,true)+`<button class="gold" style="width:100%" data-act="identify">🔍 ${t('identify')}</button>`;
+  const dis=it.frac?'disabled':'',sa=getSelAff(it);
+  let forge=`<div class="muted">${t('selectAff')}</div>`;
+  if(sa){if(sa.t===1)forge=`<div class="t1">${t('maxTier')}</div>`;else if(maxTier(it.ilvl)>sa.t-1)forge=`<div class="warn">${t('ilvlLow')} (T${sa.t-1}: ilvl ${CONFIG.tierIlvl[sa.t-1]}+)</div>`;else{const[l,h]=CONFIG.forgeCost(sa.t),ps=Math.max(0,Math.min(1,(it.stab-l+1)/(h-l+1))),pf=(1-ps)*CONFIG.fractureShare,ph=(1-ps)-pf;
+   forge=`<div class="odds"><span class="t${sa.t}">${afShort(sa.k)} T${sa.t}</span> → <span class="t${sa.t-1}">T${sa.t-1}</span><br>${t('forgeCost')}: <b>${l}–${h}</b> (${t('stability')} ${it.stab})<br><span class="good">✔ ${t('safe')} ${Math.round(ps*100)}%</span> · <span class="warn">💔 ${t('fracture')} ${Math.round(pf*100)}%</span> · <span class="bad">💥 ${t('shatter')} ${Math.round(ph*100)}%</span></div><button class="gold" id="forgeBtn" style="width:100%" data-act="forge" ${dis}>🔥 ${t('forgeBtn')} (${CONFIG.forgeGold}🪙)</button>`}}
+  return strip+itemCard(it,true)+`<div class="panel"><div class="grid2">${CURS.map(c=>{const lk=c==='lock'&&S.lvl<3;return `<div><div class="cbtn"><button id="use-${c}" data-act="use" data-arg="${c}" ${dis||lk?'disabled':''} title="${t(c+'D')}">${CICO[c]} ×${S.cur[c]}</button><button class="sm" id="buy-${c}" data-act="buyCur" data-arg="${c}" ${lk?'disabled':''}>+${curCost(c)}🪙</button></div><div class="muted" style="font-size:11px">${lk?t('needLvl')+' 3':t(c)+': '+t(c+'D')}</div></div>`}).join('')}</div></div>
+  <div class="panel"><h2>🔥 ${t('forge')}</h2>${forge}</div>
+  <button class="gold" id="sellBtn" style="width:100%;font-size:18px" data-act="sell">🪙 ${t('sell')} ${sellPrice(it)} <span class="muted">(${t('paid')} ${it.cost})</span></button>`},
+ bounties:()=>{const it=cur();return `<div class="panel muted">${t('selItem')}: ${it?(it.unid?t('unid'):(rarity(it)>=2?it.name:t(it.base))+' · ilvl '+it.ilvl):'—'}</div>`+S.bounties.map((b,i)=>{const m=bMatch(b,it);
+  return `<div class="panel"><div class="flex"><div style="font-size:36px">${b.face}</div><div class="grow"><b>${b.name}</b> <span class="muted">· ${t('leaves')} <span class="cd" data-u="b${i}"></span></span><div>${t('wants')}: ${b.keys.map(k=>`<b class="t3">${afShort(k)}</b>`).join(' + ')} · ${t('minIlvl')} ${b.minIlvl}</div></div></div>
+  <div class="flex" style="margin-top:6px"><div class="grow ${m.m===2?'good':m.m===1?'warn':'muted'}">${m.m===2?'✔ '+t('exact'):m.m===1?'≈ '+t('partial')+` (${m.hit}/${b.keys.length})`:t('nomatch')}</div><button class="gold deliver" data-act="deliver" data-arg="${i}" ${m.m?'':'disabled'}>${t('deliver')}${m.m?' '+m.pay+'🪙':''}</button></div></div>`}).join('')},
+ codex:()=>{const n=Object.keys(S.codex).length;return `<div class="panel"><h2>📖 ${t('codexT')} ${n}/${AFF.length*5}</h2><div class="cx"><div></div>${[5,4,3,2,1].map(x=>`<div class="t${x}" style="text-align:center">T${x}</div>`).join('')}
+  ${AFF.map(a=>`<div>${a.s==='p'?'P':'S'} ${afShort(a.k)}${rowDone(a.k)?' ✨':''}</div>`+[5,4,3,2,1].map(x=>`<div class="c t${x} ${S.codex[a.k+x]?'on':''}"><span>${S.codex[a.k+x]?'✓':''}</span></div>`).join('')).join('')}</div></div>
+  <div class="panel"><h2>${t('bonuses')}</h2><div>${codexRows()?'✅':'⬜'} ${t('rowB')} (${codexRows()})</div><div>${pageDone('p')?'✅':'⬜'} ${t('pageP')}</div><div>${pageDone('s')?'✅':'⬜'} ${t('pageS')}</div></div>
+  <div class="panel"><h2>👑 ${t('hof')}</h2>${S.hof.length?S.hof.map(h=>`<div class="t1">${h.name} · ${t(h.base)} · ilvl ${h.ilvl} · ${h.at}</div>`).join(''):`<div class="muted">${t('hofE')}</div>`}</div>
+  <div class="panel"><h2>${t('stats')}</h2>${t('sold')}: ${S.stats.sold} · ${t('profit')}: ${S.stats.profit}🪙 · ${t('crafts')}: ${S.stats.crafts} · ${t('t1s')}: ${S.stats.t1} · ${t('streak')}: ${S.login.streak}</div>`},
+ upgrades:()=>`<div class="panel"><h2>⭐ ${t('rep')} – ${t('level')} ${S.lvl}</h2><div class="bar"><i style="width:${S.xp/needXp(S.lvl)*100}%"></i></div><div class="muted">${S.xp}/${needXp(S.lvl)} XP</div>
+  <div class="lbl">${t('unlocks')}</div>${[1,2,3,4].map(l=>`<div>${S.lvl>=l?'✅':'🔒'} ${t('level')} ${l}: ${t('u'+l)}</div>`).join('')}<div class="muted">${t('uI')} (${marketMax()})</div></div>
+  ${UPS.map(u=>{const l=S.up[u.k],mx=l>=u.max,rq=u.req(l);return `<div class="panel flex"><div class="grow"><b>${t('up_'+u.k)}</b> (${l}/${u.max})<div class="muted">${t('up_'+u.k+'D')}${!mx&&S.lvl<rq?' · '+t('needLvl')+' '+rq:''}</div></div><button class="gold" data-act="upgrade" data-arg="${u.k}" ${mx||S.lvl<rq?'disabled':''}>${mx?t('maxed'):u.cost(l)+'🪙'}</button></div>`}).join('')}
+  <button class="red sm" data-act="reset">🗑 ${t('reset')}</button>`
+};
+function render(){renderTop();$('#view').innerHTML=V[S.tab]();renderTabs();updCd()}
+function updCd(){document.querySelectorAll('.cd').forEach(e=>{const u=e.dataset.u,until=u[0]==='b'&&u!=='b'?(S.bounties[+u.slice(1)]||{}).until:S[u];e.textContent=fmt((until||0)-S.play)})}
+// ================= LOOP =================
+function tick(){if(document.hidden)return;S.play++;let rr=false;
+ if(S.play>=S.marketAt){genMarket();rr=S.tab==='market'}
+ if(S.play>=S.trendAt){rotateTrend();toast('🔥 '+t('hot')+': '+afShort(S.hot));rr=true}
+ S.bounties.forEach((b,i)=>{if(S.play>=b.until){S.bounties[i]=genBounty();if(S.tab==='bounties')rr=true}});
+ if(rr)render();else{updCd()}if(S.play%5===0)save()}
+// ================= INIT =================
+function init(){const had=load();if(!S.hot)rotateTrend();if(!S.market.length)genMarket();while(S.bounties.length<3)S.bounties.push(genBounty());
+ if(!S.tut){S.tut=true;modal(t('tutorial'))}
+ const today=new Date().toDateString(),y=new Date(Date.now()-864e5).toDateString();
+ if(S.login.last!==today){S.login.streak=S.login.last===y?S.login.streak+1:1;S.login.last=today;const g=CONFIG.daily.gold*Math.min(S.login.streak,7);S.gold+=g;S.cur.augment+=CONFIG.daily.aug;S.cur.reroll+=1;
+  modal(`<div class="big">🎁 ${t('daily')}</div><p style="text-align:center">${t('streak')}: <b>${S.login.streak}</b> 🔥<br>+${g}🪙 · +${CONFIG.daily.aug}💠 · +1🎲</p>`)}
+ render();save();setInterval(tick,1000)}
+window.G={get S(){return S},ACT,render,itemValue,genMarket,makeItem,save};
+init();
+</script>
+</body></html>
